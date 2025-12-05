@@ -1,0 +1,185 @@
+
+# ~BrieFlow analysis configuration file~
+
+# All paths are resolved relative to the directory the workflow is run from.
+
+# Parameters:
+all:
+  root_fp: brieflow_output/
+preprocess:
+  sbs_samples_fp: config/sbs_samples.tsv
+  sbs_combo_fp: config/sbs_combo.tsv
+  phenotype_samples_fp: config/phenotype_samples.tsv
+  phenotype_combo_fp: config/phenotype_combo.tsv
+  sbs_data_format: nd2
+  sbs_data_organization: well
+  sbs_channel_order:
+  - DAPI-CY3_30p_545-A594_30p-CY5_30p-CY7_30p
+  - CY3_30p_545
+  - A594_30p
+  - CY5_30p
+  - CY7_30p
+  sbs_channel_order_flip: false
+  sbs_n_z_planes: null
+  sbs_metadata_samples_df_fp: null
+  phenotype_data_format: nd2
+  phenotype_data_organization: well
+  phenotype_channel_order:
+  - DAPI_1x1-GFP_1x1
+  - GFP_1x1
+  - A594_1x1
+  - AF750_1x1
+  phenotype_channel_order_flip: false
+  phenotype_round_order:
+  - 1
+  - 2
+  phenotype_n_z_planes: null
+  phenotype_metadata_samples_df_fp: null
+  sample_fraction: 0.5
+phenotype:
+  foci_channel_index: 2
+  channel_names:
+  - DAPI
+  - TUBULIN
+  - GH2AX
+  - PHALLOIDIN
+  align: true
+  dapi_index: 0
+  cyto_index: 3
+  segmentation_method: cellpose
+  reconcile: contained_in_cells
+  gpu: false
+  cp_method: cp_multichannel
+  nuclei_diameter: 42.684959745981
+  cell_diameter: 68.05913211132304
+  nuclei_flow_threshold: 0.4
+  nuclei_cellprob_threshold: 0.0
+  cell_flow_threshold: 1
+  cell_cellprob_threshold: 0
+  cyto_model: cyto3
+  alignments:
+    1:
+      target: 0
+      source: 2
+      riders:
+      - 3
+      remove_channel: false
+      window: 2
+      upsample_factor: 4
+      custom_channel_offsets:
+        2: &id001 !!python/tuple
+        - -5
+        - 10
+        3: *id001
+    2:
+      steps:
+      - target: 0
+        source: 2
+        riders: []
+        remove_channel: false
+      - target: 2
+        source: 3
+        riders:
+        - 4
+        remove_channel: source
+      window: 2
+      upsample_factor: 4
+      custom_channel_offsets:
+        2: &id002 !!python/tuple
+        - -5
+        - 12
+        3: *id002
+    3:
+      target: 0
+      source: 2
+      riders:
+      - 3
+      remove_channel: false
+      window: 2
+      upsample_factor: 4
+      custom_channel_offsets:
+        2: &id003 !!python/tuple
+        - -12
+        - 15
+        3: *id003
+    4:
+      steps:
+      - target: 0
+        source: 2
+        riders:
+        - 3
+        remove_channel: false
+      - target: 1
+        source: 4
+        riders: []
+        remove_channel: target
+      window: 2
+      upsample_factor: 4
+      custom_channel_offsets:
+        2: &id004 !!python/tuple
+        - 0
+        - 7
+        3: *id004
+    5:
+      target: 0
+      source: 2
+      riders:
+      - 3
+      remove_channel: false
+      window: 2
+      upsample_factor: 4
+      custom_channel_offsets:
+        2: *id002
+        3: *id002
+    6:
+      steps:
+      - target: 0
+        source: 2
+        riders:
+        - 3
+        remove_channel: false
+      - target: 1
+        source: 4
+        riders: []
+        remove_channel: target
+      window: 2
+      upsample_factor: 4
+      custom_channel_offsets:
+        2: &id005 !!python/tuple
+        - 0
+        - 15
+        3: *id005
+    7:
+      steps:
+      - target: 0
+        source: 2
+        riders:
+        - 3
+        remove_channel: false
+      - target: 1
+        source: 4
+        riders: []
+        remove_channel: target
+      window: 2
+      upsample_factor: 4
+      custom_channel_offsets:
+        2: *id002
+        3: *id002
+    8:
+      steps:
+      - target: 0
+        source: 2
+        riders:
+        - 3
+        remove_channel: false
+      - target: 1
+        source: 4
+        riders: []
+        remove_channel: target
+      window: 2
+      upsample_factor: 4
+      custom_channel_offsets:
+        2: &id006 !!python/tuple
+        - -12
+        - 12
+        3: *id006
