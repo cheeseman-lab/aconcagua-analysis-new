@@ -1,0 +1,92 @@
+# Benchmarks
+
+Compares methods at four pipeline stages.
+
+## Segmentation (`segmentation.py`)
+
+**Methods:** Cellpose (cyto3), Cellpose4 (CPSAM), StarDist
+**Metrics:** Runtime, memory, cell/nuclei counts, retention rates
+
+## Spot Calling (`spot_calling.py`)
+
+**Methods:** Standard (peak detection), Spotiflow (deep learning)
+**Metrics:** Runtime, memory, peaks, read mapping, cell assignment
+
+## Feature Extraction (`feature_extraction.py`)
+
+Two modes:
+- **comparison** (default): Compare CP Measure vs CP Multichannel pipelines
+- **timing**: Time individual cp_measure functions to identify bottlenecks
+
+**Metrics:** Runtime, memory, feature counts
+
+## Merge (`merge.py`)
+
+**Methods:** Fast (tile-by-tile alignment), Stitch (full well stitching)
+**Metrics:** Runtime, alignment quality (distance), cell retention, barcode mapping
+
+Analyzes merge results from Snakemake pipeline runs. Extracts timing from slurm logs and quality metrics from parquet outputs.
+
+**Output directories:**
+- `merge/` - Fast approach (default, `approach: fast` in config)
+- `merge_stitch/` - Stitch approach (requires `approach: stitch` in config)
+
+To generate stitch outputs for comparison, set `merge.approach: stitch` in `config/config.yml` and run the merge step.
+
+**Conclusion:** Fast approach is recommended. Stitch requires ~2TB RAM for triangle hash distance matrix (beyond cluster capacity), falls back to identity transform with degraded alignment.
+
+## Visualization (`visualization.py`)
+
+Generate publication-quality visualizations of benchmark results:
+- **segmentation**: Side-by-side segmentation method comparison
+- **spots**: Spot detection overlay comparison
+- **overlay**: Single image with segmentation overlay
+- **panel**: Multi-panel grid of samples
+
+## Usage
+
+```bash
+# Run all benchmarks
+bash run_benchmarks.sh
+
+# Run specific benchmark type
+bash run_benchmarks.sh --segmentation
+bash run_benchmarks.sh --spot-calling
+bash run_benchmarks.sh --feature-extraction
+bash run_benchmarks.sh --feature-timing
+bash run_benchmarks.sh --merge
+
+# Run single method/mode directly
+python segmentation.py --method cellpose
+python feature_extraction.py --mode timing
+python merge.py                # Analyze merge results from pipeline
+python merge.py --plots-only   # Regenerate plots only
+
+# Generate visualizations
+python visualization.py --type all
+python visualization.py --type segmentation --sample P-1_W-A1_T-1
+python visualization.py --type panel --rows 2 --cols 4
+```
+
+## Environments
+
+| Environment | Used For |
+|-------------|----------|
+| `brieflow_aconcagua_new_updates` | Main: Cellpose3, spot calling, feature extraction, merge |
+| `brieflow_cellpose4` | Cellpose4 (CPSAM) segmentation |
+| `brieflow_stardist` | StarDist segmentation |
+| `brieflow_napari` | Visualization (optional) |
+
+### Setting up brieflow_napari (for visualization)
+
+```bash
+# Create environment with all visualization dependencies (locally)
+conda create -n brieflow_napari python=3.11 -y
+conda activate brieflow_napari
+pip install napari[all] tifffile numpy pandas matplotlib scikit-image seaborn
+
+# Run visualizations (offscreen rendering enabled by default)
+python visualization.py --type all
+```
+
+Results saved to `results/{benchmark}/`.

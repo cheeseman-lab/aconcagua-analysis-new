@@ -82,7 +82,7 @@ sbs:
   nuclei_cellprob_threshold: 0.0
   cell_flow_threshold: 1
   cell_cellprob_threshold: 0
-  cyto_model: cyto3
+  cellpose_model: cyto3
 phenotype:
   foci_channel_index: 2
   channel_names:
@@ -103,7 +103,7 @@ phenotype:
   nuclei_cellprob_threshold: 0.0
   cell_flow_threshold: 1
   cell_cellprob_threshold: 0
-  cyto_model: cyto3
+  cellpose_model: cyto3
   alignments:
     1:
       target: 0
@@ -266,29 +266,18 @@ merge:
   pheno_dedup_prior:
     mapped_single_gene: false
     fov_distance_1: true
-  initial_sites:
-  - - 1
-    - 1
-  - - 76
-    - 23
-  - - 174
-    - 44
-  - - 324
-    - 85
-  - - 467
-    - 119
-  - - 656
-    - 174
-  - - 787
-    - 200
-  - - 970
-    - 254
-  - - 1084
-    - 277
-  - - 1218
-    - 316
-  - - 1277
-    - 330
+  initial_sbs_tiles:
+  - 1
+  - 23
+  - 44
+  - 85
+  - 119
+  - 174
+  - 200
+  - 254
+  - 277
+  - 316
+  - 330
   det_range:
   - 0.06
   - 0.065

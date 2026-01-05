@@ -2,3 +2,6 @@
 analysis/.snakemake/
 analysis/slurm/slurm_output/
 analysis/brieflow_output/
+
+# ignore benchmark results
+benchmarks/results/
