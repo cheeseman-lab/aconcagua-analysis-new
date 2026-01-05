@@ -253,6 +253,12 @@ phenotype:
 merge:
   approach: fast
   merge_combo_fp: config/merge_combo.tsv
+  phenotype_dimensions:
+  - 2960
+  - 2960
+  sbs_dimensions:
+  - 1480
+  - 1480
   sbs_metadata_cycle: 1
   score: 0.1
   threshold: 3
