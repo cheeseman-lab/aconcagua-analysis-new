@@ -2,10 +2,19 @@
 Merge Benchmark
 
 Compares merge approaches from actual Snakemake pipeline runs:
-- Fast: Tile-by-tile alignment using initial_sites configuration
-- Stitch: Full well stitching with triangle hash alignment
+- Fast: Tile-by-tile alignment using initial_sites configuration (brieflow_output/merge/)
+- Stitch: Full well stitching with triangle hash alignment (brieflow_output/merge_stitch/)
 
 Extracts metrics from slurm logs and parquet outputs for well P-1_W-A1.
+
+Directory structure:
+    brieflow_output/
+        merge/           # Fast approach (default, all wells)
+            parquets/    # P-{plate}_W-{well}__fast_merge.parquet, __merge_final.parquet
+            eval/        # Evaluation outputs
+        merge_stitch/    # Stitch approach (test on P-1_W-A1)
+            parquets/    # P-{plate}_W-{well}__merged_cells.parquet, __merge_final.parquet
+            eval/        # Evaluation outputs
 
 Usage:
     python merge.py              # Generate all outputs
@@ -35,27 +44,34 @@ SLURM_CONFIG = ANALYSIS_DIR / "slurm" / "config.yaml"
 BRIEFLOW_OUTPUT = ANALYSIS_DIR / "brieflow_output"
 OUTPUT_DIR = BENCHMARKS_DIR / "results" / "merge"
 
+# Output directories for each approach
+FAST_OUTPUT = BRIEFLOW_OUTPUT / "merge"
+STITCH_OUTPUT = BRIEFLOW_OUTPUT / "merge_stitch"
+
 # Well to analyze
 PLATE = 1
 WELL = "A1"
 
 # Slurm job IDs for each approach (P-1_W-A1)
 FAST_JOBS = {
-    "fast_alignment": "5125969",
-    "fast_merge": "5126073",
-    "format_merge": "5126111",
-    "deduplicate_merge": "5126159",
-    "final_merge": "5126219",
+    "fast_alignment": "5762209",
+    "fast_merge": "5763763",
+    "format_merge": "5763817",
+    "deduplicate_merge": "5763917",
+    "final_merge": "5764197",
 }
 
+# Stitch jobs from Jan 7 run (merge_stitch output)
 STITCH_JOBS = {
-    "stitch_phenotype": "9196132",
-    "stitch_sbs": "9196141",
-    "stitch_alignment": "9196831",
-    "stitch_merge": "9196870",
-    "format_merge": "9197272",
-    "deduplicate_merge": "9197278",
-    "final_merge": "9197288",
+    "estimate_stitch_sbs": "5798715",
+    "estimate_stitch_phenotype": "5798716",
+    "stitch_sbs": "5798717",
+    "stitch_phenotype": "5798718",
+    "stitch_alignment": "5812454",
+    "stitch_merge": "5817135",
+    "format_merge": "5841527",
+    "deduplicate_merge": "5841552",
+    "final_merge": "5842342",
 }
 
 
@@ -165,8 +181,8 @@ def extract_quality_metrics():
     sbs_cells = len(pd.read_parquet(sbs_info_path)) if sbs_info_path.exists() else None
 
     # Fast approach
-    fast_merge_path = BRIEFLOW_OUTPUT / "merge" / "parquets" / f"P-{PLATE}_W-{WELL}__fast_merge.parquet"
-    fast_final_path = BRIEFLOW_OUTPUT / "merge" / "parquets" / f"P-{PLATE}_W-{WELL}__merge_final.parquet"
+    fast_merge_path = FAST_OUTPUT / "parquets" / f"P-{PLATE}_W-{WELL}__fast_merge.parquet"
+    fast_final_path = FAST_OUTPUT / "parquets" / f"P-{PLATE}_W-{WELL}__merge_final.parquet"
 
     if fast_merge_path.exists():
         fast_merge = pd.read_parquet(fast_merge_path)
@@ -203,8 +219,8 @@ def extract_quality_metrics():
         })
 
     # Stitch approach
-    stitch_merge_path = BRIEFLOW_OUTPUT / "merge_stitch" / "parquets" / f"P-{PLATE}_W-{WELL}__merged_cells.parquet"
-    stitch_final_path = BRIEFLOW_OUTPUT / "merge_stitch" / "parquets" / f"P-{PLATE}_W-{WELL}__merge_final.parquet"
+    stitch_merge_path = STITCH_OUTPUT / "parquets" / f"P-{PLATE}_W-{WELL}__merged_cells.parquet"
+    stitch_final_path = STITCH_OUTPUT / "parquets" / f"P-{PLATE}_W-{WELL}__merge_final.parquet"
 
     if stitch_merge_path.exists():
         stitch_merge = pd.read_parquet(stitch_merge_path)
@@ -247,12 +263,12 @@ def load_distance_data():
     """Load raw distance data for distribution plots."""
     distances = {}
 
-    fast_path = BRIEFLOW_OUTPUT / "merge" / "parquets" / f"P-{PLATE}_W-{WELL}__fast_merge.parquet"
+    fast_path = FAST_OUTPUT / "parquets" / f"P-{PLATE}_W-{WELL}__fast_merge.parquet"
     if fast_path.exists():
         fast_df = pd.read_parquet(fast_path, columns=["distance"])
         distances["fast"] = fast_df["distance"].values
 
-    stitch_path = BRIEFLOW_OUTPUT / "merge_stitch" / "parquets" / f"P-{PLATE}_W-{WELL}__merged_cells.parquet"
+    stitch_path = STITCH_OUTPUT / "parquets" / f"P-{PLATE}_W-{WELL}__merged_cells.parquet"
     if stitch_path.exists():
         stitch_df = pd.read_parquet(stitch_path, columns=["distance"])
         distances["stitch"] = stitch_df["distance"].values
@@ -458,12 +474,12 @@ def plot_tile_match_visualization(output_path):
     # Load FINAL merge results (after deduplication)
     # tile = phenotype tile, site = SBS tile, cell_0 = phenotype cell, cell_1 = SBS cell
     fast = pd.read_parquet(
-        BRIEFLOW_OUTPUT / "merge" / "parquets" / f"P-{PLATE}_W-{WELL}__merge_final.parquet",
+        FAST_OUTPUT / "parquets" / f"P-{PLATE}_W-{WELL}__merge_final.parquet",
         columns=['tile', 'site', 'cell_0', 'cell_1']
     )
 
     # Try to load stitch final results
-    stitch_path = BRIEFLOW_OUTPUT / "merge_stitch" / "parquets" / f"P-{PLATE}_W-{WELL}__merge_final.parquet"
+    stitch_path = STITCH_OUTPUT / "parquets" / f"P-{PLATE}_W-{WELL}__merge_final.parquet"
     has_stitch = stitch_path.exists()
     if has_stitch:
         stitch = pd.read_parquet(stitch_path, columns=['tile', 'site', 'cell_0', 'cell_1'])

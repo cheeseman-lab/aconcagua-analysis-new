@@ -119,19 +119,19 @@ set-resources:
         mem_mb: 20000     
         cpus_per_task: 12  
     stitch_phenotype:
-        mem_mb: 800000      
-        cpus_per_task: 12   
+        mem_mb: 980000      
+        cpus_per_task: 48   
     stitch_sbs:
-        mem_mb: 800000       
-        cpus_per_task: 12   
+        mem_mb: 980000       
+        cpus_per_task: 48  
     stitch_alignment:
-        mem_mb: 500000
-        cpus_per_task: 12
+        mem_mb: 980000
+        cpus_per_task: 48
     stitch_merge:
         mem_mb: 500000
         cpus_per_task: 12
-    summarize_merge:
-        mem_mb: 8000
+    summarize_stitch:
+        mem_mb: 20000
 
     # aggregate
     split_datasets:

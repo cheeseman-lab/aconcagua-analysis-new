@@ -37,6 +37,7 @@ preprocess:
   phenotype_metadata_samples_df_fp: null
   sample_fraction: 0.5
 sbs:
+  heatmap_shape: 6W_sbs
   alignment_method: sbs_mean
   channel_names:
   - DAPI
@@ -84,6 +85,7 @@ sbs:
   cell_cellprob_threshold: 0
   cellpose_model: cyto3
 phenotype:
+  heatmap_shape: 6W_ph
   foci_channel_index: 2
   channel_names:
   - DAPI
@@ -252,7 +254,13 @@ phenotype:
         - 12
 merge:
   approach: stitch
-  merge_combo_fp: config/merge_combo.tsv
+  merge_combo_fp: config/merge_combo_stitch.tsv
+  phenotype_dimensions:
+  - 2960
+  - 2960
+  sbs_dimensions:
+  - 1480
+  - 1480
   sbs_metadata_cycle: 1
   sbs_metadata_channel: null
   ph_metadata_channel: null
