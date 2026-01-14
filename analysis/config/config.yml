@@ -332,8 +332,8 @@ aggregate:
   num_sims: 100000
   exclusion_string: null
   bootstrap_combinations:
-  - cell_class:
-    - Interphase
-    - Mitotic
+  - cell_class: Interphase
+    channel_combo: DAPI_TUBULIN_GH2AX_PHALLOIDIN
+  - cell_class: Mitotic
     channel_combo: DAPI_TUBULIN_GH2AX_PHALLOIDIN
   pseudogene_patterns: null

@@ -135,9 +135,9 @@ set-resources:
 
     # aggregate
     split_datasets:
-        mem_mb: 200000
+        mem_mb: 300000
     filter:
-        mem_mb: 100000
+        mem_mb: 200000
     generate_feature_table:
         mem_mb: 980000
         cpus_per_task: 4
