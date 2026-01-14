@@ -289,3 +289,51 @@ merge:
   det_range:
   - 0.06
   - 0.065
+classify:
+  classifier_path: brieflow_output/classifier/classifier/run_20260112_172222/models/multiclass_xgb_k50/multiclass_xgb_k50_model.dill
+  confidence_thresholds:
+    1:
+      threshold: 0.80796
+      mode: reassign
+    2:
+      threshold: 0.5
+      mode: exclude
+  metadata_cols_fp: config/cell_data_metadata_cols.tsv
+  class_title: cell_stage
+  class_mapping:
+    label_to_class:
+      1: Mitotic
+      2: Interphase
+aggregate:
+  metadata_cols_fp: config/cell_data_metadata_cols.tsv
+  collapse_cols:
+  - cell_barcode_0
+  - gene_symbol_0
+  aggregate_combo_fp: config/aggregate_combo.tsv
+  filter_queries:
+  - mapped_single_gene == True
+  perturbation_name_col: gene_symbol_0
+  drop_cols_threshold: 0.05
+  drop_rows_threshold: 0.01
+  impute: true
+  contamination: 0.01
+  batch_cols:
+  - plate
+  - well
+  control_key: nontargeting
+  perturbation_id_col: cell_barcode_0
+  variance_or_ncomp: 0.99
+  num_align_batches: 1
+  agg_method: median
+  skip_perturbation_score: false
+  ps_probability_threshold: null
+  ps_percentile_threshold: null
+  feature_normalization: mad
+  num_sims: 100000
+  exclusion_string: null
+  bootstrap_combinations:
+  - cell_class:
+    - Interphase
+    - Mitotic
+    channel_combo: DAPI_TUBULIN_GH2AX_PHALLOIDIN
+  pseudogene_patterns: null
