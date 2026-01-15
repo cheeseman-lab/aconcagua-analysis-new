@@ -10,7 +10,7 @@ default-resources:
     cpus_per_task: 1
     runtime: 800
     slurm_extra: "'--output=slurm/slurm_output/rule/%j.out'"
-jobs: 600
+jobs: 500
 
 set-resources:
    # preprocessing
@@ -158,6 +158,20 @@ set-resources:
         mem_mb: 10000
     initiate_montage:
         mem_mb: 1000
+    # bootstrap
+    prepare_bootstrap_data:
+        mem_mb: 100000
+        cpus_per_task: 4
+    bootstrap_construct:
+        mem_mb: 10000
+    construct_bootstrap_complete:
+        mem_mb: 1000
+    bootstrap_gene:
+        mem_mb: 20000
+    initiate_bootstrap:
+        mem_mb: 1000
+    combine_bootstrap:
+        mem_mb: 50000
 
     # cluster
     clean_aggregate:
