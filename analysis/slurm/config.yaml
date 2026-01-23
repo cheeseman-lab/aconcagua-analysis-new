@@ -10,7 +10,7 @@ default-resources:
     cpus_per_task: 1
     runtime: 800
     slurm_extra: "'--output=slurm/slurm_output/rule/%j.out'"
-jobs: 600
+jobs: 200
 
 set-resources:
    # preprocessing
@@ -143,8 +143,8 @@ set-resources:
         cpus_per_task: 4
         runtime: 2880  # 2 days
     align:
-        mem_mb: 980000
-        cpus_per_task: 4
+        mem_mb: 1300000
+        cpus_per_task: 32
         runtime: 5760  # 4 days
     aggregate:
         mem_mb: 980000
@@ -162,7 +162,7 @@ set-resources:
         mem_mb: 1000
     # bootstrap
     prepare_bootstrap_data:
-        mem_mb: 100000
+        mem_mb: 500000
         cpus_per_task: 4
     bootstrap_construct:
         mem_mb: 10000
@@ -177,7 +177,7 @@ set-resources:
 
     # cluster
     clean_aggregate:
-        mem_mb: 2000
+        mem_mb: 10000
     phate_leiden_clustering:
         mem_mb: 10000
     benchmark_clusters:

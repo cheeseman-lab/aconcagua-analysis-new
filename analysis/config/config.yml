@@ -337,3 +337,27 @@ aggregate:
   - cell_class: Mitotic
     channel_combo: DAPI_TUBULIN_GH2AX_PHALLOIDIN
   pseudogene_patterns: null
+cluster:
+  min_cell_cutoffs:
+    Mitotic: 5
+    Interphase: 10
+    all: 10
+  leiden_resolutions:
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  phate_distance_metric: cosine
+  cluster_combo_fp: config/cluster_combo.tsv
+  uniprot_data_fp: config/benchmark_clusters/uniprot_data.tsv
+  string_pair_benchmark_fp: config/benchmark_clusters/string_pair_benchmark.tsv
+  corum_group_benchmark_fp: config/benchmark_clusters/corum_group_benchmark.tsv
+  kegg_group_benchmark_fp: config/benchmark_clusters/kegg_group_benchmark.tsv
+  perturbation_auc_threshold: null

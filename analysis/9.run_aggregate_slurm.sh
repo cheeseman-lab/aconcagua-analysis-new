@@ -17,6 +17,7 @@ snakemake --executor slurm --use-conda \
     --latency-wait 10 \
     --rerun-triggers mtime \
     --keep-going \
+    --rerun-incomplete \
     --until all_aggregate
 
 # End timing and calculate duration
