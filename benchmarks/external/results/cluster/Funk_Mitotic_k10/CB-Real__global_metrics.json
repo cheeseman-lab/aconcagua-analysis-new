@@ -1,0 +1,24 @@
+{
+  "STRING": {
+    "precision": 0.032672873398583595,
+    "standard_precision": 0.032672873398583595,
+    "adjusted_precision": 1.0,
+    "recall": 0.07500091330873489,
+    "f1_score": 0.04551702731465059,
+    "standard_f1_score": 0.04551702731465059,
+    "adjusted_f1_score": 0.139536464351254,
+    "true_positives": 2053,
+    "false_positives": 60782,
+    "adjusted_false_positives": 0,
+    "false_negatives": 25320,
+    "using_adjusted_precision": false
+  },
+  "CORUM": {
+    "num_enriched_clusters": 15,
+    "proportion_enriched": 0.06
+  },
+  "KEGG": {
+    "num_enriched_clusters": 9,
+    "proportion_enriched": 0.036
+  }
+}

@@ -1,0 +1,2151 @@
+{
+  "clusters": {
+    "0": {
+      "size": 82,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0006022282445046673,
+          "recall": 0.004434589800443459,
+          "true_positives": 2.0,
+          "false_positives": 3319.0,
+          "false_negatives": 449.0
+        }
+      }
+    },
+    "1": {
+      "size": 76,
+      "enriched_in": [
+        "STRING",
+        "KEGG",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.06140350877192982,
+          "recall": 0.14033680834001605,
+          "true_positives": 175.0,
+          "false_positives": 2675.0,
+          "false_negatives": 1072.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 7,
+          "enriched_groups": [
+            "20S proteasome",
+            "26S proteasome",
+            "CAND1-CUL3-RBX1 complex",
+            "PA28-20S proteasome",
+            "PA28gamma-20S proteasome",
+            "PA700 complex",
+            "PA700-20S-PA28 complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 8,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_ABETA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SNCA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SOD1_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_UBQLN2_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_VCP_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_SCRAPIE_CONFORMATION_PRPSC_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION"
+          ]
+        }
+      }
+    },
+    "2": {
+      "size": 74,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004442798963346909,
+          "recall": 0.015483870967741935,
+          "true_positives": 12.0,
+          "false_positives": 2689.0,
+          "false_negatives": 763.0
+        }
+      }
+    },
+    "3": {
+      "size": 73,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0106544901065449,
+          "recall": 0.017937219730941704,
+          "true_positives": 28.0,
+          "false_positives": 2600.0,
+          "false_negatives": 1533.0
+        }
+      }
+    },
+    "4": {
+      "size": 72,
+      "enriched_in": [
+        "KEGG"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.004303599374021909,
+          "recall": 0.01664145234493192,
+          "true_positives": 11.0,
+          "false_positives": 2545.0,
+          "false_negatives": 650.0
+        },
+        "KEGG": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_CONDENSIN_LOADING",
+            "KEGG_MEDICUS_REFERENCE_MODIFYING_OF_CONDENSIN_II_SUBUNITS"
+          ]
+        }
+      }
+    },
+    "5": {
+      "size": 72,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.003912363067292645,
+          "recall": 0.013386880856760375,
+          "true_positives": 10.0,
+          "false_positives": 2546.0,
+          "false_negatives": 737.0
+        }
+      }
+    },
+    "6": {
+      "size": 70,
+      "enriched_in": [
+        "STRING",
+        "KEGG",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.3652173913043478,
+          "recall": 0.2090542782649917,
+          "true_positives": 882.0,
+          "false_positives": 1533.0,
+          "false_negatives": 3337.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 6,
+          "enriched_groups": [
+            "60S ribosomal subunit, cytoplasmic",
+            "DDX27-PeBoW complex",
+            "NMD3-RAN-XPO1 complex",
+            "Nop56p-associated pre-rRNA complex",
+            "Ribosome, cytoplasmic",
+            "TRBP containing complex (DICER, RPL7A, EIF6, MOV10 and subunits of the 60S ribosomal particle)"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_TRANSLATION_INITIATION"
+          ]
+        }
+      }
+    },
+    "7": {
+      "size": 65,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.4375,
+          "recall": 0.3925798101811907,
+          "true_positives": 910.0,
+          "false_positives": 1170.0,
+          "false_negatives": 1408.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 28,
+          "enriched_groups": [
+            "12S U11 snRNP",
+            "17S U2 snRNP",
+            "18S U11/U12 snRNP",
+            "20S methylosome and RG-containing Sm protein complex",
+            "6S methyltransferase and RG-containing Sm proteins complex",
+            "AQR-ISY1-PPIE-PRPF19-XAB2-ZNF830 complex",
+            "C complex spliceosome",
+            "CDC5L complex",
+            "CDC5L core complex",
+            "CDC5L-PRP19 complex",
+            "CDC5L-PRPF19 core complex",
+            "LSm1-7 complex",
+            "LSm2-8 complex",
+            "PSO4 complex",
+            "PSO4-WRN complex",
+            "SF3A1-SF3A2-SF3A3 complex",
+            "SF3b complex",
+            "SMN complex",
+            "SMN complex (16 subunits)",
+            "SMN complex (GEMIN2, SMN1, SNRPB, SNRPDs)",
+            "SMN complex, U7 snRNA specific",
+            "SMN containing complex",
+            "SNW1 complex",
+            "Spliceosome, A complex",
+            "Spliceosome, B complex",
+            "Spliceosome, C complex",
+            "Spliceosome, E complex",
+            "Spliceosome, pre-B complex"
+          ]
+        }
+      }
+    },
+    "8": {
+      "size": 65,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0014423076923076924,
+          "recall": 0.010101010101010102,
+          "true_positives": 3.0,
+          "false_positives": 2077.0,
+          "false_negatives": 294.0
+        }
+      }
+    },
+    "9": {
+      "size": 65,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0019230769230769232,
+          "recall": 0.008968609865470852,
+          "true_positives": 4.0,
+          "false_positives": 2076.0,
+          "false_negatives": 442.0
+        }
+      }
+    },
+    "10": {
+      "size": 64,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001488095238095238,
+          "recall": 0.005050505050505051,
+          "true_positives": 3.0,
+          "false_positives": 2013.0,
+          "false_negatives": 591.0
+        }
+      }
+    },
+    "11": {
+      "size": 62,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0005288207297726071,
+          "recall": 0.005128205128205128,
+          "true_positives": 1.0,
+          "false_positives": 1890.0,
+          "false_negatives": 194.0
+        }
+      }
+    },
+    "12": {
+      "size": 62,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0021152829190904283,
+          "recall": 0.006430868167202572,
+          "true_positives": 4.0,
+          "false_positives": 1887.0,
+          "false_negatives": 618.0
+        }
+      }
+    },
+    "13": {
+      "size": 61,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001639344262295082,
+          "recall": 0.009174311926605505,
+          "true_positives": 3.0,
+          "false_positives": 1827.0,
+          "false_negatives": 324.0
+        }
+      }
+    },
+    "14": {
+      "size": 60,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 1770.0,
+          "false_negatives": 359.0
+        }
+      }
+    },
+    "15": {
+      "size": 60,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004519774011299435,
+          "recall": 0.010973936899862825,
+          "true_positives": 8.0,
+          "false_positives": 1762.0,
+          "false_negatives": 721.0
+        }
+      }
+    },
+    "16": {
+      "size": 58,
+      "enriched_in": [
+        "KEGG"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.006654567453115548,
+          "recall": 0.026570048309178744,
+          "true_positives": 11.0,
+          "false_positives": 1642.0,
+          "false_negatives": 403.0
+        },
+        "KEGG": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "KEGG_MEDICUS_PATHOGEN_ESCHERICHIA_EAE_TIR_TO_ACTIN_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_EGF_EGFR_ACTIN_SIGNALING_PATHWAY"
+          ]
+        }
+      }
+    },
+    "17": {
+      "size": 58,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0006049606775559589,
+          "recall": 0.004366812227074236,
+          "true_positives": 1.0,
+          "false_positives": 1652.0,
+          "false_negatives": 228.0
+        }
+      }
+    },
+    "18": {
+      "size": 58,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0006049606775559589,
+          "recall": 0.0030864197530864196,
+          "true_positives": 1.0,
+          "false_positives": 1652.0,
+          "false_negatives": 323.0
+        }
+      }
+    },
+    "19": {
+      "size": 57,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0006265664160401002,
+          "recall": 0.003215434083601286,
+          "true_positives": 1.0,
+          "false_positives": 1595.0,
+          "false_negatives": 310.0
+        }
+      }
+    },
+    "20": {
+      "size": 57,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.013784461152882205,
+          "recall": 0.021611001964636542,
+          "true_positives": 22.0,
+          "false_positives": 1574.0,
+          "false_negatives": 996.0
+        }
+      }
+    },
+    "21": {
+      "size": 57,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005639097744360902,
+          "recall": 0.012640449438202247,
+          "true_positives": 9.0,
+          "false_positives": 1587.0,
+          "false_negatives": 703.0
+        }
+      }
+    },
+    "22": {
+      "size": 57,
+      "enriched_in": [
+        "STRING",
+        "KEGG",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.2161654135338346,
+          "recall": 0.12012534818941505,
+          "true_positives": 345.0,
+          "false_positives": 1251.0,
+          "false_negatives": 2527.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 10,
+          "enriched_groups": [
+            "40S ribosomal subunit, cytoplasmic",
+            "EIF3 complex (EIF3A, EIF3B, EIF3G, EIF3I, EIF3C)",
+            "EIF3 complex (EIF3A, EIF3B, EIF3G, EIF3I, EIF3J)",
+            "EIF3 complex (EIF3B, EIF3G, EIF3I)",
+            "EIF3 core complex (EIF3A, EIF3B, EIF3G, EIF3I)",
+            "IMP3-IMP4-MPP10 complex",
+            "Nop56p-associated pre-rRNA complex",
+            "Ribosome, cytoplasmic",
+            "eIF3 complex (EIF3S6, EIF3S5, EIF3S4, EIF3S3, EIF3S6IP, EIF3S2, EIF3S9, EIF3S12,  EIF3S10, EIF3S8,  EIF3S1, EIF3S7)",
+            "eIF3 complex (EIF3S6, EIF3S5, EIF3S4, EIF3S3, EIF3S6IP, EIF3S2, EIF3S9, EIF3S12,  EIF3S10, EIF3S8,  EIF3S1, EIF3S7, PCID1)"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_TRANSLATION_INITIATION"
+          ]
+        }
+      }
+    },
+    "23": {
+      "size": 56,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001948051948051948,
+          "recall": 0.006342494714587738,
+          "true_positives": 3.0,
+          "false_positives": 1537.0,
+          "false_negatives": 470.0
+        }
+      }
+    },
+    "24": {
+      "size": 54,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.011180992313067784,
+          "recall": 0.02188782489740082,
+          "true_positives": 16.0,
+          "false_positives": 1415.0,
+          "false_negatives": 715.0
+        }
+      }
+    },
+    "25": {
+      "size": 54,
+      "enriched_in": [
+        "STRING",
+        "KEGG",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.03843466107617051,
+          "recall": 0.08620689655172414,
+          "true_positives": 55.0,
+          "false_positives": 1376.0,
+          "false_negatives": 583.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 6,
+          "enriched_groups": [
+            "BRCA1-BARD1-BACH1-DNA damage complex II",
+            "DNA synthesome complex, breast cancer MCF7 cells",
+            "DNA synthesome complex, breast cancer cells",
+            "DNA synthesome complex, leukemia cells",
+            "RC complex, G2/M-phase-specific",
+            "RC complex, S-phase-specific"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 10,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_ATR_SIGNALING",
+            "KEGG_MEDICUS_REFERENCE_CORE_NER_REACTION",
+            "KEGG_MEDICUS_REFERENCE_DNA_END_RESECTION_AND_RPA_LOADING",
+            "KEGG_MEDICUS_REFERENCE_DNA_REPLICATION_LICENSING",
+            "KEGG_MEDICUS_REFERENCE_HOMOLOGOUS_RECOMBINATION",
+            "KEGG_MEDICUS_REFERENCE_HOMOLOGOUS_RECOMBINATION_IN_ICLR",
+            "KEGG_MEDICUS_REFERENCE_LONG_PATCH_BER",
+            "KEGG_MEDICUS_REFERENCE_MISMATCH_REPAIR",
+            "KEGG_MEDICUS_REFERENCE_ORIGIN_UNWINDING_AND_ELONGATION",
+            "KEGG_MEDICUS_REFERENCE_PRE_IC_FORMATION"
+          ]
+        }
+      }
+    },
+    "26": {
+      "size": 53,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002902757619738752,
+          "recall": 0.007233273056057866,
+          "true_positives": 4.0,
+          "false_positives": 1374.0,
+          "false_negatives": 549.0
+        }
+      }
+    },
+    "27": {
+      "size": 53,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.000725689404934688,
+          "recall": 0.004273504273504274,
+          "true_positives": 1.0,
+          "false_positives": 1377.0,
+          "false_negatives": 233.0
+        }
+      }
+    },
+    "28": {
+      "size": 51,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002352941176470588,
+          "recall": 0.005714285714285714,
+          "true_positives": 3.0,
+          "false_positives": 1272.0,
+          "false_negatives": 522.0
+        }
+      }
+    },
+    "29": {
+      "size": 51,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001568627450980392,
+          "recall": 0.006920415224913495,
+          "true_positives": 2.0,
+          "false_positives": 1273.0,
+          "false_negatives": 287.0
+        }
+      }
+    },
+    "30": {
+      "size": 51,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002352941176470588,
+          "recall": 0.011111111111111112,
+          "true_positives": 3.0,
+          "false_positives": 1272.0,
+          "false_negatives": 267.0
+        }
+      }
+    },
+    "31": {
+      "size": 51,
+      "enriched_in": [
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.00784313725490196,
+          "recall": 0.016638935108153077,
+          "true_positives": 10.0,
+          "false_positives": 1265.0,
+          "false_negatives": 591.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 5,
+          "enriched_groups": [
+            "CNS-P53 complex",
+            "COP9 signalosome complex",
+            "CSA complex",
+            "CSA-POLIIa complex",
+            "DDB2 complex"
+          ]
+        }
+      }
+    },
+    "32": {
+      "size": 50,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0008163265306122449,
+          "recall": 0.0033444816053511705,
+          "true_positives": 1.0,
+          "false_positives": 1224.0,
+          "false_negatives": 298.0
+        }
+      }
+    },
+    "33": {
+      "size": 48,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0035460992907801418,
+          "recall": 0.010101010101010102,
+          "true_positives": 4.0,
+          "false_positives": 1124.0,
+          "false_negatives": 392.0
+        }
+      }
+    },
+    "34": {
+      "size": 48,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 1128.0,
+          "false_negatives": 194.0
+        }
+      }
+    },
+    "35": {
+      "size": 48,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0008865248226950354,
+          "recall": 0.0032679738562091504,
+          "true_positives": 1.0,
+          "false_positives": 1127.0,
+          "false_negatives": 305.0
+        }
+      }
+    },
+    "36": {
+      "size": 47,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0027752081406105457,
+          "recall": 0.008620689655172414,
+          "true_positives": 3.0,
+          "false_positives": 1078.0,
+          "false_negatives": 345.0
+        }
+      }
+    },
+    "37": {
+      "size": 46,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001932367149758454,
+          "recall": 0.004132231404958678,
+          "true_positives": 2.0,
+          "false_positives": 1033.0,
+          "false_negatives": 482.0
+        }
+      }
+    },
+    "38": {
+      "size": 45,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.00202020202020202,
+          "recall": 0.0058997050147492625,
+          "true_positives": 2.0,
+          "false_positives": 988.0,
+          "false_negatives": 337.0
+        }
+      }
+    },
+    "39": {
+      "size": 45,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.00202020202020202,
+          "recall": 0.004662004662004662,
+          "true_positives": 2.0,
+          "false_positives": 988.0,
+          "false_negatives": 427.0
+        }
+      }
+    },
+    "40": {
+      "size": 45,
+      "enriched_in": [
+        "STRING",
+        "KEGG"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.052525252525252523,
+          "recall": 0.03418803418803419,
+          "true_positives": 52.0,
+          "false_positives": 938.0,
+          "false_negatives": 1469.0
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_TRANSLATION_INITIATION"
+          ]
+        }
+      }
+    },
+    "41": {
+      "size": 45,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.00101010101010101,
+          "recall": 0.002531645569620253,
+          "true_positives": 1.0,
+          "false_positives": 989.0,
+          "false_negatives": 394.0
+        }
+      }
+    },
+    "42": {
+      "size": 45,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.00101010101010101,
+          "recall": 0.00425531914893617,
+          "true_positives": 1.0,
+          "false_positives": 989.0,
+          "false_negatives": 234.0
+        }
+      }
+    },
+    "43": {
+      "size": 44,
+      "enriched_in": [
+        "STRING",
+        "KEGG",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.1321353065539112,
+          "recall": 0.2385496183206107,
+          "true_positives": 125.0,
+          "false_positives": 821.0,
+          "false_negatives": 399.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 12,
+          "enriched_groups": [
+            "APC/C complex",
+            "APC/C complex, 1.5 MDa",
+            "APC/C-ANAPC16 complex",
+            "Anaphase-promoting complex",
+            "CAP(C)-CAP(E) complex",
+            "CEN complex",
+            "CENP-A NAC complex",
+            "CENP-A NAC-CAD complex",
+            "CENP-A nucleosomal complex",
+            "CENP-H-I complex",
+            "CENPT-CENPW complex",
+            "NDC80 kinetochore complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 14,
+          "enriched_groups": [
+            "KEGG_MEDICUS_PATHOGEN_HTLV_1_TAX_TO_SPINDLE_ASSEMBLY_CHECKPOINT_SIGNALING",
+            "KEGG_MEDICUS_REFERENCE_CENPE_INTERACTION_WITH_NDC80_COMPLEX",
+            "KEGG_MEDICUS_REFERENCE_COHESIN_DISSOCIATION_IN_ANAPHASE",
+            "KEGG_MEDICUS_REFERENCE_CONDENSIN_LOADING",
+            "KEGG_MEDICUS_REFERENCE_DEPHOSPHORYLATION_OF_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_DISASSEMBLY_OF_MCC",
+            "KEGG_MEDICUS_REFERENCE_DYNEIN_RECRUITMENT_TO_THE_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_ORGANIZATION_OF_THE_INNER_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_ORGANIZATION_OF_THE_OUTER_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_RAB7_REGULATED_MICROTUBULE_MINUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_SPINDLE_ASSEMBLY_CHECKPOINT_SIGNALING",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SOD1_TO_RETROGRADE_AXONAL_TRANSPORT"
+          ]
+        }
+      }
+    },
+    "44": {
+      "size": 44,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004228329809725159,
+          "recall": 0.013114754098360656,
+          "true_positives": 4.0,
+          "false_positives": 942.0,
+          "false_negatives": 301.0
+        }
+      }
+    },
+    "45": {
+      "size": 44,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0021141649048625794,
+          "recall": 0.0055248618784530384,
+          "true_positives": 2.0,
+          "false_positives": 944.0,
+          "false_negatives": 360.0
+        }
+      }
+    },
+    "46": {
+      "size": 44,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004228329809725159,
+          "recall": 0.0070052539404553416,
+          "true_positives": 4.0,
+          "false_positives": 942.0,
+          "false_negatives": 567.0
+        }
+      }
+    },
+    "47": {
+      "size": 44,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0010570824524312897,
+          "recall": 0.0041841004184100415,
+          "true_positives": 1.0,
+          "false_positives": 945.0,
+          "false_negatives": 238.0
+        }
+      }
+    },
+    "48": {
+      "size": 41,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0012195121951219512,
+          "recall": 0.0028089887640449437,
+          "true_positives": 1.0,
+          "false_positives": 819.0,
+          "false_negatives": 355.0
+        }
+      }
+    },
+    "49": {
+      "size": 41,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0012195121951219512,
+          "recall": 0.0033222591362126247,
+          "true_positives": 1.0,
+          "false_positives": 819.0,
+          "false_negatives": 300.0
+        }
+      }
+    },
+    "50": {
+      "size": 41,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 820.0,
+          "false_negatives": 98.0
+        }
+      }
+    },
+    "51": {
+      "size": 41,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 820.0,
+          "false_negatives": 279.0
+        }
+      }
+    },
+    "52": {
+      "size": 40,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001282051282051282,
+          "recall": 0.0034602076124567475,
+          "true_positives": 1.0,
+          "false_positives": 779.0,
+          "false_negatives": 288.0
+        }
+      }
+    },
+    "53": {
+      "size": 40,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001282051282051282,
+          "recall": 0.0025906735751295338,
+          "true_positives": 1.0,
+          "false_positives": 779.0,
+          "false_negatives": 385.0
+        }
+      }
+    },
+    "54": {
+      "size": 40,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.007692307692307693,
+          "recall": 0.011385199240986717,
+          "true_positives": 6.0,
+          "false_positives": 774.0,
+          "false_negatives": 521.0
+        }
+      }
+    },
+    "55": {
+      "size": 40,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002564102564102564,
+          "recall": 0.008368200836820083,
+          "true_positives": 2.0,
+          "false_positives": 778.0,
+          "false_negatives": 237.0
+        }
+      }
+    },
+    "56": {
+      "size": 40,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005128205128205128,
+          "recall": 0.0196078431372549,
+          "true_positives": 4.0,
+          "false_positives": 776.0,
+          "false_negatives": 200.0
+        }
+      }
+    },
+    "57": {
+      "size": 40,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 780.0,
+          "false_negatives": 256.0
+        }
+      }
+    },
+    "58": {
+      "size": 39,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001349527665317139,
+          "recall": 0.0031746031746031746,
+          "true_positives": 1.0,
+          "false_positives": 740.0,
+          "false_negatives": 314.0
+        }
+      }
+    },
+    "59": {
+      "size": 39,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001349527665317139,
+          "recall": 0.00411522633744856,
+          "true_positives": 1.0,
+          "false_positives": 740.0,
+          "false_negatives": 242.0
+        }
+      }
+    },
+    "60": {
+      "size": 39,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 741.0,
+          "false_negatives": 194.0
+        }
+      }
+    },
+    "61": {
+      "size": 38,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 703.0,
+          "false_negatives": 142.0
+        }
+      }
+    },
+    "62": {
+      "size": 38,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 703.0,
+          "false_negatives": 201.0
+        }
+      }
+    },
+    "63": {
+      "size": 38,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 703.0,
+          "false_negatives": 167.0
+        }
+      }
+    },
+    "64": {
+      "size": 37,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 666.0,
+          "false_negatives": 167.0
+        }
+      }
+    },
+    "65": {
+      "size": 37,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 666.0,
+          "false_negatives": 350.0
+        }
+      }
+    },
+    "66": {
+      "size": 37,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 666.0,
+          "false_negatives": 79.0
+        }
+      }
+    },
+    "67": {
+      "size": 36,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0015873015873015873,
+          "recall": 0.006896551724137931,
+          "true_positives": 1.0,
+          "false_positives": 629.0,
+          "false_negatives": 144.0
+        }
+      }
+    },
+    "68": {
+      "size": 36,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 630.0,
+          "false_negatives": 246.0
+        }
+      }
+    },
+    "69": {
+      "size": 36,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.009523809523809525,
+          "recall": 0.02040816326530612,
+          "true_positives": 6.0,
+          "false_positives": 624.0,
+          "false_negatives": 288.0
+        }
+      }
+    },
+    "70": {
+      "size": 35,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 595.0,
+          "false_negatives": 114.0
+        }
+      }
+    },
+    "71": {
+      "size": 35,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 595.0,
+          "false_negatives": 188.0
+        }
+      }
+    },
+    "72": {
+      "size": 35,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005042016806722689,
+          "recall": 0.006276150627615063,
+          "true_positives": 3.0,
+          "false_positives": 592.0,
+          "false_negatives": 475.0
+        }
+      }
+    },
+    "73": {
+      "size": 33,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.003787878787878788,
+          "recall": 0.005390835579514825,
+          "true_positives": 2.0,
+          "false_positives": 526.0,
+          "false_negatives": 369.0
+        }
+      }
+    },
+    "74": {
+      "size": 33,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 528.0,
+          "false_negatives": 136.0
+        }
+      }
+    },
+    "75": {
+      "size": 33,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.003787878787878788,
+          "recall": 0.007380073800738007,
+          "true_positives": 2.0,
+          "false_positives": 526.0,
+          "false_negatives": 269.0
+        }
+      }
+    },
+    "76": {
+      "size": 33,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001893939393939394,
+          "recall": 0.005376344086021506,
+          "true_positives": 1.0,
+          "false_positives": 527.0,
+          "false_negatives": 185.0
+        }
+      }
+    },
+    "77": {
+      "size": 33,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 528.0,
+          "false_negatives": 200.0
+        }
+      }
+    },
+    "78": {
+      "size": 32,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 496.0,
+          "false_negatives": 217.0
+        }
+      }
+    },
+    "79": {
+      "size": 32,
+      "enriched_in": [
+        "STRING",
+        "KEGG",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.11895161290322581,
+          "recall": 0.15364583333333334,
+          "true_positives": 59.0,
+          "false_positives": 437.0,
+          "false_negatives": 325.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 6,
+          "enriched_groups": [
+            "Aurora A-TPX2 complex",
+            "Gamma-tubulin complex",
+            "HAUS augmin-like complex",
+            "PA700 complex",
+            "PA700-20S-PA28 complex",
+            "PLK4-STIL complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 11,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_REFERENCE_BRANCHING_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_REFERENCE_KINETOCHORE_FIBER_ORGANIZATION",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_ABETA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SNCA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SOD1_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_UBQLN2_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_VCP_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_SCRAPIE_CONFORMATION_PRPSC_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION"
+          ]
+        }
+      }
+    },
+    "80": {
+      "size": 32,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 496.0,
+          "false_negatives": 187.0
+        }
+      }
+    },
+    "81": {
+      "size": 32,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0020161290322580645,
+          "recall": 0.004901960784313725,
+          "true_positives": 1.0,
+          "false_positives": 495.0,
+          "false_negatives": 203.0
+        }
+      }
+    },
+    "82": {
+      "size": 32,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0020161290322580645,
+          "recall": 0.007246376811594203,
+          "true_positives": 1.0,
+          "false_positives": 495.0,
+          "false_negatives": 137.0
+        }
+      }
+    },
+    "83": {
+      "size": 32,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 496.0,
+          "false_negatives": 190.0
+        }
+      }
+    },
+    "84": {
+      "size": 32,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 496.0,
+          "false_negatives": 258.0
+        }
+      }
+    },
+    "85": {
+      "size": 32,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 496.0,
+          "false_negatives": 191.0
+        }
+      }
+    },
+    "86": {
+      "size": 31,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002150537634408602,
+          "recall": 0.0027472527472527475,
+          "true_positives": 1.0,
+          "false_positives": 464.0,
+          "false_negatives": 363.0
+        }
+      }
+    },
+    "87": {
+      "size": 31,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 465.0,
+          "false_negatives": 222.0
+        }
+      }
+    },
+    "88": {
+      "size": 31,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002150537634408602,
+          "recall": 0.003289473684210526,
+          "true_positives": 1.0,
+          "false_positives": 464.0,
+          "false_negatives": 303.0
+        }
+      }
+    },
+    "89": {
+      "size": 31,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 465.0,
+          "false_negatives": 250.0
+        }
+      }
+    },
+    "90": {
+      "size": 31,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 465.0,
+          "false_negatives": 224.0
+        }
+      }
+    },
+    "91": {
+      "size": 30,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 435.0,
+          "false_negatives": 175.0
+        }
+      }
+    },
+    "92": {
+      "size": 29,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 406.0,
+          "false_negatives": 93.0
+        }
+      }
+    },
+    "93": {
+      "size": 29,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 406.0,
+          "false_negatives": 157.0
+        }
+      }
+    },
+    "94": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.018518518518518517,
+          "recall": 0.01856763925729443,
+          "true_positives": 7.0,
+          "false_positives": 371.0,
+          "false_negatives": 370.0
+        }
+      }
+    },
+    "95": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005291005291005291,
+          "recall": 0.006153846153846154,
+          "true_positives": 2.0,
+          "false_positives": 376.0,
+          "false_negatives": 323.0
+        }
+      }
+    },
+    "96": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005291005291005291,
+          "recall": 0.004545454545454545,
+          "true_positives": 2.0,
+          "false_positives": 376.0,
+          "false_negatives": 438.0
+        }
+      }
+    },
+    "97": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 102.0
+        }
+      }
+    },
+    "98": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002849002849002849,
+          "recall": 0.003003003003003003,
+          "true_positives": 1.0,
+          "false_positives": 350.0,
+          "false_negatives": 332.0
+        }
+      }
+    },
+    "99": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 82.0
+        }
+      }
+    },
+    "100": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 170.0
+        }
+      }
+    },
+    "101": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 215.0
+        }
+      }
+    },
+    "102": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002849002849002849,
+          "recall": 0.002824858757062147,
+          "true_positives": 1.0,
+          "false_positives": 350.0,
+          "false_negatives": 353.0
+        }
+      }
+    },
+    "103": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 204.0
+        }
+      }
+    },
+    "104": {
+      "size": 26,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 325.0,
+          "false_negatives": 113.0
+        }
+      }
+    },
+    "105": {
+      "size": 26,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 325.0,
+          "false_negatives": 156.0
+        }
+      }
+    },
+    "106": {
+      "size": 26,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 325.0,
+          "false_negatives": 77.0
+        }
+      }
+    },
+    "107": {
+      "size": 25,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0033333333333333335,
+          "recall": 0.008547008547008548,
+          "true_positives": 1.0,
+          "false_positives": 299.0,
+          "false_negatives": 116.0
+        }
+      }
+    },
+    "108": {
+      "size": 25,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0033333333333333335,
+          "recall": 0.011235955056179775,
+          "true_positives": 1.0,
+          "false_positives": 299.0,
+          "false_negatives": 88.0
+        }
+      }
+    },
+    "109": {
+      "size": 25,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0033333333333333335,
+          "recall": 0.0032258064516129032,
+          "true_positives": 1.0,
+          "false_positives": 299.0,
+          "false_negatives": 309.0
+        }
+      }
+    },
+    "110": {
+      "size": 24,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 276.0,
+          "false_negatives": 212.0
+        }
+      }
+    },
+    "111": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 253.0,
+          "false_negatives": 228.0
+        }
+      }
+    },
+    "112": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 253.0,
+          "false_negatives": 194.0
+        }
+      }
+    },
+    "113": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 186.0
+        }
+      }
+    },
+    "114": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 132.0
+        }
+      }
+    },
+    "115": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004329004329004329,
+          "recall": 0.013513513513513514,
+          "true_positives": 1.0,
+          "false_positives": 230.0,
+          "false_negatives": 73.0
+        }
+      }
+    },
+    "116": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 105.0
+        }
+      }
+    },
+    "117": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 297.0
+        }
+      }
+    },
+    "118": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 26.0
+        }
+      }
+    },
+    "119": {
+      "size": 20,
+      "enriched_in": [
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.02631578947368421,
+          "recall": 0.010706638115631691,
+          "true_positives": 5.0,
+          "false_positives": 185.0,
+          "false_negatives": 462.0
+        }
+      }
+    },
+    "120": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 112.0
+        }
+      }
+    },
+    "121": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 237.0
+        }
+      }
+    },
+    "122": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 89.0
+        }
+      }
+    },
+    "123": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 120.0
+        }
+      }
+    },
+    "124": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 153.0,
+          "false_negatives": 37.0
+        }
+      }
+    },
+    "125": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.013071895424836602,
+          "recall": 0.00980392156862745,
+          "true_positives": 2.0,
+          "false_positives": 151.0,
+          "false_negatives": 202.0
+        }
+      }
+    },
+    "126": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 75.0
+        }
+      }
+    },
+    "127": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 121.0
+        }
+      }
+    },
+    "128": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.008333333333333333,
+          "recall": 0.011494252873563218,
+          "true_positives": 1.0,
+          "false_positives": 119.0,
+          "false_negatives": 86.0
+        }
+      }
+    },
+    "129": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 188.0
+        }
+      }
+    },
+    "130": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 114.0
+        }
+      }
+    },
+    "131": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 186.0
+        }
+      }
+    },
+    "132": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 154.0
+        }
+      }
+    },
+    "133": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 91.0,
+          "false_negatives": 42.0
+        }
+      }
+    },
+    "134": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 78.0,
+          "false_negatives": 153.0
+        }
+      }
+    },
+    "135": {
+      "size": 13,
+      "enriched_in": [
+        "STRING",
+        "KEGG",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.4230769230769231,
+          "recall": 0.1,
+          "true_positives": 33.0,
+          "false_positives": 45.0,
+          "false_negatives": 297.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "BBS-chaperonin complex",
+            "CCT complex (chaperonin containing TCP1 complex)"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 22,
+          "enriched_groups": [
+            "KEGG_MEDICUS_ENV_FACTOR_IRON_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_ENV_FACTOR_ZN_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_PATHOGEN_ESCHERICHIA_ESPG_TO_MICROTUBULE_RHOA_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_SALMONELLA_SIFA_TO_MICROTUBULE_PLUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_ARL8_REGULATED_MICROTUBULE_PLUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_ASSEMBLY_AND_TRAFFICKING_OF_TELOMERASE",
+            "KEGG_MEDICUS_REFERENCE_BRANCHING_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_REFERENCE_KINETOCHORE_FIBER_ORGANIZATION",
+            "KEGG_MEDICUS_REFERENCE_KINETOCHORE_MICROTUBULE_ATTACHMENT",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_DEPOLYMERIZATION",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_DEPOLYMERIZATION_AT_THE_MINUS_ENDS",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_RHOA_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_PROMOTION_OF_MICROTUBULE_GROWTH",
+            "KEGG_MEDICUS_REFERENCE_RAB7_REGULATED_MICROTUBULE_MINUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_ABETA_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_DCTN1_TO_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SNCA_TO_ANTEROGRADE_AXONAL_TRANSPORT"
+          ]
+        }
+      }
+    },
+    "136": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 78.0,
+          "false_negatives": 55.0
+        }
+      }
+    },
+    "137": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.01282051282051282,
+          "recall": 0.005555555555555556,
+          "true_positives": 1.0,
+          "false_positives": 77.0,
+          "false_negatives": 179.0
+        }
+      }
+    },
+    "138": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 66.0,
+          "false_negatives": 103.0
+        }
+      }
+    },
+    "139": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 66.0,
+          "false_negatives": 68.0
+        }
+      }
+    },
+    "140": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 66.0,
+          "false_negatives": 22.0
+        }
+      }
+    },
+    "141": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 66.0,
+          "false_negatives": 112.0
+        }
+      }
+    }
+  },
+  "enrichment_categories": {
+    "('None',)": 129,
+    "('CORUM', 'KEGG', 'STRING')": 7,
+    "('KEGG',)": 2,
+    "('CORUM', 'STRING')": 1,
+    "('CORUM',)": 1,
+    "('KEGG', 'STRING')": 1,
+    "('STRING',)": 1
+  },
+  "total_clusters_analyzed": 142
+}

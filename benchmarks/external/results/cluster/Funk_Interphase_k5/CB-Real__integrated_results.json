@@ -1,0 +1,2488 @@
+{
+  "clusters": {
+    "0": {
+      "size": 138,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004125674389082831,
+          "recall": 0.030757097791798107,
+          "true_positives": 39.0,
+          "false_positives": 9414.0,
+          "false_negatives": 1229.0
+        }
+      }
+    },
+    "1": {
+      "size": 111,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 6105.0,
+          "false_negatives": 49.0
+        }
+      }
+    },
+    "2": {
+      "size": 105,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 5460.0,
+          "false_negatives": 46.0
+        }
+      }
+    },
+    "3": {
+      "size": 80,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0018987341772151898,
+          "recall": 0.01662049861495845,
+          "true_positives": 6.0,
+          "false_positives": 3154.0,
+          "false_negatives": 355.0
+        }
+      }
+    },
+    "4": {
+      "size": 77,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005126452494873548,
+          "recall": 0.017321016166281754,
+          "true_positives": 15.0,
+          "false_positives": 2911.0,
+          "false_negatives": 851.0
+        }
+      }
+    },
+    "5": {
+      "size": 76,
+      "enriched_in": [
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.02245614035087719,
+          "recall": 0.0631163708086785,
+          "true_positives": 64.0,
+          "false_positives": 2786.0,
+          "false_negatives": 950.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 23,
+          "enriched_groups": [
+            "12S U11 snRNP",
+            "18S U11/U12 snRNP",
+            "ATAC complex, GCN5-linked",
+            "ATAC complex, YEATS2-linked",
+            "CUL2-PTCH1-TCEB1-TCEB2-ZYG11B complex",
+            "DMAP1-associated complex",
+            "H2A.Z histone-exchange complex p400/TIP60",
+            "HNRPF-HNRPH1 complex",
+            "KAT2A-TRRAP complex",
+            "NuA4/Tip60 HAT complex",
+            "NuA4/Tip60-HAT complex",
+            "NuA4/Tip60-HAT complex A",
+            "NuA4/Tip60-HAT complex B",
+            "PRAME complex",
+            "RUVBL1-RUVBL2 complex",
+            "Spliceosome, A complex",
+            "Spliceosome, E complex",
+            "TFTC-type histone acetyl transferase complex",
+            "TIP60 histone acetylase complex",
+            "Ubiquitin E3 ligase (VHL, TCEB1, TCEB2, CUL2)",
+            "Ubiquitin E3 ligase (VHL, TCEB1, TCEB2, CUL2, RBX1)",
+            "c-MYC-ATPase-helicase complex",
+            "p400-associated complex"
+          ]
+        }
+      }
+    },
+    "6": {
+      "size": 74,
+      "enriched_in": [
+        "KEGG",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.01999259533506109,
+          "recall": 0.056016597510373446,
+          "true_positives": 54.0,
+          "false_positives": 2647.0,
+          "false_negatives": 910.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 24,
+          "enriched_groups": [
+            "CDK8-CyclinC-Mediator complex",
+            "COG complex",
+            "COG subcomplex (COG5, COG6, COG7, COG8)",
+            "COG subcomplex (COG5, COG7)",
+            "COG1-COG8-COG2-COG3-COG4 subcomplex",
+            "COG1-COG8-COG5-COG6-COG7 subcomplex",
+            "COG2-COG3-COG4 subcomplex",
+            "COG5-COG6-COG7 subcomplex",
+            "DSS1 complex",
+            "GATOR complex",
+            "GATOR2 complex",
+            "GATOR2-CASTOR1 complex",
+            "GATOR2-SESN2 complex",
+            "Integrator complex",
+            "Integrator-RNAPII complex",
+            "Prefoldin complex",
+            "SOG complex",
+            "mTOR complex (MTOR, RAPTOR)",
+            "mTOR2 complex (MTOR, RICTOR, MLST8)",
+            "mTORC1 complex (MLST8, MTOR, RAPTOR)",
+            "mTORC1-PRAS40 complex",
+            "mTORC2 complex  (MAPKAP1, MLST8, MTOR, RICTOR)",
+            "mTORC2 complex (PROTOR1)",
+            "mTORC2 complex (PROTOR2)"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 4,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_AUTOPHAGY_VESICLE_NUCLEATION_ELONGATION_MATURATION_MTORC1_PI3KC3_C1",
+            "KEGG_MEDICUS_REFERENCE_FLCN_MTORC1_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_GATOR1_MTORC1_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_TSC1_2_MTORC1_SIGNALING_PATHWAY"
+          ]
+        }
+      }
+    },
+    "7": {
+      "size": 73,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.00076103500761035,
+          "recall": 0.006802721088435374,
+          "true_positives": 2.0,
+          "false_positives": 2626.0,
+          "false_negatives": 292.0
+        }
+      }
+    },
+    "8": {
+      "size": 71,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0008048289738430583,
+          "recall": 0.0064516129032258064,
+          "true_positives": 2.0,
+          "false_positives": 2483.0,
+          "false_negatives": 308.0
+        }
+      }
+    },
+    "9": {
+      "size": 70,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.00041407867494824016,
+          "recall": 0.003663003663003663,
+          "true_positives": 1.0,
+          "false_positives": 2414.0,
+          "false_negatives": 272.0
+        }
+      }
+    },
+    "10": {
+      "size": 70,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005797101449275362,
+          "recall": 0.022838499184339316,
+          "true_positives": 14.0,
+          "false_positives": 2401.0,
+          "false_negatives": 599.0
+        }
+      }
+    },
+    "11": {
+      "size": 66,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0013986013986013986,
+          "recall": 0.01,
+          "true_positives": 3.0,
+          "false_positives": 2142.0,
+          "false_negatives": 297.0
+        }
+      }
+    },
+    "12": {
+      "size": 66,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002331002331002331,
+          "recall": 0.011286681715575621,
+          "true_positives": 5.0,
+          "false_positives": 2140.0,
+          "false_negatives": 438.0
+        }
+      }
+    },
+    "13": {
+      "size": 65,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002403846153846154,
+          "recall": 0.010351966873706004,
+          "true_positives": 5.0,
+          "false_positives": 2075.0,
+          "false_negatives": 478.0
+        }
+      }
+    },
+    "14": {
+      "size": 65,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0033653846153846156,
+          "recall": 0.02,
+          "true_positives": 7.0,
+          "false_positives": 2073.0,
+          "false_negatives": 343.0
+        }
+      }
+    },
+    "15": {
+      "size": 64,
+      "enriched_in": [
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.003968253968253968,
+          "recall": 0.025477707006369428,
+          "true_positives": 8.0,
+          "false_positives": 2008.0,
+          "false_negatives": 306.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KAT2A-Oxoglutarate dehydrogenase complex"
+          ]
+        }
+      }
+    },
+    "16": {
+      "size": 64,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.000496031746031746,
+          "recall": 0.002570694087403599,
+          "true_positives": 1.0,
+          "false_positives": 2015.0,
+          "false_negatives": 388.0
+        }
+      }
+    },
+    "17": {
+      "size": 64,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.000496031746031746,
+          "recall": 0.00819672131147541,
+          "true_positives": 1.0,
+          "false_positives": 2015.0,
+          "false_negatives": 121.0
+        }
+      }
+    },
+    "18": {
+      "size": 63,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0010240655401945725,
+          "recall": 0.004008016032064128,
+          "true_positives": 2.0,
+          "false_positives": 1951.0,
+          "false_negatives": 497.0
+        }
+      }
+    },
+    "19": {
+      "size": 63,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0010240655401945725,
+          "recall": 0.006134969325153374,
+          "true_positives": 2.0,
+          "false_positives": 1951.0,
+          "false_negatives": 324.0
+        }
+      }
+    },
+    "20": {
+      "size": 61,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.20437158469945355,
+          "recall": 0.3202054794520548,
+          "true_positives": 374.0,
+          "false_positives": 1456.0,
+          "false_negatives": 794.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 3,
+          "enriched_groups": [
+            "DDX27-PeBoW complex",
+            "Nop56p-associated pre-rRNA complex",
+            "PeBoW complex"
+          ]
+        }
+      }
+    },
+    "21": {
+      "size": 59,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.21507890122735243,
+          "recall": 0.27158671586715866,
+          "true_positives": 368.0,
+          "false_positives": 1343.0,
+          "false_negatives": 987.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 31,
+          "enriched_groups": [
+            "ARC complex",
+            "ARC-L complex",
+            "ARC92-Mediator complex",
+            "BRCA1-RNA polymerase II complex",
+            "BRCA1-core RNA polymerase II complex",
+            "BRD4 complex",
+            "CRSP complex",
+            "CRSP-Mediator 2 complex",
+            "DRIP complex",
+            "DSIF complex (DRB sensitivity-inducing factor complex)",
+            "ESR1-Mediator complex",
+            "ESR2-Mediator complex",
+            "Exon junction complex",
+            "FACT complex",
+            "Mediator complex",
+            "NAT complex",
+            "NXF1-NXT1 complex",
+            "PC2 complex",
+            "POLR2B-POLR2C-RPAP1 complex",
+            "RNA polymerase II (RNAPII)",
+            "RNA polymerase II core complex",
+            "RNA polymerase II holoenzyme complex",
+            "SMCC complex",
+            "SOX9-TRAP complex",
+            "TFIIA complex",
+            "THO complex",
+            "TRAP complex",
+            "TRAP-SMCC mediator complex",
+            "TREX complex",
+            "VDR-DRIP complex",
+            "hTREX84 complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_NUCLEAR_EXPORT_OF_MRNA",
+            "KEGG_MEDICUS_REFERENCE_TRANSCRIPTION_COUPLED_NER"
+          ]
+        }
+      }
+    },
+    "22": {
+      "size": 59,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 1711.0,
+          "false_negatives": 300.0
+        }
+      }
+    },
+    "23": {
+      "size": 58,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0012099213551119178,
+          "recall": 0.010416666666666666,
+          "true_positives": 2.0,
+          "false_positives": 1651.0,
+          "false_negatives": 190.0
+        }
+      }
+    },
+    "24": {
+      "size": 58,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0006049606775559589,
+          "recall": 0.0038910505836575876,
+          "true_positives": 1.0,
+          "false_positives": 1652.0,
+          "false_negatives": 256.0
+        }
+      }
+    },
+    "25": {
+      "size": 57,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002506265664160401,
+          "recall": 0.009852216748768473,
+          "true_positives": 4.0,
+          "false_positives": 1592.0,
+          "false_negatives": 402.0
+        }
+      }
+    },
+    "26": {
+      "size": 57,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0012531328320802004,
+          "recall": 0.006493506493506494,
+          "true_positives": 2.0,
+          "false_positives": 1594.0,
+          "false_negatives": 306.0
+        }
+      }
+    },
+    "27": {
+      "size": 57,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0012531328320802004,
+          "recall": 0.014925373134328358,
+          "true_positives": 2.0,
+          "false_positives": 1594.0,
+          "false_negatives": 132.0
+        }
+      }
+    },
+    "28": {
+      "size": 56,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.04155844155844156,
+          "recall": 0.10491803278688525,
+          "true_positives": 64.0,
+          "false_positives": 1476.0,
+          "false_negatives": 546.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "Exosome",
+            "TBP-TAF complex"
+          ]
+        }
+      }
+    },
+    "29": {
+      "size": 56,
+      "enriched_in": [
+        "KEGG",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.005844155844155844,
+          "recall": 0.021791767554479417,
+          "true_positives": 9.0,
+          "false_positives": 1531.0,
+          "false_negatives": 404.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "HOPS complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 3,
+          "enriched_groups": [
+            "KEGG_MEDICUS_PATHOGEN_SALMONELLA_SIFA_TO_TETHERING_OF_LATE_ENDOSOMES_AND_LYSOSOMES",
+            "KEGG_MEDICUS_REFERENCE_AUTOPHAGOSOME_AND_LYSOSOME_FUSION_TETHERING_FACTOR",
+            "KEGG_MEDICUS_REFERENCE_TETHERING_OF_LATE_ENDOSOMES_AND_LYSOSOMES"
+          ]
+        }
+      }
+    },
+    "30": {
+      "size": 55,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0026936026936026937,
+          "recall": 0.008620689655172414,
+          "true_positives": 4.0,
+          "false_positives": 1481.0,
+          "false_negatives": 460.0
+        }
+      }
+    },
+    "31": {
+      "size": 54,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0006988120195667365,
+          "recall": 0.00273224043715847,
+          "true_positives": 1.0,
+          "false_positives": 1430.0,
+          "false_negatives": 365.0
+        }
+      }
+    },
+    "32": {
+      "size": 54,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.013277428371767994,
+          "recall": 0.037549407114624504,
+          "true_positives": 19.0,
+          "false_positives": 1412.0,
+          "false_negatives": 487.0
+        }
+      }
+    },
+    "33": {
+      "size": 54,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0020964360587002098,
+          "recall": 0.01282051282051282,
+          "true_positives": 3.0,
+          "false_positives": 1428.0,
+          "false_negatives": 231.0
+        }
+      }
+    },
+    "34": {
+      "size": 53,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.000725689404934688,
+          "recall": 0.005434782608695652,
+          "true_positives": 1.0,
+          "false_positives": 1377.0,
+          "false_negatives": 183.0
+        }
+      }
+    },
+    "35": {
+      "size": 53,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.000725689404934688,
+          "recall": 0.004901960784313725,
+          "true_positives": 1.0,
+          "false_positives": 1377.0,
+          "false_negatives": 203.0
+        }
+      }
+    },
+    "36": {
+      "size": 53,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 1378.0,
+          "false_negatives": 227.0
+        }
+      }
+    },
+    "37": {
+      "size": 53,
+      "enriched_in": [
+        "KEGG",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.02104499274310595,
+          "recall": 0.05555555555555555,
+          "true_positives": 29.0,
+          "false_positives": 1349.0,
+          "false_negatives": 493.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 6,
+          "enriched_groups": [
+            "AHCYL1-CPSF complex",
+            "BRD4 complex",
+            "Cleavage and polyadenylation factor (CPSF)",
+            "Gamma-tubulin complex",
+            "HAUS augmin-like complex",
+            "Polyadenylation complex (CSTF1, CSTF2, CSTF3, SYMPK CPSF1, CPSF2, CPSF3)"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_BRANCHING_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_NUCLEATION"
+          ]
+        }
+      }
+    },
+    "38": {
+      "size": 52,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.05656108597285068,
+          "recall": 0.14478764478764478,
+          "true_positives": 75.0,
+          "false_positives": 1251.0,
+          "false_negatives": 443.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 12,
+          "enriched_groups": [
+            "BLM complex II",
+            "DNA synthesome complex, breast cancer MCF7 cells",
+            "DNA synthesome complex, breast cancer cells",
+            "DNA synthesome complex, leukemia cells",
+            "DONSON-MCM2-MCM7-PCNA-TICRR complex",
+            "MMS22L\u2013TONSL complex",
+            "RC complex, G2/M-phase-specific",
+            "RC complex, S-phase-specific",
+            "RPA complex",
+            "RPA1-RPA2-RPA3-XPA complex",
+            "RRM1-RRM2 complex",
+            "Tim-Tipin complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 11,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_ATR_SIGNALING",
+            "KEGG_MEDICUS_REFERENCE_CORE_NER_REACTION",
+            "KEGG_MEDICUS_REFERENCE_DNA_END_RESECTION_AND_RPA_LOADING",
+            "KEGG_MEDICUS_REFERENCE_DNA_REPLICATION_LICENSING",
+            "KEGG_MEDICUS_REFERENCE_HOMOLOGOUS_RECOMBINATION",
+            "KEGG_MEDICUS_REFERENCE_HOMOLOGOUS_RECOMBINATION_IN_ICLR",
+            "KEGG_MEDICUS_REFERENCE_LONG_PATCH_BER",
+            "KEGG_MEDICUS_REFERENCE_MISMATCH_REPAIR",
+            "KEGG_MEDICUS_REFERENCE_ORIGIN_UNWINDING_AND_ELONGATION",
+            "KEGG_MEDICUS_REFERENCE_PRE_IC_FORMATION",
+            "KEGG_MEDICUS_REFERENCE_RAD51_DSDNA_DESTABILIZATION"
+          ]
+        }
+      }
+    },
+    "39": {
+      "size": 52,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0015082956259426848,
+          "recall": 0.013605442176870748,
+          "true_positives": 2.0,
+          "false_positives": 1324.0,
+          "false_negatives": 145.0
+        }
+      }
+    },
+    "40": {
+      "size": 52,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 1326.0,
+          "false_negatives": 200.0
+        }
+      }
+    },
+    "41": {
+      "size": 52,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.006787330316742082,
+          "recall": 0.04285714285714286,
+          "true_positives": 9.0,
+          "false_positives": 1317.0,
+          "false_negatives": 201.0
+        }
+      }
+    },
+    "42": {
+      "size": 51,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.000784313725490196,
+          "recall": 0.0035842293906810036,
+          "true_positives": 1.0,
+          "false_positives": 1274.0,
+          "false_negatives": 278.0
+        }
+      }
+    },
+    "43": {
+      "size": 50,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.6816326530612244,
+          "recall": 0.16817724068479356,
+          "true_positives": 835.0,
+          "false_positives": 390.0,
+          "false_negatives": 4130.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 9,
+          "enriched_groups": [
+            "40S ribosomal subunit, cytoplasmic",
+            "EIF3 complex (EIF3A, EIF3B, EIF3G, EIF3I, EIF3C)",
+            "EIF3 complex (EIF3A, EIF3B, EIF3G, EIF3I, EIF3J)",
+            "EIF3 complex (EIF3B, EIF3G, EIF3I)",
+            "EIF3 core complex (EIF3A, EIF3B, EIF3G, EIF3I)",
+            "Nop56p-associated pre-rRNA complex",
+            "Ribosome, cytoplasmic",
+            "eIF3 complex (EIF3S6, EIF3S5, EIF3S4, EIF3S3, EIF3S6IP, EIF3S2, EIF3S9, EIF3S12,  EIF3S10, EIF3S8,  EIF3S1, EIF3S7)",
+            "eIF3 complex (EIF3S6, EIF3S5, EIF3S4, EIF3S3, EIF3S6IP, EIF3S2, EIF3S9, EIF3S12,  EIF3S10, EIF3S8,  EIF3S1, EIF3S7, PCID1)"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_TRANSLATION_INITIATION"
+          ]
+        }
+      }
+    },
+    "44": {
+      "size": 50,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.05959183673469388,
+          "recall": 0.13931297709923665,
+          "true_positives": 73.0,
+          "false_positives": 1152.0,
+          "false_negatives": 451.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 10,
+          "enriched_groups": [
+            "Arp2/3 protein complex",
+            "CBC complex (cap binding complex)",
+            "ITGAV-ITGB1 complex",
+            "ITGAV-ITGB5 complex",
+            "ITGB5-PTK2 complex",
+            "NCBP1-NCBP2-PHAX-RAN-XPO1 complex",
+            "NSL complex",
+            "PXN-ITGB5-PTK2 complex",
+            "Polycystin-1 multiprotein complex",
+            "WAVE2 complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 20,
+          "enriched_groups": [
+            "KEGG_MEDICUS_PATHOGEN_ESCHERICHIA_EAE_TIR_TCCP_TO_ACTIN_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_ESCHERICHIA_EAE_TIR_TO_ACTIN_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_ESCHERICHIA_ESPT_TO_RAC_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_ESCHERICHIA_MAP_TO_CDC42_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_HCMV_US27_TO_CXCR4_GNB_G_PLCB_PKC_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_SALMONELLA_SOPB_TO_ARNO_ARF_ACTB_G_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_SALMONELLA_SOPE_TO_RAC_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_SHIGELLA_IPAB_C_D_TO_ITGA_B_TALIN_VINCULIN_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_SHIGELLA_IPAC_TO_ACTIN_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_SHIGELLA_IPGD_TO_ARNO_ARF_ACTB_G_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_ARNO_ARF_ACTB_G_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_EGF_EGFR_ACTIN_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_ITGA_B_FAK_CDC42_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_ITGA_B_FAK_RAC_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_ITGA_B_RHOGAP_RHOA_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_ITGA_B_RHOGEF_RHOA_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_ITGA_B_RHOG_RAC_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_ITGA_B_TALIN_VINCULIN_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_NUCLEAR_EXPORT_OF_MRNA",
+            "KEGG_MEDICUS_REFERENCE_TIGHT_JUNCTION_ACTIN_SIGNALING_PATHWAY"
+          ]
+        }
+      }
+    },
+    "45": {
+      "size": 50,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0008163265306122449,
+          "recall": 0.003703703703703704,
+          "true_positives": 1.0,
+          "false_positives": 1224.0,
+          "false_negatives": 269.0
+        }
+      }
+    },
+    "46": {
+      "size": 48,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0008865248226950354,
+          "recall": 0.004807692307692308,
+          "true_positives": 1.0,
+          "false_positives": 1127.0,
+          "false_negatives": 207.0
+        }
+      }
+    },
+    "47": {
+      "size": 48,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005319148936170213,
+          "recall": 0.019736842105263157,
+          "true_positives": 6.0,
+          "false_positives": 1122.0,
+          "false_negatives": 298.0
+        }
+      }
+    },
+    "48": {
+      "size": 47,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0027752081406105457,
+          "recall": 0.007792207792207792,
+          "true_positives": 3.0,
+          "false_positives": 1078.0,
+          "false_negatives": 382.0
+        }
+      }
+    },
+    "49": {
+      "size": 47,
+      "enriched_in": [
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.012950971322849213,
+          "recall": 0.017879948914431672,
+          "true_positives": 14.0,
+          "false_positives": 1067.0,
+          "false_negatives": 769.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "55S ribosome, mitochondrial"
+          ]
+        }
+      }
+    },
+    "50": {
+      "size": 46,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.13526570048309178,
+          "recall": 0.10550113036925396,
+          "true_positives": 140.0,
+          "false_positives": 895.0,
+          "false_negatives": 1187.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "AATF-NGDN-NOL10 complex",
+            "eIF3 complex (EIF3S6, EIF3S5, EIF3S4, EIF3S3, EIF3S6IP, EIF3S2, EIF3S9, EIF3S12,  EIF3S10, EIF3S8,  EIF3S1, EIF3S7, PCID1)"
+          ]
+        }
+      }
+    },
+    "51": {
+      "size": 46,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.000966183574879227,
+          "recall": 0.005319148936170213,
+          "true_positives": 1.0,
+          "false_positives": 1034.0,
+          "false_negatives": 187.0
+        }
+      }
+    },
+    "52": {
+      "size": 45,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.03636363636363636,
+          "recall": 0.07142857142857142,
+          "true_positives": 36.0,
+          "false_positives": 954.0,
+          "false_negatives": 468.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 8,
+          "enriched_groups": [
+            "CCR4-NOT complex",
+            "CCR4-NOT complex, CNOT7-CNOT6-specific",
+            "CCR4-NOT complex, CNOT7-CNOT6L-specific",
+            "CCR4-NOT complex, CNOT8-CNOT6-specific",
+            "CCR4-NOT complex, CNOT8-CNOT6L-specific",
+            "PPP2CA-PPP2R1A complex",
+            "Paf complex",
+            "TSC1-TSC2 complex"
+          ]
+        }
+      }
+    },
+    "53": {
+      "size": 45,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 990.0,
+          "false_negatives": 98.0
+        }
+      }
+    },
+    "54": {
+      "size": 45,
+      "enriched_in": [
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.01818181818181818,
+          "recall": 0.022332506203473945,
+          "true_positives": 18.0,
+          "false_positives": 972.0,
+          "false_negatives": 788.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "39S ribosomal subunit, mitochondrial",
+            "55S ribosome, mitochondrial"
+          ]
+        }
+      }
+    },
+    "55": {
+      "size": 44,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0021141649048625794,
+          "recall": 0.0111731843575419,
+          "true_positives": 2.0,
+          "false_positives": 944.0,
+          "false_negatives": 177.0
+        }
+      }
+    },
+    "56": {
+      "size": 44,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0010570824524312897,
+          "recall": 0.0058823529411764705,
+          "true_positives": 1.0,
+          "false_positives": 945.0,
+          "false_negatives": 169.0
+        }
+      }
+    },
+    "57": {
+      "size": 43,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.06423034330011074,
+          "recall": 0.12719298245614036,
+          "true_positives": 58.0,
+          "false_positives": 845.0,
+          "false_negatives": 398.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 11,
+          "enriched_groups": [
+            "ALL-1 supercomplex",
+            "DA complex",
+            "DAB complex",
+            "MLL1-WDR5 complex",
+            "TAF4-TAF12 subcomplex of TFIID complex",
+            "TFIID complex",
+            "TFIID complex, B-cell specific",
+            "TFIID-beta complex",
+            "TFTC complex (TATA-binding protein-free TAF-II-containing complex)",
+            "Transcription initiation factor complex (TAF1, TAF5, TAF11, TAF12, TBP)",
+            "Transcription initiation factor complex (TAF5, TAF6, TAF9, TAF11, TBP)"
+          ]
+        }
+      }
+    },
+    "58": {
+      "size": 43,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0011074197120708748,
+          "recall": 0.004081632653061225,
+          "true_positives": 1.0,
+          "false_positives": 902.0,
+          "false_negatives": 244.0
+        }
+      }
+    },
+    "59": {
+      "size": 43,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.006644518272425249,
+          "recall": 0.012605042016806723,
+          "true_positives": 6.0,
+          "false_positives": 897.0,
+          "false_negatives": 470.0
+        }
+      }
+    },
+    "60": {
+      "size": 43,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.3798449612403101,
+          "recall": 0.20662650602409638,
+          "true_positives": 343.0,
+          "false_positives": 560.0,
+          "false_negatives": 1317.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 23,
+          "enriched_groups": [
+            "(E.F.G) complex",
+            "12S U11 snRNP",
+            "17S U2 snRNP",
+            "18S U11/U12 snRNP",
+            "20S methylosome and RG-containing Sm protein complex",
+            "6S methyltransferase and RG-containing Sm proteins complex",
+            "6S methyltransferase complex",
+            "C complex spliceosome",
+            "CDC5L complex",
+            "CDC5L-PRPF19 core complex",
+            "LSm1-7 complex",
+            "LSm2-8 complex",
+            "SF3b complex",
+            "SMN complex",
+            "SMN complex (16 subunits)",
+            "SMN complex (GEMIN2, SMN1, SNRPB, SNRPDs)",
+            "SMN complex, U7 snRNA specific",
+            "SMN containing complex",
+            "Spliceosome, A complex",
+            "Spliceosome, B complex",
+            "Spliceosome, C complex",
+            "Spliceosome, E complex",
+            "Spliceosome, pre-B complex"
+          ]
+        }
+      }
+    },
+    "61": {
+      "size": 42,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0023228803716608595,
+          "recall": 0.009900990099009901,
+          "true_positives": 2.0,
+          "false_positives": 859.0,
+          "false_negatives": 200.0
+        }
+      }
+    },
+    "62": {
+      "size": 42,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 861.0,
+          "false_negatives": 56.0
+        }
+      }
+    },
+    "63": {
+      "size": 42,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0023228803716608595,
+          "recall": 0.005780346820809248,
+          "true_positives": 2.0,
+          "false_positives": 859.0,
+          "false_negatives": 344.0
+        }
+      }
+    },
+    "64": {
+      "size": 42,
+      "enriched_in": [
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.008130081300813009,
+          "recall": 0.05343511450381679,
+          "true_positives": 7.0,
+          "false_positives": 854.0,
+          "false_negatives": 124.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 3,
+          "enriched_groups": [
+            "Elongator complex (ELP1, ELP2, ELP3, ELP4, ELP5, ELP6)",
+            "Elongator core complex",
+            "Elongator holo complex"
+          ]
+        }
+      }
+    },
+    "65": {
+      "size": 42,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.0627177700348432,
+          "recall": 0.08385093167701864,
+          "true_positives": 54.0,
+          "false_positives": 807.0,
+          "false_negatives": 590.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 7,
+          "enriched_groups": [
+            "COA3-HSPA9-TIMM44-TIM23(sort) complex, mitochondrial",
+            "DNA-PK-Ku-eIF2-NF90-NF45 complex",
+            "EIF2B1-EIF2B2-EIF2B3-EIF2B4-EIF2B5 complex",
+            "EIF2B2-EIF2B3-EIF2B4-EIF2B5 complex",
+            "Multisynthetase complex",
+            "TIM23(motor) subcomplex (GRPEL1, GRPEL2, HSPA9, TIMM44), mitochondrial",
+            "TIM23(motor) subcomplex (GRPEL1, HSPA9), mitochondrial"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_PKR_EIF2ALPHA_SIGNALING_PATHWAY"
+          ]
+        }
+      }
+    },
+    "66": {
+      "size": 41,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.018292682926829267,
+          "recall": 0.06637168141592921,
+          "true_positives": 15.0,
+          "false_positives": 805.0,
+          "false_negatives": 211.0
+        }
+      }
+    },
+    "67": {
+      "size": 41,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0012195121951219512,
+          "recall": 0.0034602076124567475,
+          "true_positives": 1.0,
+          "false_positives": 819.0,
+          "false_negatives": 288.0
+        }
+      }
+    },
+    "68": {
+      "size": 41,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0012195121951219512,
+          "recall": 0.0051813471502590676,
+          "true_positives": 1.0,
+          "false_positives": 819.0,
+          "false_negatives": 192.0
+        }
+      }
+    },
+    "69": {
+      "size": 40,
+      "enriched_in": [
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.020512820512820513,
+          "recall": 0.05673758865248227,
+          "true_positives": 16.0,
+          "false_positives": 764.0,
+          "false_negatives": 266.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "RNA polymerase III complex"
+          ]
+        }
+      }
+    },
+    "70": {
+      "size": 40,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.007692307692307693,
+          "recall": 0.015306122448979591,
+          "true_positives": 6.0,
+          "false_positives": 774.0,
+          "false_negatives": 386.0
+        }
+      }
+    },
+    "71": {
+      "size": 40,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 780.0,
+          "false_negatives": 71.0
+        }
+      }
+    },
+    "72": {
+      "size": 40,
+      "enriched_in": [
+        "KEGG",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.03333333333333333,
+          "recall": 0.14444444444444443,
+          "true_positives": 26.0,
+          "false_positives": 754.0,
+          "false_negatives": 154.0
+        },
+        "KEGG": {
+          "num_enriched_groups": 5,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_DYNEIN_RECRUITMENT_TO_THE_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_RAB7_REGULATED_MICROTUBULE_MINUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SOD1_TO_RETROGRADE_AXONAL_TRANSPORT"
+          ]
+        }
+      }
+    },
+    "73": {
+      "size": 40,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002564102564102564,
+          "recall": 0.009950248756218905,
+          "true_positives": 2.0,
+          "false_positives": 778.0,
+          "false_negatives": 199.0
+        }
+      }
+    },
+    "74": {
+      "size": 39,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.8920377867746289,
+          "recall": 0.18562201628755967,
+          "true_positives": 661.0,
+          "false_positives": 80.0,
+          "false_negatives": 2900.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 5,
+          "enriched_groups": [
+            "60S ribosomal subunit, cytoplasmic",
+            "Nop56p-associated pre-rRNA complex",
+            "Ribosome, cytoplasmic",
+            "TNF-alpha/NF-kappa B signaling complex 6",
+            "TRBP containing complex (DICER, RPL7A, EIF6, MOV10 and subunits of the 60S ribosomal particle)"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_TRANSLATION_INITIATION"
+          ]
+        }
+      }
+    },
+    "75": {
+      "size": 39,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 741.0,
+          "false_negatives": 80.0
+        }
+      }
+    },
+    "76": {
+      "size": 39,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001349527665317139,
+          "recall": 0.007246376811594203,
+          "true_positives": 1.0,
+          "false_positives": 740.0,
+          "false_negatives": 137.0
+        }
+      }
+    },
+    "77": {
+      "size": 37,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.18618618618618618,
+          "recall": 0.16599732262382866,
+          "true_positives": 124.0,
+          "false_positives": 542.0,
+          "false_negatives": 623.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 4,
+          "enriched_groups": [
+            "26S proteasome",
+            "CAND1-CUL3-RBX1 complex",
+            "PA700 complex",
+            "PA700-20S-PA28 complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 8,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_ABETA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SNCA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SOD1_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_UBQLN2_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_VCP_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_SCRAPIE_CONFORMATION_PRPSC_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION"
+          ]
+        }
+      }
+    },
+    "78": {
+      "size": 37,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 666.0,
+          "false_negatives": 179.0
+        }
+      }
+    },
+    "79": {
+      "size": 36,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.09523809523809523,
+          "recall": 0.15584415584415584,
+          "true_positives": 60.0,
+          "false_positives": 570.0,
+          "false_negatives": 325.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 10,
+          "enriched_groups": [
+            "APC/C complex",
+            "APC/C complex, 1.5 MDa",
+            "APC/C-ANAPC16 complex",
+            "Anaphase-promoting complex",
+            "CEN complex",
+            "CENP-A NAC complex",
+            "CENP-A NAC-CAD complex",
+            "CENP-A nucleosomal complex",
+            "CENP-H-I complex",
+            "HAUS augmin-like complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 8,
+          "enriched_groups": [
+            "KEGG_MEDICUS_PATHOGEN_HTLV_1_TAX_TO_SPINDLE_ASSEMBLY_CHECKPOINT_SIGNALING",
+            "KEGG_MEDICUS_REFERENCE_BRANCHING_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_REFERENCE_COHESIN_DISSOCIATION_IN_ANAPHASE",
+            "KEGG_MEDICUS_REFERENCE_DEPHOSPHORYLATION_OF_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_DISASSEMBLY_OF_MCC",
+            "KEGG_MEDICUS_REFERENCE_ORGANIZATION_OF_THE_INNER_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_ORGANIZATION_OF_THE_OUTER_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_SPINDLE_ASSEMBLY_CHECKPOINT_SIGNALING"
+          ]
+        }
+      }
+    },
+    "80": {
+      "size": 36,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.10793650793650794,
+          "recall": 0.06355140186915888,
+          "true_positives": 68.0,
+          "false_positives": 562.0,
+          "false_negatives": 1002.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 6,
+          "enriched_groups": [
+            "39S ribosomal subunit, mitochondrial",
+            "55S ribosome, mitochondrial",
+            "Respiratory chain complex I (holoenzyme), mitochondrial",
+            "Respiratory chain complex I (incomplete intermediate), mitochondrial",
+            "Respiratory chain complex I (intermediate VII/650kD), mitochondrial",
+            "Respiratory chain complex I (intermediate), mitochondrial"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 6,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_ELECTRON_TRANSFER_IN_COMPLEX_I",
+            "KEGG_MEDICUS_REFERENCE_MITOCHONDRIAL_COMPLEX_UCP1_IN_THERMOGENESIS",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_ABETA_TO_ELECTRON_TRANSFER_IN_COMPLEX_I",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SNCA_TO_ELECTRON_TRANSFER_IN_COMPLEX_I",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_TDP43_TO_ELECTRON_TRANSFER_IN_COMPLEX_I",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_PINK1_TO_ELECTRON_TRANSFER_IN_COMPLEX_I"
+          ]
+        }
+      }
+    },
+    "81": {
+      "size": 36,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 630.0,
+          "false_negatives": 113.0
+        }
+      }
+    },
+    "82": {
+      "size": 35,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 595.0,
+          "false_negatives": 143.0
+        }
+      }
+    },
+    "83": {
+      "size": 35,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 595.0,
+          "false_negatives": 116.0
+        }
+      }
+    },
+    "84": {
+      "size": 34,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0053475935828877,
+          "recall": 0.01327433628318584,
+          "true_positives": 3.0,
+          "false_positives": 558.0,
+          "false_negatives": 223.0
+        }
+      }
+    },
+    "85": {
+      "size": 33,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.045454545454545456,
+          "recall": 0.05417607223476298,
+          "true_positives": 24.0,
+          "false_positives": 504.0,
+          "false_negatives": 419.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 6,
+          "enriched_groups": [
+            "ATRX-DAXX complex",
+            "LINC complex, S-phase",
+            "LINC complex, quiescent cells",
+            "LINC core complex",
+            "MYBL2-LIN9-LIN37-LIN52-LIN54 complex",
+            "dREAM-like complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 4,
+          "enriched_groups": [
+            "KEGG_MEDICUS_PATHOGEN_HTLV_1_TAX_TO_SPINDLE_ASSEMBLY_CHECKPOINT_SIGNALING",
+            "KEGG_MEDICUS_REFERENCE_COHESIN_DISSOCIATION_IN_ANAPHASE",
+            "KEGG_MEDICUS_REFERENCE_DISASSEMBLY_OF_MCC",
+            "KEGG_MEDICUS_REFERENCE_SPINDLE_ASSEMBLY_CHECKPOINT_SIGNALING"
+          ]
+        }
+      }
+    },
+    "86": {
+      "size": 32,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.012096774193548387,
+          "recall": 0.0379746835443038,
+          "true_positives": 6.0,
+          "false_positives": 490.0,
+          "false_negatives": 152.0
+        }
+      }
+    },
+    "87": {
+      "size": 30,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 435.0,
+          "false_negatives": 134.0
+        }
+      }
+    },
+    "88": {
+      "size": 30,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.4160919540229885,
+          "recall": 0.14538152610441768,
+          "true_positives": 181.0,
+          "false_positives": 254.0,
+          "false_negatives": 1064.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 14,
+          "enriched_groups": [
+            "17S U2 snRNP",
+            "18S U11/U12 snRNP",
+            "AQR-ISY1-PPIE-PRPF19-XAB2-ZNF830 complex",
+            "C complex spliceosome",
+            "CDC5L complex",
+            "ISY1-PRPF19-XAB2 complex",
+            "PPIE-AQR-XAB2-ISY1-ZNF830 complex",
+            "SF3A1-SF3A2-SF3A3 complex",
+            "SF3b complex",
+            "Spliceosome, A complex",
+            "Spliceosome, B complex",
+            "Spliceosome, C complex",
+            "Spliceosome, E complex",
+            "Spliceosome, pre-B complex"
+          ]
+        }
+      }
+    },
+    "89": {
+      "size": 29,
+      "enriched_in": [
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.012315270935960592,
+          "recall": 0.03731343283582089,
+          "true_positives": 5.0,
+          "false_positives": 401.0,
+          "false_negatives": 129.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "ER membrane protein complex (EMC8)",
+            "ER membrane protein complex (EMC9)"
+          ]
+        }
+      }
+    },
+    "90": {
+      "size": 29,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.009852216748768473,
+          "recall": 0.015209125475285171,
+          "true_positives": 4.0,
+          "false_positives": 402.0,
+          "false_negatives": 259.0
+        }
+      }
+    },
+    "91": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.015873015873015872,
+          "recall": 0.0392156862745098,
+          "true_positives": 6.0,
+          "false_positives": 372.0,
+          "false_negatives": 147.0
+        }
+      }
+    },
+    "92": {
+      "size": 28,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.10582010582010581,
+          "recall": 0.08316008316008316,
+          "true_positives": 40.0,
+          "false_positives": 338.0,
+          "false_negatives": 441.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 10,
+          "enriched_groups": [
+            "HYPK-NAA10-NAA15 complex",
+            "MED18-MED20-MED29 mediator subcomplex",
+            "METTL3-METTL14 complex",
+            "METTL3-METTL14-WTAP complex",
+            "Mediator complex",
+            "NAA10-NAA15 complex",
+            "NAA10-NAA15_NAA50 complex",
+            "TFIIE complex",
+            "TRAP-SMCC mediator complex",
+            "m(6)A methyltransferase complex"
+          ]
+        }
+      }
+    },
+    "93": {
+      "size": 26,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.04,
+          "recall": 0.05078125,
+          "true_positives": 13.0,
+          "false_positives": 312.0,
+          "false_negatives": 243.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "GINS complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 5,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_DNA_REPLICATION_LICENSING",
+            "KEGG_MEDICUS_REFERENCE_DNA_REPLICATION_TERMINATION",
+            "KEGG_MEDICUS_REFERENCE_ORIGIN_UNWINDING_AND_ELONGATION",
+            "KEGG_MEDICUS_REFERENCE_PRE_IC_FORMATION",
+            "KEGG_MEDICUS_REFERENCE_TRAIP_DEPENDENT_REPLISOME_DISASSEMBLY"
+          ]
+        }
+      }
+    },
+    "94": {
+      "size": 26,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.1753846153846154,
+          "recall": 0.15079365079365079,
+          "true_positives": 57.0,
+          "false_positives": 268.0,
+          "false_negatives": 321.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 20,
+          "enriched_groups": [
+            "AURKB-BIRC5-RASA1 complex",
+            "AURKB-BIRC5-XPO1 complex",
+            "BIRC5-AURKB-INCENP-EVI5 complex",
+            "Chromosomal passenger complex CPC (BIRC5, CDCA8, INCENP)",
+            "Chromosomal passenger complex CPC (CDCA8, AURKB, BIRC5)",
+            "Chromosomal passenger complex CPC (INCENP, BIRC5, AURKB)",
+            "Chromosomal passenger complex CPC (INCENP, CDCA8, BIRC5, AURKB)",
+            "Cohesin complex, incomplete (USP13, SMC3, STAG2)",
+            "Cohesin-SA1 complex",
+            "Cohesin-SA2 complex",
+            "DDX11-RAD21-SMC1A-SMC3 complex",
+            "ECT2-KIF23-RACGAP1 complex",
+            "KIF23-RACGAP1 complex",
+            "KIF4A-KIF14-KIF20A-KIF23-PRC1 complex",
+            "MAU2-NIPBL complex",
+            "Mitotic checkpoint complex",
+            "NIPBL-RAD21-SMC1A complex",
+            "SMC1-SMC3 complex",
+            "SNF2h-cohesin-NuRD complex",
+            "Sororin-cohesin complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 4,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_COHESIN_LOADING",
+            "KEGG_MEDICUS_REFERENCE_ORGANIZATION_OF_THE_OUTER_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_RECRUITMENT_AND_FORMATION_OF_THE_MCC",
+            "KEGG_MEDICUS_REFERENCE_SPINDLE_ASSEMBLY_CHECKPOINT_SIGNALING"
+          ]
+        }
+      }
+    },
+    "95": {
+      "size": 26,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.012307692307692308,
+          "recall": 0.05063291139240506,
+          "true_positives": 4.0,
+          "false_positives": 321.0,
+          "false_negatives": 75.0
+        }
+      }
+    },
+    "96": {
+      "size": 24,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.014492753623188406,
+          "recall": 0.032520325203252036,
+          "true_positives": 4.0,
+          "false_positives": 272.0,
+          "false_negatives": 119.0
+        }
+      }
+    },
+    "97": {
+      "size": 24,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.14492753623188406,
+          "recall": 0.13029315960912052,
+          "true_positives": 40.0,
+          "false_positives": 236.0,
+          "false_negatives": 267.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 8,
+          "enriched_groups": [
+            "Casein kinase II (beta-dimer, alpha, alpha')",
+            "Casein kinase II (beta-dimer, alpha-dimer)",
+            "NPC subcomplex (NUP96, NUP107, NUP133, NUP160)",
+            "Nuclear pore complex",
+            "Nup 107-160 subcomplex",
+            "SAGA complex, GCN5-linked",
+            "STAGA complex",
+            "STAGA complex, SPT3-linked"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_NUCLEAR_EXPORT_OF_MRNA"
+          ]
+        }
+      }
+    },
+    "98": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004329004329004329,
+          "recall": 0.014925373134328358,
+          "true_positives": 1.0,
+          "false_positives": 230.0,
+          "false_negatives": 66.0
+        }
+      }
+    },
+    "99": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 100.0
+        }
+      }
+    },
+    "100": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 79.0
+        }
+      }
+    },
+    "101": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 143.0
+        }
+      }
+    },
+    "102": {
+      "size": 20,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.06842105263157895,
+          "recall": 0.11403508771929824,
+          "true_positives": 13.0,
+          "false_positives": 177.0,
+          "false_negatives": 101.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 5,
+          "enriched_groups": [
+            "DHDDS-NUS1 complex",
+            "Exocyst EXOC5-EXOC6-EXOC7 subcomplex",
+            "Exocyst complex",
+            "Oligosaccharyltransferase complex (Stt3A variant)",
+            "Oligosaccharyltransferase complex (Stt3B variant)"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_N_GLYCAN_PRECURSOR_BIOSYNTHESIS_ALG6_TO_OST"
+          ]
+        }
+      }
+    },
+    "103": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.021052631578947368,
+          "recall": 0.011799410029498525,
+          "true_positives": 4.0,
+          "false_positives": 186.0,
+          "false_negatives": 335.0
+        }
+      }
+    },
+    "104": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.010526315789473684,
+          "recall": 0.023529411764705882,
+          "true_positives": 2.0,
+          "false_positives": 188.0,
+          "false_negatives": 83.0
+        }
+      }
+    },
+    "105": {
+      "size": 19,
+      "enriched_in": [
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.029239766081871343,
+          "recall": 0.1,
+          "true_positives": 5.0,
+          "false_positives": 166.0,
+          "false_negatives": 45.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 4,
+          "enriched_groups": [
+            "CBF-DNA complex",
+            "CTLH complex, submodule of the IFT/lebercilin complex",
+            "GID/CTLH ubiquitin E3 ligase complex",
+            "p32-CBF-DNA complex"
+          ]
+        }
+      }
+    },
+    "106": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 153.0,
+          "false_negatives": 33.0
+        }
+      }
+    },
+    "107": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 120.0,
+          "false_negatives": 92.0
+        }
+      }
+    },
+    "108": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 120.0,
+          "false_negatives": 39.0
+        }
+      }
+    },
+    "109": {
+      "size": 16,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.7666666666666667,
+          "recall": 0.19913419913419914,
+          "true_positives": 92.0,
+          "false_positives": 28.0,
+          "false_negatives": 370.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 6,
+          "enriched_groups": [
+            "20S proteasome",
+            "26S proteasome",
+            "PA28-20S proteasome",
+            "PA28gamma-20S proteasome",
+            "PA700-20S-PA28 complex",
+            "Ubiquilin-proteasome complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 8,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_ABETA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SNCA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SOD1_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_UBQLN2_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_VCP_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_SCRAPIE_CONFORMATION_PRPSC_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION"
+          ]
+        }
+      }
+    },
+    "110": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.01098901098901099,
+          "recall": 0.00847457627118644,
+          "true_positives": 1.0,
+          "false_positives": 90.0,
+          "false_negatives": 117.0
+        }
+      }
+    },
+    "111": {
+      "size": 14,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.3626373626373626,
+          "recall": 0.15714285714285714,
+          "true_positives": 33.0,
+          "false_positives": 58.0,
+          "false_negatives": 177.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "BBS-chaperonin complex",
+            "CCT complex (chaperonin containing TCP1 complex)"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 22,
+          "enriched_groups": [
+            "KEGG_MEDICUS_ENV_FACTOR_IRON_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_ENV_FACTOR_ZN_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_PATHOGEN_ESCHERICHIA_ESPG_TO_MICROTUBULE_RHOA_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_SALMONELLA_SIFA_TO_MICROTUBULE_PLUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_ARL8_REGULATED_MICROTUBULE_PLUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_ASSEMBLY_AND_TRAFFICKING_OF_TELOMERASE",
+            "KEGG_MEDICUS_REFERENCE_BRANCHING_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_REFERENCE_KINETOCHORE_FIBER_ORGANIZATION",
+            "KEGG_MEDICUS_REFERENCE_KINETOCHORE_MICROTUBULE_ATTACHMENT",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_DEPOLYMERIZATION",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_DEPOLYMERIZATION_AT_THE_MINUS_ENDS",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_RHOA_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_PROMOTION_OF_MICROTUBULE_GROWTH",
+            "KEGG_MEDICUS_REFERENCE_RAB7_REGULATED_MICROTUBULE_MINUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_ABETA_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_DCTN1_TO_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SNCA_TO_ANTEROGRADE_AXONAL_TRANSPORT"
+          ]
+        }
+      }
+    },
+    "112": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.01282051282051282,
+          "recall": 0.0038910505836575876,
+          "true_positives": 1.0,
+          "false_positives": 77.0,
+          "false_negatives": 256.0
+        }
+      }
+    },
+    "113": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 78.0,
+          "false_negatives": 18.0
+        }
+      }
+    },
+    "114": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 66.0,
+          "false_negatives": 61.0
+        }
+      }
+    },
+    "115": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 66.0,
+          "false_negatives": 38.0
+        }
+      }
+    },
+    "116": {
+      "size": 11,
+      "enriched_in": [
+        "KEGG",
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.18181818181818182,
+          "recall": 0.14285714285714285,
+          "true_positives": 10.0,
+          "false_positives": 45.0,
+          "false_negatives": 60.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 5,
+          "enriched_groups": [
+            "CAP(C)-CAP(E) complex",
+            "Condensin I complex",
+            "Condensin I-PARP-1-XRCC1 complex",
+            "Condensin II",
+            "DNA ligase IV-condensin complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 3,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_CONDENSIN_LOADING",
+            "KEGG_MEDICUS_REFERENCE_INACTIVATION_OF_CONDENSIN_I",
+            "KEGG_MEDICUS_REFERENCE_MODIFYING_OF_CONDENSIN_I_SUBUNITS"
+          ]
+        }
+      }
+    },
+    "117": {
+      "size": 11,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.4,
+          "recall": 0.08239700374531835,
+          "true_positives": 22.0,
+          "false_positives": 33.0,
+          "false_negatives": 245.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 7,
+          "enriched_groups": [
+            "ABCA1- CSN2-CSN5 complex",
+            "CNS-P53 complex",
+            "COP9 signalosome complex",
+            "CSA complex",
+            "CSA-POLIIa complex",
+            "CUL4B-DDB1-DTL-CSN complex",
+            "DDB2 complex"
+          ]
+        }
+      }
+    },
+    "118": {
+      "size": 10,
+      "enriched_in": [
+        "KEGG",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.35555555555555557,
+          "recall": 0.2857142857142857,
+          "true_positives": 16.0,
+          "false_positives": 29.0,
+          "false_negatives": 40.0
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_COPI_VESICLE_FORMATION"
+          ]
+        }
+      }
+    },
+    "119": {
+      "size": 9,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 36.0,
+          "false_negatives": 17.0
+        }
+      }
+    },
+    "120": {
+      "size": 8,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.4642857142857143,
+          "recall": 0.049429657794676805,
+          "true_positives": 13.0,
+          "false_positives": 15.0,
+          "false_negatives": 250.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "NMI-POLR1B-RRN3 complex",
+            "POLR1B-RRN3 complex"
+          ]
+        }
+      }
+    },
+    "121": {
+      "size": 8,
+      "enriched_in": [
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.75,
+          "recall": 0.03954802259887006,
+          "true_positives": 21.0,
+          "false_positives": 7.0,
+          "false_negatives": 510.0
+        }
+      }
+    },
+    "122": {
+      "size": 8,
+      "enriched_in": [
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 1.0,
+          "recall": 0.05588822355289421,
+          "true_positives": 28.0,
+          "false_positives": 0.0,
+          "false_negatives": 473.0
+        }
+      }
+    },
+    "123": {
+      "size": 7,
+      "enriched_in": [
+        "STRING",
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 1.0,
+          "recall": 0.17796610169491525,
+          "true_positives": 21.0,
+          "false_positives": 0.0,
+          "false_negatives": 97.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 3,
+          "enriched_groups": [
+            "DSS1 complex",
+            "Integrator complex",
+            "Integrator-RNAPII complex"
+          ]
+        }
+      }
+    }
+  },
+  "enrichment_categories": {
+    "('None',)": 81,
+    "('CORUM',)": 8,
+    "('CORUM', 'KEGG')": 3,
+    "('CORUM', 'STRING')": 11,
+    "('CORUM', 'KEGG', 'STRING')": 17,
+    "('KEGG', 'STRING')": 2,
+    "('STRING',)": 2
+  },
+  "total_clusters_analyzed": 124
+}

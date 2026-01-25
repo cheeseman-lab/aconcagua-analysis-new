@@ -1,0 +1,3610 @@
+{
+  "clusters": {
+    "0": {
+      "size": 65,
+      "enriched_in": [
+        "CORUM",
+        "KEGG",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.38317307692307695,
+          "recall": 0.20005020080321284,
+          "true_positives": 797.0,
+          "false_positives": 1283.0,
+          "false_negatives": 3187.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 6,
+          "enriched_groups": [
+            "60S ribosomal subunit, cytoplasmic",
+            "DDX27-PeBoW complex",
+            "NMD3-RAN-XPO1 complex",
+            "Nop56p-associated pre-rRNA complex",
+            "Ribosome, cytoplasmic",
+            "TRBP containing complex (DICER, RPL7A, EIF6, MOV10 and subunits of the 60S ribosomal particle)"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_TRANSLATION_INITIATION"
+          ]
+        }
+      }
+    },
+    "1": {
+      "size": 51,
+      "enriched_in": [
+        "CORUM",
+        "KEGG",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.03294117647058824,
+          "recall": 0.061764705882352944,
+          "true_positives": 42.0,
+          "false_positives": 1233.0,
+          "false_negatives": 638.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 5,
+          "enriched_groups": [
+            "DNA synthesome complex, breast cancer MCF7 cells",
+            "DNA synthesome complex, breast cancer cells",
+            "DNA synthesome complex, leukemia cells",
+            "RC complex, G2/M-phase-specific",
+            "RC complex, S-phase-specific"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 9,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_ATR_SIGNALING",
+            "KEGG_MEDICUS_REFERENCE_CORE_NER_REACTION",
+            "KEGG_MEDICUS_REFERENCE_DNA_END_RESECTION_AND_RPA_LOADING",
+            "KEGG_MEDICUS_REFERENCE_DNA_REPLICATION_LICENSING",
+            "KEGG_MEDICUS_REFERENCE_HOMOLOGOUS_RECOMBINATION",
+            "KEGG_MEDICUS_REFERENCE_LONG_PATCH_BER",
+            "KEGG_MEDICUS_REFERENCE_MISMATCH_REPAIR",
+            "KEGG_MEDICUS_REFERENCE_ORIGIN_UNWINDING_AND_ELONGATION",
+            "KEGG_MEDICUS_REFERENCE_PRE_IC_FORMATION"
+          ]
+        }
+      }
+    },
+    "2": {
+      "size": 47,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0018501387604070306,
+          "recall": 0.007547169811320755,
+          "true_positives": 2.0,
+          "false_positives": 1079.0,
+          "false_negatives": 263.0
+        }
+      }
+    },
+    "3": {
+      "size": 46,
+      "enriched_in": [
+        "CORUM",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.4492753623188406,
+          "recall": 0.24256651017214398,
+          "true_positives": 465.0,
+          "false_positives": 570.0,
+          "false_negatives": 1452.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 28,
+          "enriched_groups": [
+            "(E.F.G) complex",
+            "12S U11 snRNP",
+            "17S U2 snRNP",
+            "18S U11/U12 snRNP",
+            "20S methylosome and RG-containing Sm protein complex",
+            "6S methyltransferase and RG-containing Sm proteins complex",
+            "6S methyltransferase complex",
+            "C complex spliceosome",
+            "CDC5L complex",
+            "CDC5L core complex",
+            "CDC5L-PRP19 complex",
+            "CDC5L-PRPF19 core complex",
+            "LSm1-7 complex",
+            "LSm2-8 complex",
+            "PSO4 complex",
+            "PSO4-WRN complex",
+            "SF3b complex",
+            "SMN complex",
+            "SMN complex (16 subunits)",
+            "SMN complex (GEMIN2, SMN1, SNRPB, SNRPDs)",
+            "SMN complex, U7 snRNA specific",
+            "SMN containing complex",
+            "SNW1 complex",
+            "Spliceosome, A complex",
+            "Spliceosome, B complex",
+            "Spliceosome, C complex",
+            "Spliceosome, E complex",
+            "Spliceosome, pre-B complex"
+          ]
+        }
+      }
+    },
+    "4": {
+      "size": 44,
+      "enriched_in": [
+        "CORUM",
+        "KEGG",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.1321353065539112,
+          "recall": 0.2385496183206107,
+          "true_positives": 125.0,
+          "false_positives": 821.0,
+          "false_negatives": 399.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 12,
+          "enriched_groups": [
+            "APC/C complex",
+            "APC/C complex, 1.5 MDa",
+            "APC/C-ANAPC16 complex",
+            "Anaphase-promoting complex",
+            "CAP(C)-CAP(E) complex",
+            "CEN complex",
+            "CENP-A NAC complex",
+            "CENP-A NAC-CAD complex",
+            "CENP-A nucleosomal complex",
+            "CENP-H-I complex",
+            "CENPT-CENPW complex",
+            "NDC80 kinetochore complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 14,
+          "enriched_groups": [
+            "KEGG_MEDICUS_PATHOGEN_HTLV_1_TAX_TO_SPINDLE_ASSEMBLY_CHECKPOINT_SIGNALING",
+            "KEGG_MEDICUS_REFERENCE_CENPE_INTERACTION_WITH_NDC80_COMPLEX",
+            "KEGG_MEDICUS_REFERENCE_COHESIN_DISSOCIATION_IN_ANAPHASE",
+            "KEGG_MEDICUS_REFERENCE_CONDENSIN_LOADING",
+            "KEGG_MEDICUS_REFERENCE_DEPHOSPHORYLATION_OF_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_DISASSEMBLY_OF_MCC",
+            "KEGG_MEDICUS_REFERENCE_DYNEIN_RECRUITMENT_TO_THE_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_ORGANIZATION_OF_THE_INNER_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_ORGANIZATION_OF_THE_OUTER_KINETOCHORE",
+            "KEGG_MEDICUS_REFERENCE_RAB7_REGULATED_MICROTUBULE_MINUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_SPINDLE_ASSEMBLY_CHECKPOINT_SIGNALING",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SOD1_TO_RETROGRADE_AXONAL_TRANSPORT"
+          ]
+        }
+      }
+    },
+    "5": {
+      "size": 43,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 903.0,
+          "false_negatives": 184.0
+        }
+      }
+    },
+    "6": {
+      "size": 42,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.003484320557491289,
+          "recall": 0.009230769230769232,
+          "true_positives": 3.0,
+          "false_positives": 858.0,
+          "false_negatives": 322.0
+        }
+      }
+    },
+    "7": {
+      "size": 40,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 780.0,
+          "false_negatives": 157.0
+        }
+      }
+    },
+    "8": {
+      "size": 40,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 780.0,
+          "false_negatives": 257.0
+        }
+      }
+    },
+    "9": {
+      "size": 40,
+      "enriched_in": [
+        "CORUM",
+        "KEGG",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.2653846153846154,
+          "recall": 0.08876500857632934,
+          "true_positives": 207.0,
+          "false_positives": 573.0,
+          "false_negatives": 2125.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 3,
+          "enriched_groups": [
+            "40S ribosomal subunit, cytoplasmic",
+            "Nop56p-associated pre-rRNA complex",
+            "Ribosome, cytoplasmic"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_TRANSLATION_INITIATION"
+          ]
+        }
+      }
+    },
+    "10": {
+      "size": 39,
+      "enriched_in": [
+        "CORUM",
+        "KEGG"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.005398110661268556,
+          "recall": 0.010075566750629723,
+          "true_positives": 4.0,
+          "false_positives": 737.0,
+          "false_negatives": 393.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "Condensin II"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_MODIFYING_OF_CONDENSIN_II_SUBUNITS"
+          ]
+        }
+      }
+    },
+    "11": {
+      "size": 39,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.002699055330634278,
+          "recall": 0.0057306590257879654,
+          "true_positives": 2.0,
+          "false_positives": 739.0,
+          "false_negatives": 347.0
+        }
+      }
+    },
+    "12": {
+      "size": 38,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005689900426742532,
+          "recall": 0.009302325581395349,
+          "true_positives": 4.0,
+          "false_positives": 699.0,
+          "false_negatives": 426.0
+        }
+      }
+    },
+    "13": {
+      "size": 38,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001422475106685633,
+          "recall": 0.001876172607879925,
+          "true_positives": 1.0,
+          "false_positives": 702.0,
+          "false_negatives": 532.0
+        }
+      }
+    },
+    "14": {
+      "size": 37,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 666.0,
+          "false_negatives": 195.0
+        }
+      }
+    },
+    "15": {
+      "size": 37,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.009009009009009009,
+          "recall": 0.0160857908847185,
+          "true_positives": 6.0,
+          "false_positives": 660.0,
+          "false_negatives": 367.0
+        }
+      }
+    },
+    "16": {
+      "size": 36,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 630.0,
+          "false_negatives": 246.0
+        }
+      }
+    },
+    "17": {
+      "size": 36,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 630.0,
+          "false_negatives": 282.0
+        }
+      }
+    },
+    "18": {
+      "size": 36,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0031746031746031746,
+          "recall": 0.004282655246252677,
+          "true_positives": 2.0,
+          "false_positives": 628.0,
+          "false_negatives": 465.0
+        }
+      }
+    },
+    "19": {
+      "size": 34,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 561.0,
+          "false_negatives": 149.0
+        }
+      }
+    },
+    "20": {
+      "size": 34,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0035650623885918,
+          "recall": 0.005277044854881266,
+          "true_positives": 2.0,
+          "false_positives": 559.0,
+          "false_negatives": 377.0
+        }
+      }
+    },
+    "21": {
+      "size": 33,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.001893939393939394,
+          "recall": 0.004219409282700422,
+          "true_positives": 1.0,
+          "false_positives": 527.0,
+          "false_negatives": 236.0
+        }
+      }
+    },
+    "22": {
+      "size": 33,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 528.0,
+          "false_negatives": 116.0
+        }
+      }
+    },
+    "23": {
+      "size": 32,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 496.0,
+          "false_negatives": 123.0
+        }
+      }
+    },
+    "24": {
+      "size": 32,
+      "enriched_in": [
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.028225806451612902,
+          "recall": 0.013435700575815739,
+          "true_positives": 14.0,
+          "false_positives": 482.0,
+          "false_negatives": 1028.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "40S ribosomal subunit, cytoplasmic"
+          ]
+        }
+      }
+    },
+    "25": {
+      "size": 31,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004301075268817204,
+          "recall": 0.004201680672268907,
+          "true_positives": 2.0,
+          "false_positives": 463.0,
+          "false_negatives": 474.0
+        }
+      }
+    },
+    "26": {
+      "size": 31,
+      "enriched_in": [
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.07956989247311828,
+          "recall": 0.032342657342657344,
+          "true_positives": 37.0,
+          "false_positives": 428.0,
+          "false_negatives": 1107.0
+        }
+      }
+    },
+    "27": {
+      "size": 31,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004301075268817204,
+          "recall": 0.00641025641025641,
+          "true_positives": 2.0,
+          "false_positives": 463.0,
+          "false_negatives": 310.0
+        }
+      }
+    },
+    "28": {
+      "size": 31,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 465.0,
+          "false_negatives": 148.0
+        }
+      }
+    },
+    "29": {
+      "size": 30,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0022988505747126436,
+          "recall": 0.003278688524590164,
+          "true_positives": 1.0,
+          "false_positives": 434.0,
+          "false_negatives": 304.0
+        }
+      }
+    },
+    "30": {
+      "size": 30,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.011494252873563218,
+          "recall": 0.014285714285714285,
+          "true_positives": 5.0,
+          "false_positives": 430.0,
+          "false_negatives": 345.0
+        }
+      }
+    },
+    "31": {
+      "size": 30,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 435.0,
+          "false_negatives": 152.0
+        }
+      }
+    },
+    "32": {
+      "size": 30,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 435.0,
+          "false_negatives": 145.0
+        }
+      }
+    },
+    "33": {
+      "size": 29,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0024630541871921183,
+          "recall": 0.005,
+          "true_positives": 1.0,
+          "false_positives": 405.0,
+          "false_negatives": 199.0
+        }
+      }
+    },
+    "34": {
+      "size": 29,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 406.0,
+          "false_negatives": 290.0
+        }
+      }
+    },
+    "35": {
+      "size": 29,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0024630541871921183,
+          "recall": 0.002890173410404624,
+          "true_positives": 1.0,
+          "false_positives": 405.0,
+          "false_negatives": 345.0
+        }
+      }
+    },
+    "36": {
+      "size": 29,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 406.0,
+          "false_negatives": 191.0
+        }
+      }
+    },
+    "37": {
+      "size": 29,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 406.0,
+          "false_negatives": 202.0
+        }
+      }
+    },
+    "38": {
+      "size": 29,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0049261083743842365,
+          "recall": 0.005141388174807198,
+          "true_positives": 2.0,
+          "false_positives": 404.0,
+          "false_negatives": 387.0
+        }
+      }
+    },
+    "39": {
+      "size": 29,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0024630541871921183,
+          "recall": 0.004545454545454545,
+          "true_positives": 1.0,
+          "false_positives": 405.0,
+          "false_negatives": 219.0
+        }
+      }
+    },
+    "40": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 378.0,
+          "false_negatives": 124.0
+        }
+      }
+    },
+    "41": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005291005291005291,
+          "recall": 0.00546448087431694,
+          "true_positives": 2.0,
+          "false_positives": 376.0,
+          "false_negatives": 364.0
+        }
+      }
+    },
+    "42": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 378.0,
+          "false_negatives": 71.0
+        }
+      }
+    },
+    "43": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0026455026455026454,
+          "recall": 0.003401360544217687,
+          "true_positives": 1.0,
+          "false_positives": 377.0,
+          "false_negatives": 293.0
+        }
+      }
+    },
+    "44": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 378.0,
+          "false_negatives": 174.0
+        }
+      }
+    },
+    "45": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 378.0,
+          "false_negatives": 120.0
+        }
+      }
+    },
+    "46": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0026455026455026454,
+          "recall": 0.0021691973969631237,
+          "true_positives": 1.0,
+          "false_positives": 377.0,
+          "false_negatives": 460.0
+        }
+      }
+    },
+    "47": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0026455026455026454,
+          "recall": 0.0029154518950437317,
+          "true_positives": 1.0,
+          "false_positives": 377.0,
+          "false_negatives": 342.0
+        }
+      }
+    },
+    "48": {
+      "size": 28,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0026455026455026454,
+          "recall": 0.004081632653061225,
+          "true_positives": 1.0,
+          "false_positives": 377.0,
+          "false_negatives": 244.0
+        }
+      }
+    },
+    "49": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.008547008547008548,
+          "recall": 0.007874015748031496,
+          "true_positives": 3.0,
+          "false_positives": 348.0,
+          "false_negatives": 378.0
+        }
+      }
+    },
+    "50": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 128.0
+        }
+      }
+    },
+    "51": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.014245014245014245,
+          "recall": 0.00946969696969697,
+          "true_positives": 5.0,
+          "false_positives": 346.0,
+          "false_negatives": 523.0
+        }
+      }
+    },
+    "52": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 61.0
+        }
+      }
+    },
+    "53": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 76.0
+        }
+      }
+    },
+    "54": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 246.0
+        }
+      }
+    },
+    "55": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 100.0
+        }
+      }
+    },
+    "56": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 117.0
+        }
+      }
+    },
+    "57": {
+      "size": 27,
+      "enriched_in": [
+        "CORUM",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.039886039886039885,
+          "recall": 0.03626943005181347,
+          "true_positives": 14.0,
+          "false_positives": 337.0,
+          "false_negatives": 372.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 11,
+          "enriched_groups": [
+            "CAND1-CUL1-RBX1 complex",
+            "CAND1-CUL2-RBX1 complex",
+            "CAND1-CUL3-RBX1 complex",
+            "CAND1-CUL4A-RBX1 complex",
+            "CAND1-CUL4B-RBX1 complex",
+            "CNOT1-CNOT2-CNOT3 complex",
+            "CUL3-DCUN1D3-RBX1 complex",
+            "Ubiquitin E3 ligase (CUL3, KEAP1, RBX1)",
+            "Ubiquitin E3 ligase (CUL3, KLHL20, RBX1)",
+            "Ubiquitin E3 ligase (CUL3, KLHL24, RBX1)",
+            "Ubiquitin E3 ligase (CUL3, KLHL7, RBX1)"
+          ]
+        }
+      }
+    },
+    "58": {
+      "size": 27,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 351.0,
+          "false_negatives": 106.0
+        }
+      }
+    },
+    "59": {
+      "size": 26,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 325.0,
+          "false_negatives": 325.0
+        }
+      }
+    },
+    "60": {
+      "size": 26,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 325.0,
+          "false_negatives": 233.0
+        }
+      }
+    },
+    "61": {
+      "size": 26,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 325.0,
+          "false_negatives": 194.0
+        }
+      }
+    },
+    "62": {
+      "size": 26,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 325.0,
+          "false_negatives": 183.0
+        }
+      }
+    },
+    "63": {
+      "size": 26,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.003076923076923077,
+          "recall": 0.003875968992248062,
+          "true_positives": 1.0,
+          "false_positives": 324.0,
+          "false_negatives": 257.0
+        }
+      }
+    },
+    "64": {
+      "size": 26,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.003076923076923077,
+          "recall": 0.00684931506849315,
+          "true_positives": 1.0,
+          "false_positives": 324.0,
+          "false_negatives": 145.0
+        }
+      }
+    },
+    "65": {
+      "size": 25,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.01,
+          "recall": 0.008130081300813009,
+          "true_positives": 3.0,
+          "false_positives": 297.0,
+          "false_negatives": 366.0
+        }
+      }
+    },
+    "66": {
+      "size": 25,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0033333333333333335,
+          "recall": 0.002849002849002849,
+          "true_positives": 1.0,
+          "false_positives": 299.0,
+          "false_negatives": 350.0
+        }
+      }
+    },
+    "67": {
+      "size": 25,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0033333333333333335,
+          "recall": 0.0038314176245210726,
+          "true_positives": 1.0,
+          "false_positives": 299.0,
+          "false_negatives": 260.0
+        }
+      }
+    },
+    "68": {
+      "size": 25,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 300.0,
+          "false_negatives": 308.0
+        }
+      }
+    },
+    "69": {
+      "size": 25,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 300.0,
+          "false_negatives": 144.0
+        }
+      }
+    },
+    "70": {
+      "size": 25,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 300.0,
+          "false_negatives": 164.0
+        }
+      }
+    },
+    "71": {
+      "size": 25,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.01,
+          "recall": 0.018633540372670808,
+          "true_positives": 3.0,
+          "false_positives": 297.0,
+          "false_negatives": 158.0
+        }
+      }
+    },
+    "72": {
+      "size": 24,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.018115942028985508,
+          "recall": 0.01488095238095238,
+          "true_positives": 5.0,
+          "false_positives": 271.0,
+          "false_negatives": 331.0
+        }
+      }
+    },
+    "73": {
+      "size": 24,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 276.0,
+          "false_negatives": 142.0
+        }
+      }
+    },
+    "74": {
+      "size": 24,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.010869565217391304,
+          "recall": 0.014492753623188406,
+          "true_positives": 3.0,
+          "false_positives": 273.0,
+          "false_negatives": 204.0
+        }
+      }
+    },
+    "75": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.003952569169960474,
+          "recall": 0.008130081300813009,
+          "true_positives": 1.0,
+          "false_positives": 252.0,
+          "false_negatives": 122.0
+        }
+      }
+    },
+    "76": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.003952569169960474,
+          "recall": 0.011111111111111112,
+          "true_positives": 1.0,
+          "false_positives": 252.0,
+          "false_negatives": 89.0
+        }
+      }
+    },
+    "77": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.019762845849802372,
+          "recall": 0.012987012987012988,
+          "true_positives": 5.0,
+          "false_positives": 248.0,
+          "false_negatives": 380.0
+        }
+      }
+    },
+    "78": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 253.0,
+          "false_negatives": 91.0
+        }
+      }
+    },
+    "79": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 253.0,
+          "false_negatives": 124.0
+        }
+      }
+    },
+    "80": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 253.0,
+          "false_negatives": 120.0
+        }
+      }
+    },
+    "81": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.003952569169960474,
+          "recall": 0.0035335689045936395,
+          "true_positives": 1.0,
+          "false_positives": 252.0,
+          "false_negatives": 282.0
+        }
+      }
+    },
+    "82": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.003952569169960474,
+          "recall": 0.00392156862745098,
+          "true_positives": 1.0,
+          "false_positives": 252.0,
+          "false_negatives": 254.0
+        }
+      }
+    },
+    "83": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.007905138339920948,
+          "recall": 0.006872852233676976,
+          "true_positives": 2.0,
+          "false_positives": 251.0,
+          "false_negatives": 289.0
+        }
+      }
+    },
+    "84": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.003952569169960474,
+          "recall": 0.005649717514124294,
+          "true_positives": 1.0,
+          "false_positives": 252.0,
+          "false_negatives": 176.0
+        }
+      }
+    },
+    "85": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 253.0,
+          "false_negatives": 142.0
+        }
+      }
+    },
+    "86": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 253.0,
+          "false_negatives": 191.0
+        }
+      }
+    },
+    "87": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 253.0,
+          "false_negatives": 61.0
+        }
+      }
+    },
+    "88": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 253.0,
+          "false_negatives": 323.0
+        }
+      }
+    },
+    "89": {
+      "size": 23,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 253.0,
+          "false_negatives": 42.0
+        }
+      }
+    },
+    "90": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.012987012987012988,
+          "recall": 0.010380622837370242,
+          "true_positives": 3.0,
+          "false_positives": 228.0,
+          "false_negatives": 286.0
+        }
+      }
+    },
+    "91": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 175.0
+        }
+      }
+    },
+    "92": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 88.0
+        }
+      }
+    },
+    "93": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004329004329004329,
+          "recall": 0.0024752475247524753,
+          "true_positives": 1.0,
+          "false_positives": 230.0,
+          "false_negatives": 403.0
+        }
+      }
+    },
+    "94": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 48.0
+        }
+      }
+    },
+    "95": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 327.0
+        }
+      }
+    },
+    "96": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004329004329004329,
+          "recall": 0.005813953488372093,
+          "true_positives": 1.0,
+          "false_positives": 230.0,
+          "false_negatives": 171.0
+        }
+      }
+    },
+    "97": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 91.0
+        }
+      }
+    },
+    "98": {
+      "size": 22,
+      "enriched_in": [
+        "CORUM",
+        "KEGG",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.12121212121212122,
+          "recall": 0.07932011331444759,
+          "true_positives": 28.0,
+          "false_positives": 203.0,
+          "false_negatives": 325.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 6,
+          "enriched_groups": [
+            "Aurora A-TPX2 complex",
+            "Aurora A-TPX2-NuMA complex",
+            "Gamma-tubulin complex",
+            "PA700 complex",
+            "PA700-20S-PA28 complex",
+            "PLK4-STIL complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 10,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_REFERENCE_BRANCHING_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_ABETA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SNCA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SOD1_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_UBQLN2_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_VCP_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_SCRAPIE_CONFORMATION_PRPSC_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION"
+          ]
+        }
+      }
+    },
+    "99": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 212.0
+        }
+      }
+    },
+    "100": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 85.0
+        }
+      }
+    },
+    "101": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 67.0
+        }
+      }
+    },
+    "102": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 120.0
+        }
+      }
+    },
+    "103": {
+      "size": 22,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 231.0,
+          "false_negatives": 256.0
+        }
+      }
+    },
+    "104": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 145.0
+        }
+      }
+    },
+    "105": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 82.0
+        }
+      }
+    },
+    "106": {
+      "size": 21,
+      "enriched_in": [
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.0380952380952381,
+          "recall": 0.011611030478955007,
+          "true_positives": 8.0,
+          "false_positives": 202.0,
+          "false_negatives": 681.0
+        }
+      }
+    },
+    "107": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 203.0
+        }
+      }
+    },
+    "108": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.004761904761904762,
+          "recall": 0.005208333333333333,
+          "true_positives": 1.0,
+          "false_positives": 209.0,
+          "false_negatives": 191.0
+        }
+      }
+    },
+    "109": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 72.0
+        }
+      }
+    },
+    "110": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 23.0
+        }
+      }
+    },
+    "111": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 102.0
+        }
+      }
+    },
+    "112": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 79.0
+        }
+      }
+    },
+    "113": {
+      "size": 21,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 210.0,
+          "false_negatives": 296.0
+        }
+      }
+    },
+    "114": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 164.0
+        }
+      }
+    },
+    "115": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 67.0
+        }
+      }
+    },
+    "116": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 184.0
+        }
+      }
+    },
+    "117": {
+      "size": 20,
+      "enriched_in": [
+        "CORUM"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.015789473684210527,
+          "recall": 0.012195121951219513,
+          "true_positives": 3.0,
+          "false_positives": 187.0,
+          "false_negatives": 243.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 5,
+          "enriched_groups": [
+            "CNS-P53 complex",
+            "COP9 signalosome complex",
+            "CSA complex",
+            "CSA-POLIIa complex",
+            "DDB2 complex"
+          ]
+        }
+      }
+    },
+    "118": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 94.0
+        }
+      }
+    },
+    "119": {
+      "size": 20,
+      "enriched_in": [
+        "CORUM",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.3,
+          "recall": 0.07702702702702703,
+          "true_positives": 57.0,
+          "false_positives": 133.0,
+          "false_negatives": 683.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 11,
+          "enriched_groups": [
+            "17S U2 snRNP",
+            "AQR-ISY1-PPIE-PRPF19-XAB2-ZNF830 complex",
+            "C complex spliceosome",
+            "ISY1-PRPF19-XAB2 complex",
+            "PPIE-AQR-XAB2-ISY1-ZNF830 complex",
+            "SF3A1-SF3A2-SF3A3 complex",
+            "Spliceosome, A complex",
+            "Spliceosome, B complex",
+            "Spliceosome, C complex",
+            "Spliceosome, E complex",
+            "Spliceosome, pre-B complex"
+          ]
+        }
+      }
+    },
+    "120": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 59.0
+        }
+      }
+    },
+    "121": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 253.0
+        }
+      }
+    },
+    "122": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 57.0
+        }
+      }
+    },
+    "123": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 131.0
+        }
+      }
+    },
+    "124": {
+      "size": 20,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 190.0,
+          "false_negatives": 191.0
+        }
+      }
+    },
+    "125": {
+      "size": 19,
+      "enriched_in": [
+        "CORUM",
+        "KEGG",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.3333333333333333,
+          "recall": 0.114,
+          "true_positives": 57.0,
+          "false_positives": 114.0,
+          "false_negatives": 443.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 6,
+          "enriched_groups": [
+            "20S proteasome",
+            "26S proteasome",
+            "PA28-20S proteasome",
+            "PA28gamma-20S proteasome",
+            "PA700 complex",
+            "PA700-20S-PA28 complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 8,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_ABETA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SNCA_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SOD1_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_UBQLN2_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_MUTATION_INACTIVATED_VCP_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION",
+            "KEGG_MEDICUS_VARIANT_SCRAPIE_CONFORMATION_PRPSC_TO_26S_PROTEASOME_MEDIATED_PROTEIN_DEGRADATION"
+          ]
+        }
+      }
+    },
+    "126": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 45.0
+        }
+      }
+    },
+    "127": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005847953216374269,
+          "recall": 0.004761904761904762,
+          "true_positives": 1.0,
+          "false_positives": 170.0,
+          "false_negatives": 209.0
+        }
+      }
+    },
+    "128": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 151.0
+        }
+      }
+    },
+    "129": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 175.0
+        }
+      }
+    },
+    "130": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.005847953216374269,
+          "recall": 0.005263157894736842,
+          "true_positives": 1.0,
+          "false_positives": 170.0,
+          "false_negatives": 189.0
+        }
+      }
+    },
+    "131": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 113.0
+        }
+      }
+    },
+    "132": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 43.0
+        }
+      }
+    },
+    "133": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.017543859649122806,
+          "recall": 0.037037037037037035,
+          "true_positives": 3.0,
+          "false_positives": 168.0,
+          "false_negatives": 78.0
+        }
+      }
+    },
+    "134": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 40.0
+        }
+      }
+    },
+    "135": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 257.0
+        }
+      }
+    },
+    "136": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 68.0
+        }
+      }
+    },
+    "137": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 194.0
+        }
+      }
+    },
+    "138": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.011695906432748537,
+          "recall": 0.009615384615384616,
+          "true_positives": 2.0,
+          "false_positives": 169.0,
+          "false_negatives": 206.0
+        }
+      }
+    },
+    "139": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 118.0
+        }
+      }
+    },
+    "140": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 179.0
+        }
+      }
+    },
+    "141": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 99.0
+        }
+      }
+    },
+    "142": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 30.0
+        }
+      }
+    },
+    "143": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 91.0
+        }
+      }
+    },
+    "144": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 59.0
+        }
+      }
+    },
+    "145": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.011695906432748537,
+          "recall": 0.012987012987012988,
+          "true_positives": 2.0,
+          "false_positives": 169.0,
+          "false_negatives": 152.0
+        }
+      }
+    },
+    "146": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 106.0
+        }
+      }
+    },
+    "147": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 136.0
+        }
+      }
+    },
+    "148": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 106.0
+        }
+      }
+    },
+    "149": {
+      "size": 19,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 171.0,
+          "false_negatives": 166.0
+        }
+      }
+    },
+    "150": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 153.0,
+          "false_negatives": 124.0
+        }
+      }
+    },
+    "151": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 153.0,
+          "false_negatives": 117.0
+        }
+      }
+    },
+    "152": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 153.0,
+          "false_negatives": 143.0
+        }
+      }
+    },
+    "153": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 153.0,
+          "false_negatives": 47.0
+        }
+      }
+    },
+    "154": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.006535947712418301,
+          "recall": 0.013333333333333334,
+          "true_positives": 1.0,
+          "false_positives": 152.0,
+          "false_negatives": 74.0
+        }
+      }
+    },
+    "155": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 153.0,
+          "false_negatives": 28.0
+        }
+      }
+    },
+    "156": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 153.0,
+          "false_negatives": 65.0
+        }
+      }
+    },
+    "157": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.006535947712418301,
+          "recall": 0.005747126436781609,
+          "true_positives": 1.0,
+          "false_positives": 152.0,
+          "false_negatives": 173.0
+        }
+      }
+    },
+    "158": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 153.0,
+          "false_negatives": 97.0
+        }
+      }
+    },
+    "159": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 153.0,
+          "false_negatives": 107.0
+        }
+      }
+    },
+    "160": {
+      "size": 18,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 153.0,
+          "false_negatives": 90.0
+        }
+      }
+    },
+    "161": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 223.0
+        }
+      }
+    },
+    "162": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.007352941176470588,
+          "recall": 0.012658227848101266,
+          "true_positives": 1.0,
+          "false_positives": 135.0,
+          "false_negatives": 78.0
+        }
+      }
+    },
+    "163": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 244.0
+        }
+      }
+    },
+    "164": {
+      "size": 17,
+      "enriched_in": [
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.08088235294117647,
+          "recall": 0.01877133105802048,
+          "true_positives": 11.0,
+          "false_positives": 125.0,
+          "false_negatives": 575.0
+        }
+      }
+    },
+    "165": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 87.0
+        }
+      }
+    },
+    "166": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 149.0
+        }
+      }
+    },
+    "167": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 98.0
+        }
+      }
+    },
+    "168": {
+      "size": 17,
+      "enriched_in": [
+        "CORUM",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.058823529411764705,
+          "recall": 0.026490066225165563,
+          "true_positives": 8.0,
+          "false_positives": 128.0,
+          "false_negatives": 294.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "C complex spliceosome"
+          ]
+        }
+      }
+    },
+    "169": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 96.0
+        }
+      }
+    },
+    "170": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.007352941176470588,
+          "recall": 0.004048582995951417,
+          "true_positives": 1.0,
+          "false_positives": 135.0,
+          "false_negatives": 246.0
+        }
+      }
+    },
+    "171": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.007352941176470588,
+          "recall": 0.006060606060606061,
+          "true_positives": 1.0,
+          "false_positives": 135.0,
+          "false_negatives": 164.0
+        }
+      }
+    },
+    "172": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 48.0
+        }
+      }
+    },
+    "173": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 116.0
+        }
+      }
+    },
+    "174": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 66.0
+        }
+      }
+    },
+    "175": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 98.0
+        }
+      }
+    },
+    "176": {
+      "size": 17,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 136.0,
+          "false_negatives": 190.0
+        }
+      }
+    },
+    "177": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 120.0,
+          "false_negatives": 35.0
+        }
+      }
+    },
+    "178": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 120.0,
+          "false_negatives": 179.0
+        }
+      }
+    },
+    "179": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 120.0,
+          "false_negatives": 161.0
+        }
+      }
+    },
+    "180": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.008333333333333333,
+          "recall": 0.007246376811594203,
+          "true_positives": 1.0,
+          "false_positives": 119.0,
+          "false_negatives": 137.0
+        }
+      }
+    },
+    "181": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 120.0,
+          "false_negatives": 118.0
+        }
+      }
+    },
+    "182": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 120.0,
+          "false_negatives": 81.0
+        }
+      }
+    },
+    "183": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 120.0,
+          "false_negatives": 73.0
+        }
+      }
+    },
+    "184": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 120.0,
+          "false_negatives": 163.0
+        }
+      }
+    },
+    "185": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 120.0,
+          "false_negatives": 39.0
+        }
+      }
+    },
+    "186": {
+      "size": 16,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 120.0,
+          "false_negatives": 214.0
+        }
+      }
+    },
+    "187": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 91.0
+        }
+      }
+    },
+    "188": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 188.0
+        }
+      }
+    },
+    "189": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 26.0
+        }
+      }
+    },
+    "190": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 12.0
+        }
+      }
+    },
+    "191": {
+      "size": 15,
+      "enriched_in": [
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.047619047619047616,
+          "recall": 0.009823182711198428,
+          "true_positives": 5.0,
+          "false_positives": 100.0,
+          "false_negatives": 504.0
+        }
+      }
+    },
+    "192": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 106.0
+        }
+      }
+    },
+    "193": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 82.0
+        }
+      }
+    },
+    "194": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 123.0
+        }
+      }
+    },
+    "195": {
+      "size": 15,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 105.0,
+          "false_negatives": 33.0
+        }
+      }
+    },
+    "196": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.02197802197802198,
+          "recall": 0.009615384615384616,
+          "true_positives": 2.0,
+          "false_positives": 89.0,
+          "false_negatives": 206.0
+        }
+      }
+    },
+    "197": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 91.0,
+          "false_negatives": 22.0
+        }
+      }
+    },
+    "198": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 91.0,
+          "false_negatives": 182.0
+        }
+      }
+    },
+    "199": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 91.0,
+          "false_negatives": 161.0
+        }
+      }
+    },
+    "200": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 91.0,
+          "false_negatives": 125.0
+        }
+      }
+    },
+    "201": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 91.0,
+          "false_negatives": 53.0
+        }
+      }
+    },
+    "202": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 91.0,
+          "false_negatives": 94.0
+        }
+      }
+    },
+    "203": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 91.0,
+          "false_negatives": 20.0
+        }
+      }
+    },
+    "204": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 91.0,
+          "false_negatives": 64.0
+        }
+      }
+    },
+    "205": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.01098901098901099,
+          "recall": 0.005025125628140704,
+          "true_positives": 1.0,
+          "false_positives": 90.0,
+          "false_negatives": 198.0
+        }
+      }
+    },
+    "206": {
+      "size": 14,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 91.0,
+          "false_negatives": 105.0
+        }
+      }
+    },
+    "207": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.01282051282051282,
+          "recall": 0.00641025641025641,
+          "true_positives": 1.0,
+          "false_positives": 77.0,
+          "false_negatives": 155.0
+        }
+      }
+    },
+    "208": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 78.0,
+          "false_negatives": 98.0
+        }
+      }
+    },
+    "209": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 78.0,
+          "false_negatives": 2.0
+        }
+      }
+    },
+    "210": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 78.0,
+          "false_negatives": 17.0
+        }
+      }
+    },
+    "211": {
+      "size": 13,
+      "enriched_in": [
+        "CORUM",
+        "KEGG",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.4230769230769231,
+          "recall": 0.1,
+          "true_positives": 33.0,
+          "false_positives": 45.0,
+          "false_negatives": 297.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 2,
+          "enriched_groups": [
+            "BBS-chaperonin complex",
+            "CCT complex (chaperonin containing TCP1 complex)"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 22,
+          "enriched_groups": [
+            "KEGG_MEDICUS_ENV_FACTOR_IRON_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_ENV_FACTOR_ZN_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_PATHOGEN_ESCHERICHIA_ESPG_TO_MICROTUBULE_RHOA_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_PATHOGEN_SALMONELLA_SIFA_TO_MICROTUBULE_PLUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_ARL8_REGULATED_MICROTUBULE_PLUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_ASSEMBLY_AND_TRAFFICKING_OF_TELOMERASE",
+            "KEGG_MEDICUS_REFERENCE_BRANCHING_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_REFERENCE_KINETOCHORE_FIBER_ORGANIZATION",
+            "KEGG_MEDICUS_REFERENCE_KINETOCHORE_MICROTUBULE_ATTACHMENT",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_DEPOLYMERIZATION",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_DEPOLYMERIZATION_AT_THE_MINUS_ENDS",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_NUCLEATION",
+            "KEGG_MEDICUS_REFERENCE_MICROTUBULE_RHOA_SIGNALING_PATHWAY",
+            "KEGG_MEDICUS_REFERENCE_PROMOTION_OF_MICROTUBULE_GROWTH",
+            "KEGG_MEDICUS_REFERENCE_RAB7_REGULATED_MICROTUBULE_MINUS_END_DIRECTED_TRANSPORT",
+            "KEGG_MEDICUS_REFERENCE_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_ABETA_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_DCTN1_TO_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_ANTEROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_HTT_TO_RETROGRADE_AXONAL_TRANSPORT",
+            "KEGG_MEDICUS_VARIANT_MUTATION_CAUSED_ABERRANT_SNCA_TO_ANTEROGRADE_AXONAL_TRANSPORT"
+          ]
+        }
+      }
+    },
+    "212": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 78.0,
+          "false_negatives": 101.0
+        }
+      }
+    },
+    "213": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 78.0,
+          "false_negatives": 141.0
+        }
+      }
+    },
+    "214": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.01282051282051282,
+          "recall": 0.007352941176470588,
+          "true_positives": 1.0,
+          "false_positives": 77.0,
+          "false_negatives": 135.0
+        }
+      }
+    },
+    "215": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 78.0,
+          "false_negatives": 107.0
+        }
+      }
+    },
+    "216": {
+      "size": 13,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 78.0,
+          "false_negatives": 54.0
+        }
+      }
+    },
+    "217": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 66.0,
+          "false_negatives": 31.0
+        }
+      }
+    },
+    "218": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 66.0,
+          "false_negatives": 11.0
+        }
+      }
+    },
+    "219": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.015151515151515152,
+          "recall": 0.02127659574468085,
+          "true_positives": 1.0,
+          "false_positives": 65.0,
+          "false_negatives": 46.0
+        }
+      }
+    },
+    "220": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 66.0,
+          "false_negatives": 70.0
+        }
+      }
+    },
+    "221": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 66.0,
+          "false_negatives": 186.0
+        }
+      }
+    },
+    "222": {
+      "size": 12,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 66.0,
+          "false_negatives": 117.0
+        }
+      }
+    },
+    "223": {
+      "size": 11,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 55.0,
+          "false_negatives": 110.0
+        }
+      }
+    },
+    "224": {
+      "size": 11,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 55.0,
+          "false_negatives": 33.0
+        }
+      }
+    },
+    "225": {
+      "size": 11,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 55.0,
+          "false_negatives": 89.0
+        }
+      }
+    },
+    "226": {
+      "size": 11,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 55.0,
+          "false_negatives": 54.0
+        }
+      }
+    },
+    "227": {
+      "size": 11,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 55.0,
+          "false_negatives": 84.0
+        }
+      }
+    },
+    "228": {
+      "size": 11,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 55.0,
+          "false_negatives": 65.0
+        }
+      }
+    },
+    "229": {
+      "size": 11,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 55.0,
+          "false_negatives": 50.0
+        }
+      }
+    },
+    "230": {
+      "size": 11,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 55.0,
+          "false_negatives": 43.0
+        }
+      }
+    },
+    "231": {
+      "size": 11,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 55.0,
+          "false_negatives": 33.0
+        }
+      }
+    },
+    "232": {
+      "size": 10,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 45.0,
+          "false_negatives": 69.0
+        }
+      }
+    },
+    "233": {
+      "size": 10,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 45.0,
+          "false_negatives": 22.0
+        }
+      }
+    },
+    "234": {
+      "size": 10,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 45.0,
+          "false_negatives": 89.0
+        }
+      }
+    },
+    "235": {
+      "size": 10,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 45.0,
+          "false_negatives": 63.0
+        }
+      }
+    },
+    "236": {
+      "size": 10,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 45.0,
+          "false_negatives": 139.0
+        }
+      }
+    },
+    "237": {
+      "size": 10,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 45.0,
+          "false_negatives": 25.0
+        }
+      }
+    },
+    "238": {
+      "size": 10,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 45.0,
+          "false_negatives": 96.0
+        }
+      }
+    },
+    "239": {
+      "size": 10,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 45.0,
+          "false_negatives": 136.0
+        }
+      }
+    },
+    "240": {
+      "size": 10,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 45.0,
+          "false_negatives": 63.0
+        }
+      }
+    },
+    "241": {
+      "size": 9,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 36.0,
+          "false_negatives": 22.0
+        }
+      }
+    },
+    "242": {
+      "size": 9,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 36.0,
+          "false_negatives": 65.0
+        }
+      }
+    },
+    "243": {
+      "size": 9,
+      "enriched_in": [
+        "CORUM",
+        "KEGG",
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.7777777777777778,
+          "recall": 0.8484848484848485,
+          "true_positives": 28.0,
+          "false_positives": 8.0,
+          "false_negatives": 5.0
+        },
+        "CORUM": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "HAUS augmin-like complex"
+          ]
+        },
+        "KEGG": {
+          "num_enriched_groups": 1,
+          "enriched_groups": [
+            "KEGG_MEDICUS_REFERENCE_BRANCHING_MICROTUBULE_NUCLEATION"
+          ]
+        }
+      }
+    },
+    "244": {
+      "size": 9,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 36.0,
+          "false_negatives": 98.0
+        }
+      }
+    },
+    "245": {
+      "size": 8,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 28.0,
+          "false_negatives": 85.0
+        }
+      }
+    },
+    "246": {
+      "size": 6,
+      "enriched_in": [
+        "STRING"
+      ],
+      "details": {
+        "STRING": {
+          "precision": 0.06666666666666667,
+          "recall": 0.014492753623188406,
+          "true_positives": 1.0,
+          "false_positives": 14.0,
+          "false_negatives": 68.0
+        }
+      }
+    },
+    "247": {
+      "size": 6,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 15.0,
+          "false_negatives": 7.0
+        }
+      }
+    },
+    "248": {
+      "size": 6,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 15.0,
+          "false_negatives": 73.0
+        }
+      }
+    },
+    "249": {
+      "size": 5,
+      "enriched_in": [],
+      "details": {
+        "STRING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "true_positives": 0.0,
+          "false_positives": 10.0,
+          "false_negatives": 14.0
+        }
+      }
+    }
+  },
+  "enrichment_categories": {
+    "('CORUM', 'KEGG', 'STRING')": 8,
+    "('None',)": 230,
+    "('CORUM', 'STRING')": 4,
+    "('CORUM', 'KEGG')": 1,
+    "('CORUM',)": 2,
+    "('STRING',)": 5
+  },
+  "total_clusters_analyzed": 250
+}

@@ -8,6 +8,7 @@
 # - Feature Extraction: CP Measure vs CP Multichannel comparison
 # - Feature Timing: Individual cp_measure function timing
 # - Merge: Fast mode vs Stitch mode cell matching
+# - Clustering: Brieflow vs Funk et al. 2022 comparison
 #
 # Usage: bash run_benchmarks.sh [OPTIONS]
 #
@@ -17,6 +18,7 @@
 #   --feature-extraction  Only run feature extraction comparison
 #   --feature-timing      Only run feature function timing
 #   --merge               Only run merge mode comparison (fast vs stitch)
+#   --cluster             Only run clustering comparison (Brieflow vs Funk et al.)
 #   --help                Show this help message
 
 set -e  # Exit on error
@@ -25,7 +27,7 @@ set -e  # Exit on error
 # CONFIGURATION
 # ============================================================================
 
-MAIN_ENV="brieflow_aconcagua_new_updates"
+MAIN_ENV="brieflow_aconcagua"
 CELLPOSE_ENV="brieflow_cellpose4"
 STARDIST_ENV="brieflow_stardist"
 
@@ -45,6 +47,7 @@ RUN_SPOT_CALLING=true
 RUN_FEATURE_EXTRACTION=true
 RUN_FEATURE_TIMING=true
 RUN_MERGE=true
+RUN_CLUSTER=true
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -53,6 +56,7 @@ while [[ $# -gt 0 ]]; do
             RUN_FEATURE_EXTRACTION=false
             RUN_FEATURE_TIMING=false
             RUN_MERGE=false
+            RUN_CLUSTER=false
             shift
             ;;
         --spot-calling)
@@ -60,6 +64,7 @@ while [[ $# -gt 0 ]]; do
             RUN_FEATURE_EXTRACTION=false
             RUN_FEATURE_TIMING=false
             RUN_MERGE=false
+            RUN_CLUSTER=false
             shift
             ;;
         --feature-extraction)
@@ -67,6 +72,7 @@ while [[ $# -gt 0 ]]; do
             RUN_SPOT_CALLING=false
             RUN_FEATURE_TIMING=false
             RUN_MERGE=false
+            RUN_CLUSTER=false
             shift
             ;;
         --feature-timing)
@@ -74,6 +80,7 @@ while [[ $# -gt 0 ]]; do
             RUN_SPOT_CALLING=false
             RUN_FEATURE_EXTRACTION=false
             RUN_MERGE=false
+            RUN_CLUSTER=false
             shift
             ;;
         --merge)
@@ -81,6 +88,15 @@ while [[ $# -gt 0 ]]; do
             RUN_SPOT_CALLING=false
             RUN_FEATURE_EXTRACTION=false
             RUN_FEATURE_TIMING=false
+            RUN_CLUSTER=false
+            shift
+            ;;
+        --cluster)
+            RUN_SEGMENTATION=false
+            RUN_SPOT_CALLING=false
+            RUN_FEATURE_EXTRACTION=false
+            RUN_FEATURE_TIMING=false
+            RUN_MERGE=false
             shift
             ;;
         --help)
@@ -94,6 +110,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --feature-extraction  Only run feature extraction comparison"
             echo "  --feature-timing      Only run feature function timing"
             echo "  --merge               Only run merge mode comparison (fast vs stitch)"
+            echo "  --cluster             Only run clustering comparison (Brieflow vs Funk et al.)"
             echo "  --help                Show this help message"
             exit 0
             ;;
@@ -288,6 +305,24 @@ if [ "$RUN_MERGE" = true ]; then
     fi
 
     log_success "Merge benchmarks completed"
+fi
+
+# ============================================================================
+# CLUSTERING BENCHMARKS (BRIEFLOW vs FUNK ET AL. 2022)
+# ============================================================================
+
+if [ "$RUN_CLUSTER" = true ]; then
+    echo ""
+    echo "============================================================================"
+    echo "CLUSTERING BENCHMARKS (BRIEFLOW vs FUNK ET AL. 2022)"
+    echo "============================================================================"
+
+    log_info "Running clustering comparison benchmark..."
+    if ! run_in_env "$MAIN_ENV" "cluster.py" "main"; then
+        OVERALL_SUCCESS=false
+    fi
+
+    log_success "Clustering benchmarks completed"
 fi
 
 # ============================================================================
