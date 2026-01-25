@@ -45,14 +45,14 @@ IDEAL_CONFIGS = [
     {
         "name": "Interphase",
         "cell_class": "Interphase",
-        "brieflow_k": 14,
+        "brieflow_k": 13,
         "funk_k": 10,  # Funk's published ideal resolution
         "display_name": "Interphase",
     },
     {
         "name": "Mitotic",
         "cell_class": "Mitotic",
-        "brieflow_k": 7,
+        "brieflow_k": 5,
         "funk_k": 9,  # Funk's published ideal resolution
         "display_name": "Mitotic",
     },
