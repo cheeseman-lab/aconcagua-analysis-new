@@ -162,3 +162,7 @@ sample_fp	plate	well	round	channel
 /archive/cheeseman/ops_data/aconcagua/input_ph/plate_8/round_1/20200210_222508_389/WellB3_ChannelAF750_1x1_Seq0006.nd2	8	B3	1	AF750_1x1
 /archive/cheeseman/ops_data/aconcagua/input_ph/plate_8/round_1/20200210_222508_389/WellB3_ChannelDAPI_1x1-GFP_1x1_Seq0015.nd2	8	B3	1	DAPI_1x1-GFP_1x1
 /archive/cheeseman/ops_data/aconcagua/input_ph/plate_8/round_2/20200216_140242_361/WellB3_ChannelGFP_1x1_Seq0003.nd2	8	B3	2	GFP_1x1
+/lab/ops_data/aconcagua/input_ph/plate_8/round_1/20200210_222508_389/WellA2_ChannelA594_1x1_Seq0003.nd2	8	A2	1	A594_1x1
+/lab/ops_data/aconcagua/input_ph/plate_8/round_1/20200210_222508_389/WellA2_ChannelAF750_1x1_Seq0002.nd2	8	A2	1	AF750_1x1
+/lab/ops_data/aconcagua/input_ph/plate_8/round_1/20200210_222508_389/WellA2_ChannelDAPI_1x1-GFP_1x1_Seq0013.nd2	8	A2	1	DAPI_1x1-GFP_1x1
+/lab/ops_data/aconcagua/input_ph/plate_8/round_2/20200216_140242_361/WellA2_ChannelGFP_1x1_Seq0001.nd2	8	A2	2	GFP_1x1
