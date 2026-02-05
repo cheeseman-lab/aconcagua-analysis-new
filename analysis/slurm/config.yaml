@@ -10,7 +10,7 @@ default-resources:
     cpus_per_task: 1
     runtime: 800
     slurm_extra: "'--output=slurm/slurm_output/rule/%j.out'"
-jobs: 200
+jobs: 100
 
 set-resources:
    # preprocessing
@@ -139,13 +139,13 @@ set-resources:
     filter:
         mem_mb: 200000
     generate_feature_table:
-        mem_mb: 980000
+        mem_mb: 1300000
         cpus_per_task: 4
         runtime: 2880  # 2 days
     align:
         mem_mb: 1300000
         cpus_per_task: 32
-        runtime: 5760  # 4 days
+        runtime: 2880  # 2 days
     aggregate:
         mem_mb: 980000
         cpus_per_task: 4
