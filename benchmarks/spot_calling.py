@@ -16,7 +16,6 @@ import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 from tifffile import imread, imwrite
 import shutil
 from pathlib import Path
@@ -39,11 +38,7 @@ from lib.sbs.call_cells import call_cells
 from lib.shared.extract_phenotype_minimal import extract_phenotype_minimal
 
 # Import evaluation functions
-from lib.sbs.eval_mapping import (
-    plot_read_mapping_heatmap,
-    plot_cell_mapping_heatmap,
-    mapping_overview
-)
+from lib.sbs.eval_mapping import plot_read_mapping_heatmap, mapping_overview
 
 random.seed(42)
 
@@ -110,7 +105,9 @@ def find_sample_data(one_per_plate=True):
     aligned_files = list(PIPELINE_OUTPUT_DIR.glob("P-*_W-*_T-*__aligned.tiff"))
 
     if not aligned_files:
-        print("No aligned files found! Have you run the pipeline with temp→None changes?")
+        print(
+            "No aligned files found! Have you run the pipeline with temp→None changes?"
+        )
         return []
 
     # Group samples by plate
@@ -120,10 +117,10 @@ def find_sample_data(one_per_plate=True):
         base_filename = aligned_file.name.replace("__aligned.tiff", "")
 
         # Parse plate, well, tile from filename
-        parts = base_filename.split('_')
-        plate = parts[0].replace('P-', '')
-        well = parts[1].replace('W-', '')
-        tile = parts[2].replace('T-', '')
+        parts = base_filename.split("_")
+        plate = parts[0].replace("P-", "")
+        well = parts[1].replace("W-", "")
+        tile = parts[2].replace("T-", "")
 
         # Check for all required permanent files
         log_filtered_file = PIPELINE_OUTPUT_DIR / f"{base_filename}__log_filtered.tiff"
@@ -132,12 +129,14 @@ def find_sample_data(one_per_plate=True):
         cells_file = PIPELINE_OUTPUT_DIR / f"{base_filename}__cells.tiff"
 
         # Only include if ALL permanent files exist
-        if all([
-            log_filtered_file.exists(),
-            max_filtered_file.exists(),
-            nuclei_file.exists(),
-            cells_file.exists()
-        ]):
+        if all(
+            [
+                log_filtered_file.exists(),
+                max_filtered_file.exists(),
+                nuclei_file.exists(),
+                cells_file.exists(),
+            ]
+        ):
             sample = {
                 "plate": plate,
                 "well": well,
@@ -147,7 +146,7 @@ def find_sample_data(one_per_plate=True):
                 "log_filtered_file": str(log_filtered_file),
                 "max_filtered_file": str(max_filtered_file),
                 "nuclei_file": str(nuclei_file),
-                "cells_file": str(cells_file)
+                "cells_file": str(cells_file),
             }
 
             if plate not in samples_by_plate:
@@ -161,39 +160,45 @@ def find_sample_data(one_per_plate=True):
         if samples:
             selected = random.choice(samples)
             selected_samples.append(selected)
-            print(f"Selected sample: plate {plate}, well {selected['well']}, tile {selected['tile']}")
+            print(
+                f"Selected sample: plate {plate}, well {selected['well']}, tile {selected['tile']}"
+            )
 
     if not selected_samples:
         print("Could not find samples with complete permanent files!")
         print("Make sure pipeline has been run with temp→None changes.")
     else:
-        print(f"\nFound {len(selected_samples)} samples (one per plate) with complete permanent files")
+        print(
+            f"\nFound {len(selected_samples)} samples (one per plate) with complete permanent files"
+        )
 
     return selected_samples
 
 
 def process_standard_method(sample, df_barcode_library=None):
     """Process a sample with the standard spot detection method."""
-    print(f"Processing plate {sample['plate']}, well {sample['well']}, tile {sample['tile']} with standard method...")
+    print(
+        f"Processing plate {sample['plate']}, well {sample['well']}, tile {sample['tile']} with standard method..."
+    )
 
     # Track metrics
     metrics = {
-        'method': 'standard',
-        'plate': sample['plate'],
-        'well': sample['well'],
-        'tile': sample['tile'],
-        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "method": "standard",
+        "plate": sample["plate"],
+        "well": sample["well"],
+        "tile": sample["tile"],
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
 
     try:
         # Load pre-existing permanent files
         print("  Loading intermediate files from pipeline...")
 
-        aligned_images = imread(sample['aligned_file'])
-        log_filtered_data = imread(sample['log_filtered_file'])
-        max_filtered_data = imread(sample['max_filtered_file'])
-        cells_data = imread(sample['cells_file'])
-        nuclei_data = imread(sample['nuclei_file'])
+        aligned_images = imread(sample["aligned_file"])
+        log_filtered_data = imread(sample["log_filtered_file"])
+        max_filtered_data = imread(sample["max_filtered_file"])
+        cells_data = imread(sample["cells_file"])
+        nuclei_data = imread(sample["nuclei_file"])
 
         print(f"  Loaded aligned images: {aligned_images.shape}")
         print(f"  Loaded LOG filtered data: {log_filtered_data.shape}")
@@ -207,7 +212,7 @@ def process_standard_method(sample, df_barcode_library=None):
         # Compute standard deviation (method-specific for standard peak detection)
         standard_deviation_data = compute_standard_deviation(
             log_filtered_data=log_filtered_data,
-            remove_index=STANDARD_PARAMS["dapi_index"]
+            remove_index=STANDARD_PARAMS["dapi_index"],
         )
 
         # Find peaks using standard method
@@ -233,10 +238,10 @@ def process_standard_method(sample, df_barcode_library=None):
             threshold_peaks=STANDARD_PARAMS["threshold_peaks"],
             bases=STANDARD_PARAMS["bases"],
             wildcards={
-                'plate': sample['plate'],
-                'well': sample['well'],
-                'tile': sample['tile']
-            }
+                "plate": sample["plate"],
+                "well": sample["well"],
+                "tile": sample["tile"],
+            },
         )
 
         # Save bases data
@@ -247,7 +252,7 @@ def process_standard_method(sample, df_barcode_library=None):
         reads_data = call_reads(
             bases_data=bases_data,
             peaks_data=peaks_data,
-            method=STANDARD_PARAMS["call_reads_method"]
+            method=STANDARD_PARAMS["call_reads_method"],
         )
 
         # Save reads data
@@ -255,11 +260,11 @@ def process_standard_method(sample, df_barcode_library=None):
         reads_data.to_csv(reads_path, sep="\t", index=False)
 
         # Add metrics
-        metrics['runtime_seconds'] = runtime
-        metrics['memory_mb'] = mem_usage
-        metrics['total_peaks'] = len(peaks_data.nonzero()[0])
-        metrics['total_bases'] = len(bases_data)
-        metrics['total_reads'] = len(reads_data)
+        metrics["runtime_seconds"] = runtime
+        metrics["memory_mb"] = mem_usage
+        metrics["total_peaks"] = len(peaks_data.nonzero()[0])
+        metrics["total_bases"] = len(bases_data)
+        metrics["total_reads"] = len(reads_data)
 
         # If barcode library is provided, evaluate mapping quality
         if df_barcode_library is not None:
@@ -272,11 +277,13 @@ def process_standard_method(sample, df_barcode_library=None):
                 barcodes,
                 shape="6W_sbs",
                 return_plot=False,
-                return_summary=True
+                return_summary=True,
             )
 
             if read_mapping is not None and len(read_mapping) > 0:
-                metrics['read_mapping_fraction'] = read_mapping['fraction of reads mapping'].mean()
+                metrics["read_mapping_fraction"] = read_mapping[
+                    "fraction of reads mapping"
+                ].mean()
 
             # Call cells (assign barcodes to cells)
             cells_data_df = call_cells(
@@ -285,7 +292,7 @@ def process_standard_method(sample, df_barcode_library=None):
                 q_min=STANDARD_PARAMS["q_min"],
                 prefix_col=STANDARD_PARAMS["prefix_col"],
                 sort_calls=STANDARD_PARAMS["sort_calls"],
-                error_correct=STANDARD_PARAMS["error_correct"]
+                error_correct=STANDARD_PARAMS["error_correct"],
             )
 
             # Save cells data
@@ -297,14 +304,16 @@ def process_standard_method(sample, df_barcode_library=None):
                 phenotype_data=nuclei_data,
                 nuclei_data=nuclei_data,
                 wildcards={
-                    'plate': sample['plate'],
-                    'well': sample['well'],
-                    'tile': sample['tile']
-                }
+                    "plate": sample["plate"],
+                    "well": sample["well"],
+                    "tile": sample["tile"],
+                },
             )
 
             # Save SBS info
-            sbs_info_path = OUTPUT_DIR / "standard" / f"{sample['base_name']}_sbs_info.tsv"
+            sbs_info_path = (
+                OUTPUT_DIR / "standard" / f"{sample['base_name']}_sbs_info.tsv"
+            )
             sbs_info.to_csv(sbs_info_path, sep="\t", index=False)
 
             # Calculate cell mapping statistics
@@ -314,37 +323,40 @@ def process_standard_method(sample, df_barcode_library=None):
                     metrics[col] = mapping_stats.iloc[0][col]
 
         print(f"  Successfully processed standard method in {runtime:.2f} seconds")
-        return {'metrics': metrics}
+        return {"metrics": metrics}
 
     except Exception as e:
         print(f"  Error in standard method: {e}")
         import traceback
+
         traceback.print_exc()
-        metrics['error'] = str(e)
-        return {'metrics': metrics}
+        metrics["error"] = str(e)
+        return {"metrics": metrics}
 
 
 def process_spotiflow_method(sample, df_barcode_library=None):
     """Process a sample with the Spotiflow spot detection method."""
-    print(f"Processing plate {sample['plate']}, well {sample['well']}, tile {sample['tile']} with spotiflow method...")
+    print(
+        f"Processing plate {sample['plate']}, well {sample['well']}, tile {sample['tile']} with spotiflow method..."
+    )
 
     # Track metrics
     metrics = {
-        'method': 'spotiflow',
-        'plate': sample['plate'],
-        'well': sample['well'],
-        'tile': sample['tile'],
-        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "method": "spotiflow",
+        "plate": sample["plate"],
+        "well": sample["well"],
+        "tile": sample["tile"],
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
 
     try:
         # Load pre-existing permanent files
         print("  Loading intermediate files from pipeline...")
 
-        aligned_images = imread(sample['aligned_file'])
-        max_filtered_data = imread(sample['max_filtered_file'])
-        cells_data = imread(sample['cells_file'])
-        nuclei_data = imread(sample['nuclei_file'])
+        aligned_images = imread(sample["aligned_file"])
+        max_filtered_data = imread(sample["max_filtered_file"])
+        cells_data = imread(sample["cells_file"])
+        nuclei_data = imread(sample["nuclei_file"])
 
         print(f"  Loaded aligned images: {aligned_images.shape}")
         print(f"  Loaded max filtered data: {max_filtered_data.shape}")
@@ -362,7 +374,7 @@ def process_spotiflow_method(sample, df_barcode_library=None):
             prob_thresh=SPOTIFLOW_PARAMS["spotiflow_threshold"],
             min_distance=SPOTIFLOW_PARAMS["spotiflow_min_distance"],
             remove_index=SPOTIFLOW_PARAMS["dapi_index"],
-            verbose=True
+            verbose=True,
         )
 
         # Save peaks TIFF for visualization
@@ -385,10 +397,10 @@ def process_spotiflow_method(sample, df_barcode_library=None):
             threshold_peaks=SPOTIFLOW_PARAMS["threshold_peaks"],
             bases=SPOTIFLOW_PARAMS["bases"],
             wildcards={
-                'plate': sample['plate'],
-                'well': sample['well'],
-                'tile': sample['tile']
-            }
+                "plate": sample["plate"],
+                "well": sample["well"],
+                "tile": sample["tile"],
+            },
         )
 
         # Save bases data
@@ -399,7 +411,7 @@ def process_spotiflow_method(sample, df_barcode_library=None):
         reads_data = call_reads(
             bases_data=bases_data,
             peaks_data=peaks_data,
-            method=SPOTIFLOW_PARAMS["call_reads_method"]
+            method=SPOTIFLOW_PARAMS["call_reads_method"],
         )
 
         # Save reads data
@@ -407,11 +419,11 @@ def process_spotiflow_method(sample, df_barcode_library=None):
         reads_data.to_csv(reads_path, sep="\t", index=False)
 
         # Add metrics
-        metrics['runtime_seconds'] = runtime
-        metrics['memory_mb'] = mem_usage
-        metrics['total_peaks'] = len(peaks_data.nonzero()[0])
-        metrics['total_bases'] = len(bases_data)
-        metrics['total_reads'] = len(reads_data)
+        metrics["runtime_seconds"] = runtime
+        metrics["memory_mb"] = mem_usage
+        metrics["total_peaks"] = len(peaks_data.nonzero()[0])
+        metrics["total_bases"] = len(bases_data)
+        metrics["total_reads"] = len(reads_data)
 
         # If barcode library is provided, evaluate mapping quality
         if df_barcode_library is not None:
@@ -424,11 +436,13 @@ def process_spotiflow_method(sample, df_barcode_library=None):
                 barcodes,
                 shape="6W_sbs",
                 return_plot=False,
-                return_summary=True
+                return_summary=True,
             )
 
             if read_mapping is not None and len(read_mapping) > 0:
-                metrics['read_mapping_fraction'] = read_mapping['fraction of reads mapping'].mean()
+                metrics["read_mapping_fraction"] = read_mapping[
+                    "fraction of reads mapping"
+                ].mean()
 
             # Call cells (assign barcodes to cells)
             cells_data_df = call_cells(
@@ -437,7 +451,7 @@ def process_spotiflow_method(sample, df_barcode_library=None):
                 q_min=SPOTIFLOW_PARAMS["q_min"],
                 prefix_col=SPOTIFLOW_PARAMS["prefix_col"],
                 sort_calls=SPOTIFLOW_PARAMS["sort_calls"],
-                error_correct=SPOTIFLOW_PARAMS["error_correct"]
+                error_correct=SPOTIFLOW_PARAMS["error_correct"],
             )
 
             # Save cells data
@@ -449,14 +463,16 @@ def process_spotiflow_method(sample, df_barcode_library=None):
                 phenotype_data=nuclei_data,
                 nuclei_data=nuclei_data,
                 wildcards={
-                    'plate': sample['plate'],
-                    'well': sample['well'],
-                    'tile': sample['tile']
-                }
+                    "plate": sample["plate"],
+                    "well": sample["well"],
+                    "tile": sample["tile"],
+                },
             )
 
             # Save SBS info
-            sbs_info_path = OUTPUT_DIR / "spotiflow" / f"{sample['base_name']}_sbs_info.tsv"
+            sbs_info_path = (
+                OUTPUT_DIR / "spotiflow" / f"{sample['base_name']}_sbs_info.tsv"
+            )
             sbs_info.to_csv(sbs_info_path, sep="\t", index=False)
 
             # Calculate cell mapping statistics
@@ -466,14 +482,15 @@ def process_spotiflow_method(sample, df_barcode_library=None):
                     metrics[col] = mapping_stats.iloc[0][col]
 
         print(f"  Successfully processed spotiflow method in {runtime:.2f} seconds")
-        return {'metrics': metrics}
+        return {"metrics": metrics}
 
     except Exception as e:
         print(f"  Error in spotiflow method: {e}")
         import traceback
+
         traceback.print_exc()
-        metrics['error'] = str(e)
-        return {'metrics': metrics}
+        metrics["error"] = str(e)
+        return {"metrics": metrics}
 
 
 def run_benchmark():
@@ -512,45 +529,55 @@ def run_benchmark():
         # Copy aligned image to results directory for visualization
         aligned_dst = OUTPUT_DIR / "aligned" / f"{sample['base_name']}__aligned.tiff"
         if not aligned_dst.exists():
-            shutil.copy(sample['aligned_file'], aligned_dst)
+            shutil.copy(sample["aligned_file"], aligned_dst)
 
         # Copy max_filtered image to results directory for visualization
-        max_filtered_dst = OUTPUT_DIR / "max_filtered" / f"{sample['base_name']}__max_filtered.tiff"
+        max_filtered_dst = (
+            OUTPUT_DIR / "max_filtered" / f"{sample['base_name']}__max_filtered.tiff"
+        )
         if not max_filtered_dst.exists():
-            shutil.copy(sample['max_filtered_file'], max_filtered_dst)
+            shutil.copy(sample["max_filtered_file"], max_filtered_dst)
 
         # Process with standard method
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"Sample: {sample_id} - Standard Method")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         standard_results = process_standard_method(sample, df_barcode_library)
-        all_metrics.append(standard_results['metrics'])
+        all_metrics.append(standard_results["metrics"])
 
         # Process with spotiflow method
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"Sample: {sample_id} - Spotiflow Method")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         spotiflow_results = process_spotiflow_method(sample, df_barcode_library)
-        all_metrics.append(spotiflow_results['metrics'])
+        all_metrics.append(spotiflow_results["metrics"])
 
     # Combine all metrics into DataFrame
     results_df = pd.DataFrame(all_metrics)
 
     # Save results
     results_df.to_csv(OUTPUT_DIR / "benchmark_results.csv", index=False)
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Results saved to {OUTPUT_DIR / 'benchmark_results.csv'}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     # Print summary
     print("\n=== BENCHMARK SUMMARY ===")
-    for method in results_df['method'].unique():
-        method_data = results_df[results_df['method'] == method]
+    for method in results_df["method"].unique():
+        method_data = results_df[results_df["method"] == method]
         print(f"\n--- {method.upper()} ---")
-        print(f"Runtime: {method_data['runtime_seconds'].mean():.2f} sec (±{method_data['runtime_seconds'].std():.2f})")
-        print(f"Memory: {method_data['memory_mb'].mean():.1f} MB (±{method_data['memory_mb'].std():.1f})")
-        print(f"Peaks: {method_data['total_peaks'].mean():.0f} (±{method_data['total_peaks'].std():.0f})")
-        print(f"Reads: {method_data['total_reads'].mean():.0f} (±{method_data['total_reads'].std():.0f})")
+        print(
+            f"Runtime: {method_data['runtime_seconds'].mean():.2f} sec (±{method_data['runtime_seconds'].std():.2f})"
+        )
+        print(
+            f"Memory: {method_data['memory_mb'].mean():.1f} MB (±{method_data['memory_mb'].std():.1f})"
+        )
+        print(
+            f"Peaks: {method_data['total_peaks'].mean():.0f} (±{method_data['total_peaks'].std():.0f})"
+        )
+        print(
+            f"Reads: {method_data['total_reads'].mean():.0f} (±{method_data['total_reads'].std():.0f})"
+        )
 
     # Generate visualization
     print("\n=== GENERATING VISUALIZATION ===")
@@ -565,14 +592,14 @@ def generate_visualization(results_df=None):
     Args:
         results_df: DataFrame with benchmark results. If None, loads from method_summary.csv
     """
-    from plot_style import setup_plot_style, COLORS, FIGSIZE
+    from plot_style import setup_plot_style
 
     # Apply consistent plot styling
     setup_plot_style()
 
     # Load or generate the method summary data
     if results_df is None:
-        summary_path = OUTPUT_DIR / 'method_summary.csv'
+        summary_path = OUTPUT_DIR / "method_summary.csv"
         if summary_path.exists():
             df = pd.read_csv(summary_path, header=[0, 1])
         else:
@@ -581,138 +608,182 @@ def generate_visualization(results_df=None):
     else:
         # Generate method summary from results_df - only use numeric columns
         numeric_cols = results_df.select_dtypes(include=[np.number]).columns.tolist()
-        method_summary = results_df.groupby('method')[numeric_cols].agg(['mean', 'std'])
-        method_summary.to_csv(OUTPUT_DIR / 'method_summary.csv')
+        method_summary = results_df.groupby("method")[numeric_cols].agg(["mean", "std"])
+        method_summary.to_csv(OUTPUT_DIR / "method_summary.csv")
         df = method_summary.reset_index()
 
     # Extract data for plotting - handle both DataFrame formats
     if isinstance(df.columns, pd.MultiIndex):
         # Multi-level columns from method_summary.csv
-        spotiflow_idx = df[df[('method', '')].str.lower() == 'spotiflow'].index[0] if ('method', '') in df.columns else 0
-        standard_idx = df[df[('method', '')].str.lower() == 'standard'].index[0] if ('method', '') in df.columns else 1
+        spotiflow_idx = (
+            df[df[("method", "")].str.lower() == "spotiflow"].index[0]
+            if ("method", "") in df.columns
+            else 0
+        )
+        standard_idx = (
+            df[df[("method", "")].str.lower() == "standard"].index[0]
+            if ("method", "") in df.columns
+            else 1
+        )
 
         # Try different column name patterns
         spots_col = None
         mapping_col = None
 
         for col in df.columns:
-            if 'filtered_total_reads' in str(col).lower() or 'total_reads' in str(col).lower():
-                if 'mean' in str(col).lower():
+            if (
+                "filtered_total_reads" in str(col).lower()
+                or "total_reads" in str(col).lower()
+            ):
+                if "mean" in str(col).lower():
                     spots_col = col
-            if '1_or_more_genes__percent' in str(col).lower() or 'mapping' in str(col).lower():
-                if 'mean' in str(col).lower():
+            if (
+                "1_or_more_genes__percent" in str(col).lower()
+                or "mapping" in str(col).lower()
+            ):
+                if "mean" in str(col).lower():
                     mapping_col = col
 
         # Fallback to total_reads if filtered not available
         if spots_col is None:
             for col in df.columns:
-                if isinstance(col, tuple) and 'total_reads' in col[0]:
-                    if col[1] == 'mean':
+                if isinstance(col, tuple) and "total_reads" in col[0]:
+                    if col[1] == "mean":
                         spots_col = col
                         break
 
         if mapping_col is None:
             for col in df.columns:
-                if isinstance(col, tuple) and '1_or_more_genes' in col[0]:
-                    if col[1] == 'mean':
+                if isinstance(col, tuple) and "1_or_more_genes" in col[0]:
+                    if col[1] == "mean":
                         mapping_col = col
                         break
     else:
         # Flat DataFrame from results_df groupby
-        spotiflow_data = results_df[results_df['method'] == 'spotiflow']
-        standard_data = results_df[results_df['method'] == 'standard']
+        spotiflow_data = results_df[results_df["method"] == "spotiflow"]
+        standard_data = results_df[results_df["method"] == "standard"]
 
     # Create plot data
-    plot_data = pd.DataFrame({
-        'Method': ['Spotiflow', 'Standard'],
-        'Total Spots': [
-            results_df[results_df['method'] == 'spotiflow']['total_reads'].mean() if results_df is not None else df.loc[0, spots_col],
-            results_df[results_df['method'] == 'standard']['total_reads'].mean() if results_df is not None else df.loc[1, spots_col]
-        ],
-        'Spots Error': [
-            results_df[results_df['method'] == 'spotiflow']['total_reads'].std() if results_df is not None else df.loc[0, (spots_col[0], 'std')],
-            results_df[results_df['method'] == 'standard']['total_reads'].std() if results_df is not None else df.loc[1, (spots_col[0], 'std')]
-        ],
-        'Mapping Rate (%)': [
-            results_df[results_df['method'] == 'spotiflow']['1_or_more_genes__percent'].mean() if results_df is not None and '1_or_more_genes__percent' in results_df.columns else 0,
-            results_df[results_df['method'] == 'standard']['1_or_more_genes__percent'].mean() if results_df is not None and '1_or_more_genes__percent' in results_df.columns else 0
-        ],
-        'Mapping Rate Error': [
-            results_df[results_df['method'] == 'spotiflow']['1_or_more_genes__percent'].std() if results_df is not None and '1_or_more_genes__percent' in results_df.columns else 0,
-            results_df[results_df['method'] == 'standard']['1_or_more_genes__percent'].std() if results_df is not None and '1_or_more_genes__percent' in results_df.columns else 0
-        ]
-    })
+    plot_data = pd.DataFrame(
+        {
+            "Method": ["Spotiflow", "Standard"],
+            "Total Spots": [
+                results_df[results_df["method"] == "spotiflow"]["total_reads"].mean()
+                if results_df is not None
+                else df.loc[0, spots_col],
+                results_df[results_df["method"] == "standard"]["total_reads"].mean()
+                if results_df is not None
+                else df.loc[1, spots_col],
+            ],
+            "Spots Error": [
+                results_df[results_df["method"] == "spotiflow"]["total_reads"].std()
+                if results_df is not None
+                else df.loc[0, (spots_col[0], "std")],
+                results_df[results_df["method"] == "standard"]["total_reads"].std()
+                if results_df is not None
+                else df.loc[1, (spots_col[0], "std")],
+            ],
+            "Mapping Rate (%)": [
+                results_df[results_df["method"] == "spotiflow"][
+                    "1_or_more_genes__percent"
+                ].mean()
+                if results_df is not None
+                and "1_or_more_genes__percent" in results_df.columns
+                else 0,
+                results_df[results_df["method"] == "standard"][
+                    "1_or_more_genes__percent"
+                ].mean()
+                if results_df is not None
+                and "1_or_more_genes__percent" in results_df.columns
+                else 0,
+            ],
+            "Mapping Rate Error": [
+                results_df[results_df["method"] == "spotiflow"][
+                    "1_or_more_genes__percent"
+                ].std()
+                if results_df is not None
+                and "1_or_more_genes__percent" in results_df.columns
+                else 0,
+                results_df[results_df["method"] == "standard"][
+                    "1_or_more_genes__percent"
+                ].std()
+                if results_df is not None
+                and "1_or_more_genes__percent" in results_df.columns
+                else 0,
+            ],
+        }
+    )
 
     # Define colors with higher opacity
-    spotiflow_color = '#FFD700'  # Yellow
-    standard_color = '#E41A1C'   # Red
+    spotiflow_color = "#FFD700"  # Yellow
+    standard_color = "#E41A1C"  # Red
     colors = [spotiflow_color, standard_color]
     opacity = 0.7  # Set opacity level
 
     # Create a SQUARE figure
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 10), dpi=300)
-    fig.patch.set_facecolor('#F8F8F8')  # Set figure background
+    fig.patch.set_facecolor("#F8F8F8")  # Set figure background
 
     # Create bar plot for Total Spots with error bars - using alpha for opacity
     bars1 = ax1.bar(
         [0, 1],  # Using numerical positions instead of labels
-        plot_data['Total Spots'],
-        yerr=plot_data['Spots Error'],
+        plot_data["Total Spots"],
+        yerr=plot_data["Spots Error"],
         color=[spotiflow_color, standard_color],
         alpha=opacity,
         width=0.8,  # Wider bars so they almost touch
         capsize=7,  # Larger cap size
-        edgecolor='black',
-        linewidth=1
+        edgecolor="black",
+        linewidth=1,
     )
 
     # Add values in the middle of bars
     for bar in bars1:
         height = bar.get_height()
         ax1.text(
-            bar.get_x() + bar.get_width()/2.,
-            height/2,  # Middle of the bar
-            f'{int(height):,}',
-            ha='center',
-            va='center',
+            bar.get_x() + bar.get_width() / 2.0,
+            height / 2,  # Middle of the bar
+            f"{int(height):,}",
+            ha="center",
+            va="center",
             fontsize=20,  # Larger font
-            fontweight='bold',
-            color='black'
+            fontweight="bold",
+            color="black",
         )
 
     # Create bar plot for Mapping Rate with error bars - using alpha for opacity
     bars2 = ax2.bar(
         [0, 1],  # Using numerical positions instead of labels
-        plot_data['Mapping Rate (%)'],
-        yerr=plot_data['Mapping Rate Error'],
+        plot_data["Mapping Rate (%)"],
+        yerr=plot_data["Mapping Rate Error"],
         color=[spotiflow_color, standard_color],
         alpha=opacity,
         width=0.8,  # Wider bars so they almost touch
         capsize=7,  # Larger cap size
-        edgecolor='black',
-        linewidth=1
+        edgecolor="black",
+        linewidth=1,
     )
 
     # Add values in the middle of bars
     for bar in bars2:
         height = bar.get_height()
         ax2.text(
-            bar.get_x() + bar.get_width()/2.,
-            height/2,  # Middle of the bar
-            f'{height:.1f}%',
-            ha='center',
-            va='center',
+            bar.get_x() + bar.get_width() / 2.0,
+            height / 2,  # Middle of the bar
+            f"{height:.1f}%",
+            ha="center",
+            va="center",
             fontsize=20,  # Larger font
-            fontweight='bold',
-            color='black'
+            fontweight="bold",
+            color="black",
         )
 
     # Customize the appearance
     for ax in [ax1, ax2]:
-        ax.set_facecolor('#F8F8F8')  # Matching background
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        ax.tick_params(axis='both', which='major', labelsize=14)  # Larger tick labels
+        ax.set_facecolor("#F8F8F8")  # Matching background
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.tick_params(axis="both", which="major", labelsize=14)  # Larger tick labels
         ax.set_axisbelow(True)
         # Remove vertical grid lines
         ax.yaxis.grid(False)
@@ -720,35 +791,47 @@ def generate_visualization(results_df=None):
 
         # Set custom x-tick labels
         ax.set_xticks([0, 1])
-        ax.set_xticklabels(['Spotiflow', 'Standard'], fontsize=18)
+        ax.set_xticklabels(["Spotiflow", "Standard"], fontsize=18)
 
     # Set titles above the plots
-    ax1.set_title('Filtered Spots', fontsize=28, fontweight='bold', pad=20)  # Moved up with more padding
-    ax1.set_ylabel('Number of Spots', fontsize=20)  # Larger font
-    ax1.set_ylim(0, max(plot_data['Total Spots']) * 1.3)  # More space for error bars and title
+    ax1.set_title(
+        "Filtered Spots", fontsize=28, fontweight="bold", pad=20
+    )  # Moved up with more padding
+    ax1.set_ylabel("Number of Spots", fontsize=20)  # Larger font
+    ax1.set_ylim(
+        0, max(plot_data["Total Spots"]) * 1.3
+    )  # More space for error bars and title
 
-    ax2.set_title('Mapped Cells', fontsize=28, fontweight='bold', pad=20)
-    ax2.set_ylabel('Percentage of Cells (%)', fontsize=20)  # Larger font
+    ax2.set_title("Mapped Cells", fontsize=28, fontweight="bold", pad=20)
+    ax2.set_ylabel("Percentage of Cells (%)", fontsize=20)  # Larger font
     ax2.set_ylim(0, 105)  # Slightly higher to ensure error bars are fully visible
 
     # Adjust layout and make sure the figure remains square
     plt.tight_layout()
 
     # Save the figure
-    plt.savefig(OUTPUT_DIR / 'spotiflow_vs_standard_comparison_square.png',
-                dpi=300,
-                bbox_inches='tight',
-                facecolor='#F8F8F8')
-    print(f"Visualization saved to {OUTPUT_DIR / 'spotiflow_vs_standard_comparison_square.png'}")
+    plt.savefig(
+        OUTPUT_DIR / "spotiflow_vs_standard_comparison_square.png",
+        dpi=300,
+        bbox_inches="tight",
+        facecolor="#F8F8F8",
+    )
+    print(
+        f"Visualization saved to {OUTPUT_DIR / 'spotiflow_vs_standard_comparison_square.png'}"
+    )
 
     plt.close()
 
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(description="Spot calling benchmark")
-    parser.add_argument("--plots-only", action="store_true",
-                        help="Only regenerate plots from existing results")
+    parser.add_argument(
+        "--plots-only",
+        action="store_true",
+        help="Only regenerate plots from existing results",
+    )
     args = parser.parse_args()
 
     if args.plots_only:

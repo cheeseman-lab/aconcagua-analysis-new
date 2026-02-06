@@ -5,3 +5,11 @@ analysis/brieflow_output/
 
 # ignore benchmark results
 benchmarks/results/
+
+# ignore large Funk external data (HDF, extracted features, supplementary CSV)
+benchmarks/external/*.hdf
+benchmarks/external/*.tsv
+benchmarks/external/*.csv
+benchmarks/external/results/
+benchmarks/external/logs/
+benchmarks/__pycache__/

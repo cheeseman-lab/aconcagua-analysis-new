@@ -35,8 +35,6 @@ Remote Configuration:
     Screenshots saved to: remote:results/visualizations/screenshots/
 """
 
-import os
-import sys
 import argparse
 import tempfile
 import subprocess
@@ -145,6 +143,7 @@ def get_random_center(height, width, margin):
         [y, x] center position
     """
     import random
+
     y = random.randint(margin, height - margin)
     x = random.randint(margin, width - margin)
     return [y, x]
@@ -260,7 +259,7 @@ def load_segmentation_data(sample_id):
         try:
             data["nuclei"][method] = download_file(nuclei_remote, nuclei_local)
             data["cells"][method] = download_file(cells_remote, cells_local)
-        except RuntimeError as e:
+        except RuntimeError:
             print(f"  Warning: {method} data not found")
             data["nuclei"][method] = None
             data["cells"][method] = None
@@ -290,7 +289,9 @@ def run_segmentation_visualization(sample_id, output_dir=None):
         if data["nuclei"][method]:
             nuclei[method] = skimage.io.imread(data["nuclei"][method])
             cells[method] = skimage.io.imread(data["cells"][method])
-            print(f"  Loaded {method}: nuclei={nuclei[method].shape}, cells={cells[method].shape}")
+            print(
+                f"  Loaded {method}: nuclei={nuclei[method].shape}, cells={cells[method].shape}"
+            )
 
     # Create viewer
     print("\nStarting napari viewer...")
@@ -451,21 +452,27 @@ def load_spot_data(sample_id):
         print("  Warning: Aligned image not found")
 
     # Download max_filtered image (optional, for better visualization)
-    max_filtered_remote = f"{REMOTE_BASE}/spot_calling/aligned/{sample_id}__max_filtered.tiff"
+    max_filtered_remote = (
+        f"{REMOTE_BASE}/spot_calling/aligned/{sample_id}__max_filtered.tiff"
+    )
     try:
         data["max_filtered"] = download_file(max_filtered_remote)
     except RuntimeError:
         print("  Warning: Max filtered image not found (will use aligned)")
 
     # Download peaks TIFF files (use unique local names to avoid cache collision)
-    standard_peaks_remote = f"{REMOTE_BASE}/spot_calling/standard/{sample_id}_peaks.tiff"
+    standard_peaks_remote = (
+        f"{REMOTE_BASE}/spot_calling/standard/{sample_id}_peaks.tiff"
+    )
     try:
         standard_local = LOCAL_CACHE / f"{sample_id}_standard_peaks.tiff"
         data["standard_peaks"] = download_file(standard_peaks_remote, standard_local)
     except RuntimeError:
         print("  Warning: Standard peaks not found")
 
-    spotiflow_peaks_remote = f"{REMOTE_BASE}/spot_calling/spotiflow/{sample_id}_peaks.tiff"
+    spotiflow_peaks_remote = (
+        f"{REMOTE_BASE}/spot_calling/spotiflow/{sample_id}_peaks.tiff"
+    )
     try:
         spotiflow_local = LOCAL_CACHE / f"{sample_id}_spotiflow_peaks.tiff"
         data["spotiflow_peaks"] = download_file(spotiflow_peaks_remote, spotiflow_local)
@@ -519,7 +526,11 @@ def binary_to_points(binary_mask, threshold=0, is_standard=False):
             coords = np.where(binary_mask > threshold)
         else:
             coords = np.where(binary_mask > 0)
-        return np.array(list(zip(coords[0], coords[1]))) if len(coords[0]) > 0 else np.empty((0, 2))
+        return (
+            np.array(list(zip(coords[0], coords[1])))
+            if len(coords[0]) > 0
+            else np.empty((0, 2))
+        )
 
 
 def run_spot_visualization(sample_id, output_dir=None):
@@ -561,12 +572,18 @@ def run_spot_visualization(sample_id, output_dir=None):
 
     if data.get("standard_peaks"):
         standard_peaks = tifffile.imread(data["standard_peaks"])
-        standard_points = binary_to_points(standard_peaks, threshold=cfg["standard_threshold"], is_standard=True)
-        print(f"  Standard spots (threshold>{cfg['standard_threshold']}): {len(standard_points)}")
+        standard_points = binary_to_points(
+            standard_peaks, threshold=cfg["standard_threshold"], is_standard=True
+        )
+        print(
+            f"  Standard spots (threshold>{cfg['standard_threshold']}): {len(standard_points)}"
+        )
 
     if data.get("spotiflow_peaks"):
         spotiflow_peaks = tifffile.imread(data["spotiflow_peaks"])
-        spotiflow_points = binary_to_points(spotiflow_peaks, threshold=0, is_standard=False)
+        spotiflow_points = binary_to_points(
+            spotiflow_peaks, threshold=0, is_standard=False
+        )
         print(f"  Spotiflow spots: {len(spotiflow_points)}")
 
     # Create viewer
@@ -766,7 +783,6 @@ def run_phenotype_visualization(sample_id, output_dir=None):
     import napari
     import tifffile
     from qtpy.QtWidgets import QApplication
-    from qtpy.QtCore import QTimer
     import time
 
     # Load data
@@ -816,7 +832,9 @@ def run_phenotype_visualization(sample_id, output_dir=None):
             ch_data,
             name=ch_name,
             colormap="gray",
-            contrast_limits=cfg["contrast_limits"].get(ch_name, [ch_data.min(), ch_data.max()]),
+            contrast_limits=cfg["contrast_limits"].get(
+                ch_name, [ch_data.min(), ch_data.max()]
+            ),
         )
 
         # Configure viewer
@@ -875,7 +893,9 @@ def run_phenotype_visualization(sample_id, output_dir=None):
 def list_sbs_samples():
     """List available SBS samples on remote (random selection)."""
     try:
-        output = run_ssh_command(f"ls {REMOTE_SBS_DIR}/*__aligned.tiff 2>/dev/null | shuf | head -20")
+        output = run_ssh_command(
+            f"ls {REMOTE_SBS_DIR}/*__aligned.tiff 2>/dev/null | shuf | head -20"
+        )
         files = [Path(f).name for f in output.split("\n") if f]
         return [f.replace("__aligned.tiff", "") for f in files]
     except RuntimeError:
@@ -900,7 +920,6 @@ def run_sbs_visualization(sample_id, output_dir=None):
     import napari
     import tifffile
     from qtpy.QtWidgets import QApplication
-    from qtpy.QtCore import QTimer
     import time
 
     # Load data
@@ -924,18 +943,24 @@ def run_sbs_visualization(sample_id, output_dir=None):
     if aligned_image.ndim == 4:
         # (cycles, channels, H, W)
         dapi = aligned_image[cycle_idx, 0, :, :]
-        channel_data = [aligned_image[cycle_idx, i+1, :, :] for i in range(4)]
+        channel_data = [aligned_image[cycle_idx, i + 1, :, :] for i in range(4)]
         height, width = aligned_image.shape[2], aligned_image.shape[3]
     elif aligned_image.ndim == 3:
         if aligned_image.shape[0] <= 5:
             # (channels, H, W)
             dapi = aligned_image[0, :, :]
-            channel_data = [aligned_image[i+1, :, :] for i in range(min(4, aligned_image.shape[0]-1))]
+            channel_data = [
+                aligned_image[i + 1, :, :]
+                for i in range(min(4, aligned_image.shape[0] - 1))
+            ]
             height, width = aligned_image.shape[1], aligned_image.shape[2]
         else:
             # (H, W, channels)
             dapi = aligned_image[:, :, 0]
-            channel_data = [aligned_image[:, :, i+1] for i in range(min(4, aligned_image.shape[2]-1))]
+            channel_data = [
+                aligned_image[:, :, i + 1]
+                for i in range(min(4, aligned_image.shape[2] - 1))
+            ]
             height, width = aligned_image.shape[0], aligned_image.shape[1]
     else:
         print("Error: Unexpected image dimensions")
@@ -966,7 +991,9 @@ def run_sbs_visualization(sample_id, output_dir=None):
     )
 
     # Add GTAC channels with colors
-    for i, (ch_name, ch_color) in enumerate(zip(cfg["channel_names"], cfg["channel_colors"])):
+    for i, (ch_name, ch_color) in enumerate(
+        zip(cfg["channel_names"], cfg["channel_colors"])
+    ):
         if i < len(channel_data):
             limits = cfg["contrast_limits"].get(ch_name, [0, 30000])
             viewer.add_image(
@@ -1033,7 +1060,9 @@ def run_sbs_visualization(sample_id, output_dir=None):
 def list_ic_fields():
     """List available IC field files on remote."""
     try:
-        output = run_ssh_command(f"ls {REMOTE_IC_FIELDS_DIR}/ | grep '__ic_field.tiff' | shuf | head -20")
+        output = run_ssh_command(
+            f"ls {REMOTE_IC_FIELDS_DIR}/ | grep '__ic_field.tiff' | shuf | head -20"
+        )
         files = [f for f in output.split("\n") if f]
         return files
     except RuntimeError:
@@ -1046,7 +1075,7 @@ def load_illum_data(sample_id=None):
     IC fields are per plate-well (e.g., P-1_W-A1__ic_field.tiff).
     Raw images are per tile (e.g., P-1_W-A1_T-0__image.tiff).
     """
-    print(f"\nLoading illumination correction data...")
+    print("\nLoading illumination correction data...")
 
     data = {"illum_function": None, "example_image": None}
 
@@ -1058,9 +1087,10 @@ def load_illum_data(sample_id=None):
 
     # Pick a random IC field or use specified sample
     import random
+
     if sample_id:
         # sample_id might be full tile ID like P-1_W-A1_T-0, extract plate-well
-        parts = sample_id.split('_T-')
+        parts = sample_id.split("_T-")
         plate_well = parts[0]  # e.g., P-1_W-A1
         ic_file = f"{plate_well}__ic_field.tiff"
     else:
@@ -1080,7 +1110,9 @@ def load_illum_data(sample_id=None):
 
     # Find a random tile for this plate-well from preprocess images
     try:
-        output = run_ssh_command(f"ls {REMOTE_PREPROCESS_DIR}/ | grep '{plate_well}_T-' | grep '__image.tiff' | shuf | head -1")
+        output = run_ssh_command(
+            f"ls {REMOTE_PREPROCESS_DIR}/ | grep '{plate_well}_T-' | grep '__image.tiff' | shuf | head -1"
+        )
         if output.strip():
             raw_image_file = output.strip()
             raw_remote = f"{REMOTE_PREPROCESS_DIR}/{raw_image_file}"
@@ -1098,7 +1130,6 @@ def run_illum_visualization(sample_id=None, output_dir=None):
     import napari
     import tifffile
     from qtpy.QtWidgets import QApplication
-    from qtpy.QtCore import QTimer
     import time
 
     # Load data
@@ -1126,7 +1157,13 @@ def run_illum_visualization(sample_id=None, output_dir=None):
         # If multi-channel, take first (DAPI)
         if illum_img.ndim == 3:
             illum_img = illum_img[0] if illum_img.shape[0] <= 5 else illum_img[:, :, 0]
-        images_to_process.append((illum_img, "Illumination correction function, DAPI channel", "illum_function"))
+        images_to_process.append(
+            (
+                illum_img,
+                "Illumination correction function, DAPI channel",
+                "illum_function",
+            )
+        )
 
     # Load and prepare example DAPI image
     if data.get("example_image"):
@@ -1277,6 +1314,7 @@ def main():
 
     if args.clear_cache:
         import shutil
+
         if LOCAL_CACHE.exists():
             shutil.rmtree(LOCAL_CACHE)
             print("Cache cleared.")
@@ -1336,6 +1374,7 @@ def main():
         if not args.sample:
             # Pick a random sample
             import random
+
             args.sample = random.choice(samples) if samples else None
         if not args.sample:
             print("Error: No phenotype samples found")
@@ -1348,6 +1387,7 @@ def main():
         if not args.sample:
             # Pick a random sample
             import random
+
             args.sample = random.choice(samples) if samples else None
         if not args.sample:
             print("Error: No SBS samples found")
