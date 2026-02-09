@@ -362,16 +362,17 @@ cluster:
   kegg_group_benchmark_fp: config/benchmark_clusters/kegg_group_benchmark.tsv
   perturbation_auc_threshold: null
 mozzarellm:
-  cell_class: Interphase
+  cell_class: Mitotic
   channel_combo: DAPI_TUBULIN_GH2AX_PHALLOIDIN
-  leiden_resolution: 12
+  leiden_resolution: 5
   model: claude-opus-4-6
   temperature: 0.0
   screen_context: "These clusters are from an optical pooled screen (OPS) that measured\
-    \ morphological\nphenotypes in human cells. The clusters are derived from interphase\
-    \ cells, so phenotypes\nrelated to cell division and mitotic processes are not\
-    \ expected. The screen involved\nperturbing genes using CRISPR knockout and imaging\
-    \ the resulting cellular morphology via\nfluorescence microscopy using a cell-painting-derived\
-    \ panel, specifically DAPI, Tubulin,\n\u03B3H2AX (DNA damage), and Phalloidin.\
-    \ Genes grouped within a cluster tend to exhibit\nsimilar phenotypes, suggesting\
-    \ they may participate in the same biological process or\npathway."
+    \ morphological\nphenotypes in human cells. The clusters are derived from mitotic\
+    \ cells, so phenotypes\nrelated to cell division, spindle assembly, and chromosome\
+    \ segregation are expected to be\nprominent. The screen involved perturbing genes\
+    \ using CRISPR knockout and imaging the\nresulting cellular morphology via fluorescence\
+    \ microscopy using a cell-painting-derived\npanel, specifically DAPI, Tubulin,\
+    \ \u03B3H2AX (DNA damage), and Phalloidin. Genes grouped\nwithin a cluster tend\
+    \ to exhibit similar phenotypes, suggesting they may participate in\nthe same biological\
+    \ process or pathway."

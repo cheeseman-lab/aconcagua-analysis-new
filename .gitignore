@@ -13,3 +13,6 @@ benchmarks/external/*.csv
 benchmarks/external/results/
 benchmarks/external/logs/
 benchmarks/__pycache__/
+
+# ignore .env
+analysis/.env

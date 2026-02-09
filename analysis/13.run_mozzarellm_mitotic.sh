@@ -1,10 +1,10 @@
 #!/bin/bash
 # =============================================================================
-# 13.run_mozzarellm.sh - Run mozzarellm analysis from config
+# 13.run_mozzarellm_mitotic.sh - Run mozzarellm analysis from config (Mitotic)
 # =============================================================================
 #
 # This script runs mozzarellm LLM analysis on clustering results.
-# Configuration is read from config/config.yml (set up in notebook 12).
+# Configuration is read from config/config_mitotic.yml (Mitotic cell class).
 #
 # Features:
 #   - Config-driven: All parameters read from config.yml
@@ -12,7 +12,7 @@
 #   - Incremental saving: Results saved after each cluster
 #
 # Usage:
-#   bash 13.run_mozzarellm.sh
+#   bash 13.run_mozzarellm_mitotic.sh
 #
 # =============================================================================
 
@@ -20,7 +20,7 @@ set -e
 cd "$(dirname "$0")"
 
 echo "Running mozzarellm analysis..."
-echo "Reading configuration from config/config.yml"
+echo "Reading configuration from config/config_mitotic.yml"
 echo ""
 
 python3 << 'MOZZARELLM_SCRIPT'
@@ -42,7 +42,7 @@ load_dotenv(Path(".env"))
 # Load configuration
 # =============================================================================
 
-CONFIG_PATH = Path("config/config.yml")
+CONFIG_PATH = Path("config/config_mitotic.yml")
 with open(CONFIG_PATH) as f:
     config = yaml.safe_load(f)
 
