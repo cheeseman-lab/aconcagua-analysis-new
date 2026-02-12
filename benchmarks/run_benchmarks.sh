@@ -9,6 +9,7 @@
 # - Feature Timing: Individual cp_measure function timing
 # - Merge: Fast mode vs Stitch mode cell matching
 # - Clustering: Brieflow vs Funk et al. 2022 comparison
+# - ISS Multi: Multi-construct barcode validation
 #
 # Usage: bash run_benchmarks.sh [OPTIONS]
 #
@@ -19,6 +20,7 @@
 #   --feature-timing      Only run feature function timing
 #   --merge               Only run merge mode comparison (fast vs stitch)
 #   --cluster             Only run clustering comparison (Brieflow vs Funk et al.)
+#   --iss-multi           Only run ISS multi-construct validation
 #   --help                Show this help message
 
 set -e  # Exit on error
@@ -48,6 +50,7 @@ RUN_FEATURE_EXTRACTION=true
 RUN_FEATURE_TIMING=true
 RUN_MERGE=true
 RUN_CLUSTER=true
+RUN_ISS_MULTI=true
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -57,6 +60,7 @@ while [[ $# -gt 0 ]]; do
             RUN_FEATURE_TIMING=false
             RUN_MERGE=false
             RUN_CLUSTER=false
+            RUN_ISS_MULTI=false
             shift
             ;;
         --spot-calling)
@@ -65,6 +69,7 @@ while [[ $# -gt 0 ]]; do
             RUN_FEATURE_TIMING=false
             RUN_MERGE=false
             RUN_CLUSTER=false
+            RUN_ISS_MULTI=false
             shift
             ;;
         --feature-extraction)
@@ -73,6 +78,7 @@ while [[ $# -gt 0 ]]; do
             RUN_FEATURE_TIMING=false
             RUN_MERGE=false
             RUN_CLUSTER=false
+            RUN_ISS_MULTI=false
             shift
             ;;
         --feature-timing)
@@ -81,6 +87,7 @@ while [[ $# -gt 0 ]]; do
             RUN_FEATURE_EXTRACTION=false
             RUN_MERGE=false
             RUN_CLUSTER=false
+            RUN_ISS_MULTI=false
             shift
             ;;
         --merge)
@@ -89,6 +96,7 @@ while [[ $# -gt 0 ]]; do
             RUN_FEATURE_EXTRACTION=false
             RUN_FEATURE_TIMING=false
             RUN_CLUSTER=false
+            RUN_ISS_MULTI=false
             shift
             ;;
         --cluster)
@@ -97,6 +105,16 @@ while [[ $# -gt 0 ]]; do
             RUN_FEATURE_EXTRACTION=false
             RUN_FEATURE_TIMING=false
             RUN_MERGE=false
+            RUN_ISS_MULTI=false
+            shift
+            ;;
+        --iss-multi)
+            RUN_SEGMENTATION=false
+            RUN_SPOT_CALLING=false
+            RUN_FEATURE_EXTRACTION=false
+            RUN_FEATURE_TIMING=false
+            RUN_MERGE=false
+            RUN_CLUSTER=false
             shift
             ;;
         --help)
@@ -111,6 +129,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --feature-timing      Only run feature function timing"
             echo "  --merge               Only run merge mode comparison (fast vs stitch)"
             echo "  --cluster             Only run clustering comparison (Brieflow vs Funk et al.)"
+            echo "  --iss-multi           Only run ISS multi-construct validation"
             echo "  --help                Show this help message"
             exit 0
             ;;
@@ -323,6 +342,24 @@ if [ "$RUN_CLUSTER" = true ]; then
     fi
 
     log_success "Clustering benchmarks completed"
+fi
+
+# ============================================================================
+# ISS MULTI-CONSTRUCT VALIDATION
+# ============================================================================
+
+if [ "$RUN_ISS_MULTI" = true ]; then
+    echo ""
+    echo "============================================================================"
+    echo "ISS MULTI-CONSTRUCT VALIDATION"
+    echo "============================================================================"
+
+    log_info "Running ISS multi-construct validation benchmark..."
+    if ! run_in_env "$MAIN_ENV" "iss_multi.py" "main" "--all-wells --positions all --rerun --threshold 400"; then
+        OVERALL_SUCCESS=false
+    fi
+
+    log_success "ISS multi-construct validation completed"
 fi
 
 # ============================================================================

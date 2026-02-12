@@ -92,7 +92,7 @@ _BASE_CHANNEL_INDICES = [
 # ---------------------------------------------------------------------------
 DATA_CONFIG = {
     "data_root": BENCHMARKS_DIR / "results" / "iss_multi",
-    "output_dir": BENCHMARKS_DIR / "results" / "iss_multi_results",
+    "output_dir": BENCHMARKS_DIR / "results" / "iss_multi",
     "cycle_dirs": ["c1", "c2", "c3"],
     "skip_cycles": [],
     "n_positions": 3,
@@ -629,35 +629,35 @@ def generate_plots(summary_df: pd.DataFrame, out_dir: Path) -> None:
     c_ambig = "#f39c12"    # orange
     c_nobc = "#bdc3c7"     # gray
 
-    def _label_segment(ax, x_pos, bot, height, total, color="white", min_frac=0.04):
-        """Add count + pct label inside a bar segment if large enough."""
-        if height / total < min_frac:
-            return
-        mid = bot + height / 2
-        pct = height / total * 100
-        ax.text(x_pos, mid, f"{int(height):,}\n({pct:.1f}%)",
-                ha="center", va="center", fontsize=9, fontweight="bold", color=color)
+    labels = ["Uniquely mapped", "Ambiguous (multi-construct)", "No barcode"]
 
-    # ── Plot 1: Counts ──
+    # ── Plot 1: Counts (no percentages, just counts) ──
     fig, ax = plt.subplots(figsize=FIGSIZE["single"])
-    ax.bar(x, n_unique, bw, label="Uniquely mapped", color=c_unique,
+    ax.bar(x, n_unique, bw, label=labels[0], color=c_unique,
            edgecolor="white", linewidth=0.5)
-    ax.bar(x, n_ambig, bw, bottom=n_unique, label="Ambiguous (multi-construct)",
+    ax.bar(x, n_ambig, bw, bottom=n_unique, label=labels[1],
            color=c_ambig, edgecolor="white", linewidth=0.5)
-    ax.bar(x, n_no_bc, bw, bottom=n_unique + n_ambig, label="No barcode",
+    ax.bar(x, n_no_bc, bw, bottom=n_unique + n_ambig, label=labels[2],
            color=c_nobc, edgecolor="white", linewidth=0.5)
 
     for i in range(len(wells)):
-        _label_segment(ax, x[i], 0, n_unique[i], n_seg[i], color="white")
-        _label_segment(ax, x[i], n_unique[i], n_ambig[i], n_seg[i], color="white")
-        _label_segment(ax, x[i], n_unique[i] + n_ambig[i], n_no_bc[i], n_seg[i], color="#555")
+        # Counts only — no percentages
+        if n_unique[i] / n_seg[i] > 0.04:
+            ax.text(x[i], n_unique[i] / 2, f"{int(n_unique[i]):,}",
+                    ha="center", va="center", fontsize=9, fontweight="bold", color="white")
+        if n_ambig[i] / n_seg[i] > 0.04:
+            ax.text(x[i], n_unique[i] + n_ambig[i] / 2, f"{int(n_ambig[i]):,}",
+                    ha="center", va="center", fontsize=9, fontweight="bold", color="white")
+        if n_no_bc[i] / n_seg[i] > 0.04:
+            ax.text(x[i], n_unique[i] + n_ambig[i] + n_no_bc[i] / 2, f"{int(n_no_bc[i]):,}",
+                    ha="center", va="center", fontsize=9, fontweight="bold", color="#555")
 
     ax.set_ylabel("Cells")
     ax.set_title("Cell Mapping (counts)")
     ax.set_xticks(x)
     ax.set_xticklabels(wells)
     ax.set_xlabel("Well")
-    ax.legend(loc="upper left")
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3, frameon=False)
     fig.tight_layout()
     save_figure(fig, out_dir / "cell_mapping_counts")
     plt.close(fig)
@@ -669,11 +669,11 @@ def generate_plots(summary_df: pd.DataFrame, out_dir: Path) -> None:
     pct_nobc = n_no_bc / n_seg * 100
 
     fig, ax = plt.subplots(figsize=FIGSIZE["single"])
-    ax.bar(x, pct_unique, bw, label="Uniquely mapped", color=c_unique,
+    ax.bar(x, pct_unique, bw, label=labels[0], color=c_unique,
            edgecolor="white", linewidth=0.5)
-    ax.bar(x, pct_ambig, bw, bottom=pct_unique, label="Ambiguous (multi-construct)",
+    ax.bar(x, pct_ambig, bw, bottom=pct_unique, label=labels[1],
            color=c_ambig, edgecolor="white", linewidth=0.5)
-    ax.bar(x, pct_nobc, bw, bottom=pct_unique + pct_ambig, label="No barcode",
+    ax.bar(x, pct_nobc, bw, bottom=pct_unique + pct_ambig, label=labels[2],
            color=c_nobc, edgecolor="white", linewidth=0.5)
 
     for i in range(len(wells)):
@@ -694,7 +694,7 @@ def generate_plots(summary_df: pd.DataFrame, out_dir: Path) -> None:
     ax.set_xticklabels(wells)
     ax.set_xlabel("Well")
     ax.set_ylim(0, 105)
-    ax.legend(loc="upper left")
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3, frameon=False)
     fig.tight_layout()
     save_figure(fig, out_dir / "cell_mapping_pct")
     plt.close(fig)
