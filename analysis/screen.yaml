@@ -1,60 +1,63 @@
 # Screen Information
 experiment:
-  id: ""  # Experiment identifier
-  notebook_entries: ""  # Links or references to lab notebook entries
-  dates: 
+  id: "aconcagua"
+  notebook_entries: ""
+  dates:
     start: ""
     end: ""
 
 # Cellular Conditions
 cellular:
-  cell_line: ""  # e.g., HeLa, HEK293, etc.
-  imaging_timepoint: ""  # When imaging occurred after treatment
+  cell_line: "HeLa"
+  imaging_timepoint: "78 hours"
   treatment:
-    summary: ""  # Brief description of treatment
-    details: ""  # Detailed protocol or conditions
-  plates: ""  # Number of plates
-  wells_per_plate: ""  # Number of wells per plate
+    summary: "CRISPR knockout perturbation screen"
+    details: "Optical Pooled Screen (OPS) using CRISPR knockout to perturb ~5,299 genes. Cells were imaged via fluorescence microscopy."
+  plates: 8
+  wells_per_plate: "5-6"
 
 # Sequencing by Synthesis (SBS)
 sbs:
-  cycles: ""  # Number of cycles
-  cycle_order: ""  # Order of cycles
-  background_channel: ""  # Suggested background channel
+  cycles: 11
+  cycle_order: "1-11"
+  background_channel: "DAPI"
   library_details:
-    number_of_genes: ""
-    guides_per_gene: ""
-    other_information: ""
+    number_of_genes: 5299
+    guides_per_gene: "~4 (20,445 total guides)"
+    barcode_length: "11-mer"
 
 # Phenotype (PH) Steps
 phenotype:
-  background_channel_cell: ""  # For cell segmentation
-  background_channel_body: ""  # For body (e.g. parasite) segmentation
-  
-  # Rounds of staining/imaging (in order they were stained for each round)
-  # Add more rounds as needed
+  background_channel_cell: "DAPI"
+  background_channel_body: "PHALLOIDIN"
+
   rounds:
     - round_number: 1
       stains:
-        - name: "DAPI"  # Name of stain/antibody
-          marker_of: "Nuclei"  # What it marks
-          channel: "DAPI"  # Channel used (e.g., DAPI, CY3)
-        - name: "ConA"
-          marker_of: "Cytoplasm"
-          channel: "AF750"
-    
+        - name: "DAPI"
+          marker_of: "Nuclei (DNA)"
+          channel: "DAPI"
+        - name: "Tubulin"
+          marker_of: "Microtubules / Cytoskeleton"
+          channel: "GFP"
+
     - round_number: 2
       stains:
-        - name: ""  # Name of stain/antibody
-          marker_of: ""  # What it marks
-          channel: ""  # Channel used (e.g., DAPI, CY3)
-        - name: ""
-          marker_of: ""
-          channel: ""
+        - name: "gamma-H2AX"
+          marker_of: "DNA damage foci"
+          channel: "A594"
+        - name: "Phalloidin"
+          marker_of: "Actin / Cell body"
+          channel: "AF750"
 
 # Data Generated
 data:
-  storage_format: ""  # e.g., .nd2, .tiff
-  location: "/lab/.."  # Base path for data storage
-  
-  notes: ""  # Any additional notes about the data or file naming conventions
+  storage_format: "nd2"
+  location: "/lab/ops_analysis_ssd/cheeseman/aconcagua-analysis-new/"
+  notes: "Cell painting-derived panel: DAPI, Tubulin, gamma-H2AX, Phalloidin. Processed via brieflow pipeline."
+
+# Data Provenance
+provenance:
+  processing_pipeline: "brieflow"
+  pipeline_version: "visualizer_pro branch"
+  dataset_version: "1.0"

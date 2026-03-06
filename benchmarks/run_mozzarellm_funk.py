@@ -157,14 +157,14 @@ def main():
     print("\nRunning LLM analysis...")
     analyzer = ClusterAnalyzer(model=MODEL, temperature=TEMPERATURE, show_progress=True)
 
-    results = analyzer.analyze(
+    analyzer.analyze(
         cluster_df,
         gene_annotations=gene_annotations,
         screen_context=screen_context,
         output_dir=output_dir,
     )
 
-    print(f"\nDone!")
+    print("\nDone!")
     print(f"Results saved to: {output_dir}")
 
 

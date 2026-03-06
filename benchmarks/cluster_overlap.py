@@ -21,14 +21,14 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from pathlib import Path
 
-from plot_style import setup_plot_style, save_figure, COLORS, FIGSIZE
+from plot_style import setup_plot_style, save_figure, COLORS
 
 # Paths
 SCRIPT_DIR = Path(__file__).parent
 ANALYSIS_DIR = SCRIPT_DIR.parent / "analysis"
 CLUSTER_DIR = ANALYSIS_DIR / "brieflow_output" / "cluster" / "DAPI_TUBULIN_GH2AX_PHALLOIDIN"
 FUNK_DIR = SCRIPT_DIR / "external" / "results" / "cluster"
-OUTPUT_DIR = SCRIPT_DIR / "results" / "cluster_overlap"
+OUTPUT_DIR = SCRIPT_DIR / "results" / "cluster" / "overlap"
 
 # Configurations
 CONFIGS = {
@@ -283,8 +283,8 @@ def plot_category_summary(results_dict, output_path):
             df = results_dict[label]
             counts.append((df["category"] == cat).sum())
         counts = np.array(counts, dtype=float)
-        bars = ax.bar(x, counts, bottom=bottom, color=color, edgecolor="white",
-                      linewidth=0.5, label=cat, width=0.6)
+        ax.bar(x, counts, bottom=bottom, color=color, edgecolor="white",
+               linewidth=0.5, label=cat, width=0.6)
         # Label non-zero segments
         for i, c in enumerate(counts):
             if c > 0:
@@ -346,106 +346,6 @@ def plot_overlap_heatmap(results_dict, output_path, top_n=20):
     plt.tight_layout()
     save_figure(fig, output_path)
     plt.close(fig)
-    print(f"Saved: {output_path}")
-
-
-def generate_markdown_summary(all_results, gene_stats, output_path):
-    """Generate markdown summary of overlap analysis."""
-    lines = [
-        "# Cluster Overlap Metrics: Brieflow vs Funk",
-        "",
-        f"**Generated:** {pd.Timestamp.now().strftime('%Y-%m-%d')}",
-        "",
-        "Systematic Jaccard similarity and overlap metrics between all",
-        "high-confidence MozzareLLM clusters across Brieflow and Funk pipelines.",
-        "",
-        "---",
-        "",
-        "## Gene-Level Statistics",
-        "",
-    ]
-
-    # Gene-level table
-    lines.append("| Direction | HC genes | Found in other | Unique | % found |")
-    lines.append("|---|---|---|---|---|")
-    for label, stats in gene_stats.items():
-        lines.append(
-            f"| {label} | {stats['source_hc_genes']:,} | "
-            f"{stats['in_target']:,} | {stats['source_unique']:,} | "
-            f"{stats['pct_found']:.1f}% |"
-        )
-    lines.extend(["", "---", ""])
-
-    # Per-condition summary
-    for label, df in all_results.items():
-        lines.append(f"## {label}")
-        lines.append("")
-
-        # Category counts
-        cat_counts = df["category"].value_counts()
-        n_total = len(df)
-        lines.append(f"**{n_total} high-confidence clusters analyzed**")
-        lines.append("")
-        lines.append("| Match Quality | Count | % |")
-        lines.append("|---|---|---|")
-        for cat in ["Strong concordance", "Good concordance", "Partial match",
-                     "Weak match", "Unique to source"]:
-            c = cat_counts.get(cat, 0)
-            lines.append(f"| {cat} | {c} | {100*c/n_total:.1f}% |")
-
-        # Summary stats
-        lines.extend([
-            "",
-            f"- **Median Jaccard:** {df['jaccard'].median():.3f}",
-            f"- **Mean Jaccard:** {df['jaccard'].mean():.3f}",
-            f"- **Mean fragmentation:** {df['fragmentation'].mean():.1f}x",
-            "",
-        ])
-
-        # Top matches table
-        lines.append("### Top Matches (Jaccard ≥ 0.3)")
-        lines.append("")
-        top = df[df["jaccard"] >= 0.3].sort_values("jaccard", ascending=False)
-        if len(top) > 0:
-            lines.append("| Source cl | Source process | Size | Target cl | Target process | Target conf | Jaccard | Shared | Frag |")
-            lines.append("|---|---|---|---|---|---|---|---|---|")
-            for _, row in top.iterrows():
-                src_proc = row["source_process"]
-                if len(src_proc) > 45:
-                    src_proc = src_proc[:42] + "..."
-                tgt_proc = row["target_process"]
-                if len(tgt_proc) > 45:
-                    tgt_proc = tgt_proc[:42] + "..."
-                lines.append(
-                    f"| {int(row['source_cluster'])} | {src_proc} | "
-                    f"{int(row['source_size'])} | {int(row['best_target_cluster'])} | "
-                    f"{tgt_proc} | {row['target_confidence']} | "
-                    f"{row['jaccard']:.3f} | {int(row['shared_genes'])} | "
-                    f"{int(row['fragmentation'])} |"
-                )
-        else:
-            lines.append("*No clusters with Jaccard ≥ 0.3*")
-
-        lines.extend(["", "### Unique to Source (Jaccard < 0.05)", ""])
-        unique = df[df["jaccard"] < 0.05].sort_values("source_size", ascending=False)
-        if len(unique) > 0:
-            lines.append("| Source cl | Source process | Size | Best Jaccard |")
-            lines.append("|---|---|---|---|")
-            for _, row in unique.iterrows():
-                proc = row["source_process"]
-                if len(proc) > 55:
-                    proc = proc[:52] + "..."
-                lines.append(
-                    f"| {int(row['source_cluster'])} | {proc} | "
-                    f"{int(row['source_size'])} | {row['jaccard']:.3f} |"
-                )
-        else:
-            lines.append("*No clusters unique to source*")
-
-        lines.extend(["", "---", ""])
-
-    with open(output_path, "w") as f:
-        f.write("\n".join(lines))
     print(f"Saved: {output_path}")
 
 
@@ -546,12 +446,6 @@ def main():
     )
     plot_overlap_heatmap(all_bf_to_fk, OUTPUT_DIR / "heatmap_bf_to_fk.png")
     plot_overlap_heatmap(all_fk_to_bf, OUTPUT_DIR / "heatmap_fk_to_bf.png")
-
-    # Generate markdown
-    generate_markdown_summary(
-        all_results, gene_stats,
-        OUTPUT_DIR / "CLUSTER_OVERLAP.md",
-    )
 
     print("\nDone! Results in:", OUTPUT_DIR)
 

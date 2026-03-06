@@ -13,8 +13,8 @@ Metrics compared:
 - Precision-Recall curves across clustering resolutions
 
 Usage:
-    python cluster.py              # Generate all outputs
-    python cluster.py --plots-only # Regenerate plots only
+    python cluster_enrichment.py              # Generate all outputs
+    python cluster_enrichment.py --plots-only # Regenerate plots only
 """
 
 import json
@@ -33,7 +33,7 @@ PROJECT_ROOT = BENCHMARKS_DIR.parent
 ANALYSIS_DIR = PROJECT_ROOT / "analysis"
 BRIEFLOW_OUTPUT = ANALYSIS_DIR / "brieflow_output" / "cluster"
 FUNK_RESULTS = BENCHMARKS_DIR / "external" / "results" / "cluster"
-OUTPUT_DIR = BENCHMARKS_DIR / "results" / "cluster" / "benchmarks"
+OUTPUT_DIR = BENCHMARKS_DIR / "results" / "cluster" / "enrichment"
 
 # Clustering configurations to analyze (ideal resolutions)
 IDEAL_CONFIGS = [

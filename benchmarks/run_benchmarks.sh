@@ -357,8 +357,33 @@ if [ "$RUN_CLUSTER" = true ]; then
     echo "CLUSTERING BENCHMARKS (BRIEFLOW vs FUNK ET AL. 2022)"
     echo "============================================================================"
 
-    log_info "Running clustering comparison benchmark..."
-    if ! run_in_env "$MAIN_ENV" "cluster.py" "main"; then
+    log_info "Running clustering enrichment benchmark..."
+    if ! run_in_env "$MAIN_ENV" "cluster_enrichment.py" "main"; then
+        OVERALL_SUCCESS=false
+    fi
+
+    log_info "Running cluster overlap analysis..."
+    if ! run_in_env "$MAIN_ENV" "cluster_overlap.py" "main"; then
+        OVERALL_SUCCESS=false
+    fi
+
+    log_info "Running cluster validation analysis..."
+    if ! run_in_env "$MAIN_ENV" "cluster_validation.py" "main"; then
+        OVERALL_SUCCESS=false
+    fi
+
+    log_info "Running cluster similarity analysis..."
+    if ! run_in_env "$MAIN_ENV" "cluster_similarity.py" "main"; then
+        OVERALL_SUCCESS=false
+    fi
+
+    log_info "Running cluster MozzareLLM analysis..."
+    if ! run_in_env "$MAIN_ENV" "cluster_mozzarellm.py" "main" "--include-shuffled"; then
+        OVERALL_SUCCESS=false
+    fi
+
+    log_info "Running cluster tables generation..."
+    if ! run_in_env "$MAIN_ENV" "cluster_tables.py" "main"; then
         OVERALL_SUCCESS=false
     fi
 

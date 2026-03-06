@@ -14,8 +14,8 @@ Reads summaries from:
   Shuffled:  .../Interphase/12/mozzarellm_shuffled/claude-opus-4-6_summaries.tsv (optional)
 
 Usage:
-    python mozzarellm.py
-    python mozzarellm.py --include-shuffled
+    python cluster_mozzarellm.py
+    python cluster_mozzarellm.py --include-shuffled
 """
 
 import argparse
@@ -31,7 +31,7 @@ SCRIPT_DIR = Path(__file__).parent
 ANALYSIS_DIR = SCRIPT_DIR.parent / "analysis"
 CLUSTER_DIR = ANALYSIS_DIR / "brieflow_output" / "cluster" / "DAPI_TUBULIN_GH2AX_PHALLOIDIN"
 FUNK_DIR = SCRIPT_DIR / "external" / "results" / "cluster"
-OUTPUT_DIR = SCRIPT_DIR / "results" / "mozzarellm"
+OUTPUT_DIR = SCRIPT_DIR / "results" / "cluster" / "mozzarellm"
 
 # Pipeline → cell class → path
 PIPELINES = {
@@ -162,7 +162,7 @@ def figure_a(data, output_dir):
 
     fig, ax = plt.subplots(figsize=(7, 5))
 
-    pcts = [stats[l]["pct_high"] for l in bar_labels]
+    pcts = [stats[lbl]["pct_high"] for lbl in bar_labels]
     bars = ax.bar(bar_positions, pcts, width, color=bar_colors, edgecolor="white", linewidth=1.5)
 
     for bar, label in zip(bars, bar_labels):
@@ -197,8 +197,8 @@ def figure_b(data, output_dir):
     setup_plot_style()
 
     # Exclude Shuffled
-    labels = [l for l in data if l != "Shuffled"]
-    stats = {l: get_confidence_stats(data[l]) for l in labels}
+    labels = [lbl for lbl in data if lbl != "Shuffled"]
+    stats = {lbl: get_confidence_stats(data[lbl]) for lbl in labels}
 
     # Order: Brieflow Interphase, Funk Interphase, Brieflow Mitotic, Funk Mitotic
     ordered = []
@@ -215,12 +215,8 @@ def figure_b(data, output_dir):
     width = 0.6
     pos = 0
     group_centers = []
-    cc_idx = 0
     for i, label in enumerate(ordered):
         positions.append(pos)
-        # Add gap after every 2 bars (between cell classes)
-        if i > 0 and i % len(PIPELINES) == 0:
-            pass  # gap already added below
         pos += width + 0.1
         if (i + 1) % len(PIPELINES) == 0:
             group_centers.append(np.mean(positions[-len(PIPELINES):]))
@@ -228,15 +224,15 @@ def figure_b(data, output_dir):
 
     x = np.array(positions)
 
-    established = [stats[l]["genes_established"] for l in ordered]
-    novel = [stats[l]["genes_novel"] for l in ordered]
-    uncharacterized = [stats[l]["genes_uncharacterized"] for l in ordered]
+    established = [stats[lbl]["genes_established"] for lbl in ordered]
+    novel = [stats[lbl]["genes_novel"] for lbl in ordered]
+    uncharacterized = [stats[lbl]["genes_uncharacterized"] for lbl in ordered]
 
     # Stack colors: consistent across all bars
     stack_colors = {"Established": "#2ca02c", "Novel role": "#ff7f0e", "Uncharacterized": "#d62728"}
 
     # Use hatching to distinguish pipelines
-    hatches = [None if l.startswith("Brieflow") else "///" for l in ordered]
+    hatches = [None if lbl.startswith("Brieflow") else "///" for lbl in ordered]
 
     for i, label in enumerate(ordered):
         h = hatches[i]
@@ -248,7 +244,7 @@ def figure_b(data, output_dir):
                color=stack_colors["Uncharacterized"], edgecolor="white", hatch=h)
 
     # Total labels
-    totals = [stats[l]["genes_total_highconf"] for l in ordered]
+    totals = [stats[lbl]["genes_total_highconf"] for lbl in ordered]
     for i, total in enumerate(totals):
         ax.text(x[i], total + 10, f"{total}", ha="center", va="bottom", fontsize=10, fontweight="bold")
 
@@ -279,8 +275,8 @@ def figure_c(data, output_dir):
     setup_plot_style()
 
     # Exclude Shuffled
-    labels = [l for l in data if l != "Shuffled"]
-    stats = {l: get_confidence_stats(data[l]) for l in labels}
+    labels = [lbl for lbl in data if lbl != "Shuffled"]
+    stats = {lbl: get_confidence_stats(data[lbl]) for lbl in labels}
 
     # Order labels
     ordered = []
@@ -355,7 +351,7 @@ def save_summary_table(data, output_dir):
     table = pd.DataFrame(rows)
     path = output_dir / "summary_table.tsv"
     table.to_csv(path, sep="\t", index=False)
-    print(f"Saved: summary_table.tsv")
+    print("Saved: summary_table.tsv")
     print(table.to_string(index=False))
     return table
 

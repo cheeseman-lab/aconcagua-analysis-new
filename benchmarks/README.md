@@ -1,6 +1,6 @@
 # Benchmarks
 
-Compares methods at four pipeline stages.
+Compares methods at four pipeline stages, plus clustering evaluation and supplemental table generation.
 
 ## Segmentation (`segmentation.py`)
 
@@ -25,31 +25,39 @@ Two modes:
 **Methods:** Fast (tile-by-tile alignment), Stitch (full well stitching)
 **Metrics:** Runtime, alignment quality (distance), cell retention, barcode mapping
 
-Analyzes merge results from Snakemake pipeline runs. Extracts timing from slurm logs and quality metrics from parquet outputs.
-
-**Output directories:**
-- `merge/` - Fast approach (default, `approach: fast` in config)
-- `merge_stitch/` - Stitch approach (requires `approach: stitch` in config)
-
-To generate stitch outputs for comparison, set `merge.approach: stitch` in `config/config.yml` and run the merge step.
-
 **Conclusion:** Fast approach is recommended. Stitch requires ~2TB RAM for triangle hash distance matrix (beyond cluster capacity), falls back to identity transform with degraded alignment.
 
-## Clustering (`cluster.py`)
+## Clustering (`cluster_enrichment.py`)
 
 **Comparison:** Brieflow vs Funk et al. 2022 original analysis
-**Metrics:**
-- STRING F1 score (protein-protein interaction enrichment)
-- CORUM/KEGG enrichment (% clusters with significant pathway enrichment)
-- Cluster size distributions
-- Precision-Recall curves for pathway detection
+**Metrics:** STRING F1, CORUM/KEGG enrichment, Precision-Recall curves
 
-Addresses reviewer feedback requesting rigorous quantitative benchmarking and head-to-head comparison with PR curves. Demonstrates improved clustering quality through:
-- Enhanced biological coherence (CORUM/KEGG enrichment)
-- Better protein interaction network capture (STRING F1)
-- Systematic evaluation across both Interphase and Mitotic configurations
+### Supporting cluster analysis scripts
 
-**Baseline data:** External comparison uses Funk et al. 2022 supplementary data (Table S2) from the original OPS manuscript.
+| Script | Purpose | Output Dir |
+|--------|---------|------------|
+| `cluster_overlap.py` | Jaccard similarity between Brieflow↔Funk clusters | `results/cluster/overlap/` |
+| `cluster_validation.py` | Co-clustering preservation of known gene groups | `results/cluster/validation/` |
+| `cluster_similarity.py` | Feature embedding Pearson correlation heatmaps | `results/cluster/similarity/` |
+
+### MozzareLLM
+
+| Script | Purpose | Output Dir |
+|--------|---------|------------|
+| `cluster_mozzarellm.py` | Publication figures A-C from LLM cluster summaries | `results/cluster/mozzarellm/` |
+| `run_mozzarellm_funk.py` | Run MozzareLLM on Funk re-clustered data | `external/results/cluster/*/mozzarellm/` |
+
+### Supplemental Tables (`cluster_tables.py`)
+
+Generates all supplemental tables (S1-S9) and a merged Excel workbook:
+- **S1:** All high-confidence clusters
+- **S2:** Gene annotations for high-confidence clusters
+- **S3:** Cross-pipeline Jaccard similarity (requires `cluster_overlap.py` output)
+- **S4:** Funk cluster retention in Brieflow
+- **S5:** Shuffled control comparison
+- **S6-S9:** Comprehensive cluster and gene tables (Brieflow + Funk)
+
+**Output:** `results/cluster/tables/` including `all_supplemental_tables.xlsx`
 
 ## Classifier (`classifier.py`)
 
@@ -70,10 +78,6 @@ Multi-construct barcode validation for in-situ sequencing quality control.
 ## Visualization (`visualization.py`)
 
 Generate publication-quality visualizations of benchmark results. Requires Napari viewer — run locally, not via `run_benchmarks.sh`.
-- **segmentation**: Side-by-side segmentation method comparison
-- **spots**: Spot detection overlay comparison
-- **overlay**: Single image with segmentation overlay
-- **panel**: Multi-panel grid of samples
 
 ## Usage
 
@@ -95,14 +99,19 @@ python segmentation.py --method cellpose
 python feature_extraction.py --mode timing
 python merge.py                # Analyze merge results from pipeline
 python merge.py --plots-only   # Regenerate plots only
-python cluster.py              # Compare clustering with Funk et al. 2022
-python cluster.py --plots-only # Regenerate plots only
+python cluster_enrichment.py              # Compare clustering with Funk et al. 2022
+python cluster_enrichment.py --plots-only # Regenerate plots only
 python classifier.py           # Train and evaluate cell stage classifier
+
+# Cluster analysis scripts (run independently)
+python cluster_overlap.py
+python cluster_validation.py
+python cluster_similarity.py
+python cluster_mozzarellm.py --include-shuffled
+python cluster_tables.py       # Generate S1-S9 tables + Excel
 
 # Generate visualizations (requires Napari, run locally)
 python visualization.py --type all
-python visualization.py --type segmentation --sample P-1_W-A1_T-1
-python visualization.py --type panel --rows 2 --cols 4
 ```
 
 ## Environments
@@ -113,17 +122,6 @@ python visualization.py --type panel --rows 2 --cols 4
 | `brieflow_cellpose4` | Cellpose4 (CPSAM) segmentation |
 | `brieflow_stardist` | StarDist segmentation |
 | `brieflow_napari` | Visualization (optional) |
-
-### Setting up brieflow_napari (for visualization)
-
-```bash
-# Create environment with all visualization dependencies (locally)
-conda create -n brieflow_napari python=3.11 -y
-conda activate brieflow_napari
-pip install napari[all] tifffile numpy pandas matplotlib scikit-image seaborn
-
-# Run visualizations (offscreen rendering enabled by default)
-python visualization.py --type all
-```
+| `mozzarellm` | MozzareLLM cluster analysis (`run_mozzarellm_funk.py`) |
 
 Results saved to `results/{benchmark}/`.
