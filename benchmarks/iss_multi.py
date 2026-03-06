@@ -110,10 +110,12 @@ DATA_CONFIG = {
     "known_prefixes": ["ATA", "TGA", "CAT"],
 }
 
-DF_BARCODE_LIBRARY = pd.DataFrame({
-    "gene_symbol": ["construct_1", "construct_2", "construct_3"],
-    "prefix": ["ATA", "TGA", "CAT"],
-})
+DF_BARCODE_LIBRARY = pd.DataFrame(
+    {
+        "gene_symbol": ["construct_1", "construct_2", "construct_3"],
+        "prefix": ["ATA", "TGA", "CAT"],
+    }
+)
 
 _ND2_CHANNEL_STR = "DAPI,CY3_T7,AF594_T7,CY5_T7,CY7_T7"
 _SUMMARY_FILENAME = "iss_multi_summary.tsv"
@@ -142,7 +144,7 @@ def load_position_across_cycles(well: str, position: int) -> list[np.ndarray]:
 
     images: list[np.ndarray] = []
 
-    vprint(f"\n--- Data Loading ---")
+    vprint("\n--- Data Loading ---")
     vprint(f"  Root:     {root}")
     vprint(f"  Well:     {well}  |  Position: {position}")
     vprint(f"  Seq:      {seq}")
@@ -258,7 +260,12 @@ def run_sbs_pipeline(
     pipeline_dir = DATA_CONFIG["data_root"] / "pipeline"
     pos_dir = pipeline_dir / f"{well}_pos{position}"
     pos_dir.mkdir(parents=True, exist_ok=True)
-    for name, arr in [("aligned", aligned), ("nuclei", nuclei), ("peaks", peaks), ("maxed", maxed)]:
+    for name, arr in [
+        ("aligned", aligned),
+        ("nuclei", nuclei),
+        ("peaks", peaks),
+        ("maxed", maxed),
+    ]:
         tifffile.imwrite(str(pos_dir / f"{name}.tiff"), arr)
     vprint(f"   Saved arrays to {pos_dir}")
 
@@ -477,9 +484,7 @@ def raw_barcode_specificity(
         per_barcode[prefix] = {"count": int(count), "fraction": count / n_peaks}
 
     n_known = sum(per_read_known)
-    unknown_bcs = {
-        bc: int(cnt) for bc, cnt in bc_counts.items() if bc not in known_set
-    }
+    unknown_bcs = {bc: int(cnt) for bc, cnt in bc_counts.items() if bc not in known_set}
 
     per_cycle_dist = []
     for c in range(n_cycles):
@@ -521,12 +526,23 @@ def call_reads_cross_well(
 
     if not combined_parts:
         empty_reads = pd.DataFrame(
-            columns=["read", "cell", "i", "j", "tile", "well",
-                     "barcode", "Q_min", "peak"]
+            columns=[
+                "read",
+                "cell",
+                "i",
+                "j",
+                "tile",
+                "well",
+                "barcode",
+                "Q_min",
+                "peak",
+            ]
         )
         empty_cells = pd.DataFrame()
-        return {w: {"df_reads": empty_reads.copy(), "df_cells": empty_cells.copy()}
-                for w in per_well_results}
+        return {
+            w: {"df_reads": empty_reads.copy(), "df_cells": empty_cells.copy()}
+            for w in per_well_results
+        }
 
     df_combined = pd.concat(combined_parts, ignore_index=True)
     n_reads = df_combined["read"].nunique()
@@ -554,7 +570,9 @@ def call_reads_cross_well(
         if n > 0:
             top_bc = df_reads_well["barcode"].value_counts().index[0]
             top_ct = df_reads_well["barcode"].value_counts().iloc[0]
-            print(f"   {well}: {n} reads, top={top_bc} ({top_ct}/{n}, {top_ct/n*100:.1f}%)")
+            print(
+                f"   {well}: {n} reads, top={top_bc} ({top_ct}/{n}, {top_ct / n * 100:.1f}%)"
+            )
 
             df_cells_well = call_cells(
                 df_reads_well,
@@ -589,18 +607,51 @@ def build_summary_table(
         n_unique = det.get("n_uniquely_mapped", 0)
         per_con = det.get("per_construct", {})
 
-        rows.append({
-            "well": well,
-            "n_positions": len(wd.get("raw_specificity", [])),
-            "n_segmented": n_seg,
-            "n_mapped": n_mapped,
-            "n_uniquely_mapped": n_unique,
-            "pct_mapped": n_mapped / n_seg * 100 if n_seg > 0 else 0,
-            "pct_uniquely_mapped": n_unique / n_seg * 100 if n_seg > 0 else 0,
-            **{name: per_con.get(name, 0) for name in construct_names},
-        })
+        rows.append(
+            {
+                "well": well,
+                "n_positions": len(wd.get("raw_specificity", [])),
+                "n_segmented": n_seg,
+                "n_mapped": n_mapped,
+                "n_uniquely_mapped": n_unique,
+                "pct_mapped": n_mapped / n_seg * 100 if n_seg > 0 else 0,
+                "pct_uniquely_mapped": n_unique / n_seg * 100 if n_seg > 0 else 0,
+                **{name: per_con.get(name, 0) for name in construct_names},
+            }
+        )
 
     return pd.DataFrame(rows)
+
+
+# ---------------------------------------------------------------------------
+# Mock legend for base colors (matches plot_normalization_comparison)
+# ---------------------------------------------------------------------------
+def generate_base_legend(out_dir: Path) -> None:
+    """Generate a legend-only plot showing the base color mapping."""
+    import matplotlib.pyplot as plt
+
+    sys.path.insert(0, str(BENCHMARKS_DIR))
+    from plot_style import setup_plot_style, save_figure
+
+    setup_plot_style()
+
+    base_colors = {"G": "purple", "T": "cyan", "A": "green", "C": "red"}
+    base_order = ["G", "T", "A", "C"]
+
+    fig, ax = plt.subplots(figsize=(4, 1))
+    for base in base_order:
+        ax.scatter([], [], color=base_colors[base], s=40, label=f"'{base}' base call")
+    ax.legend(
+        loc="center",
+        ncol=len(base_order),
+        frameon=False,
+        fontsize=11,
+    )
+    ax.set_axis_off()
+    fig.tight_layout()
+    save_figure(fig, out_dir / "base_legend")
+    plt.close(fig)
+    print(f"Saved: {out_dir / 'base_legend.png'}")
 
 
 # ---------------------------------------------------------------------------
@@ -609,6 +660,7 @@ def build_summary_table(
 def generate_plots(summary_df: pd.DataFrame, out_dir: Path) -> None:
     """Generate publication-quality plots from summary table."""
     import matplotlib.pyplot as plt
+
     sys.path.insert(0, str(BENCHMARKS_DIR))
     from plot_style import setup_plot_style, FIGSIZE, save_figure
 
@@ -621,39 +673,88 @@ def generate_plots(summary_df: pd.DataFrame, out_dir: Path) -> None:
 
     # Three categories per well (stacking to n_segmented)
     n_unique = summary_df["n_uniquely_mapped"].values.astype(float)
-    n_ambig = (summary_df["n_mapped"] - summary_df["n_uniquely_mapped"]).values.astype(float)
+    n_ambig = (summary_df["n_mapped"] - summary_df["n_uniquely_mapped"]).values.astype(
+        float
+    )
     n_no_bc = (summary_df["n_segmented"] - summary_df["n_mapped"]).values.astype(float)
     n_seg = summary_df["n_segmented"].values.astype(float)
 
-    c_unique = "#27ae60"   # green
-    c_ambig = "#f39c12"    # orange
-    c_nobc = "#bdc3c7"     # gray
+    c_unique = "#27ae60"  # green
+    c_ambig = "#f39c12"  # orange
+    c_nobc = "#bdc3c7"  # gray
 
     labels = ["Uniquely mapped", "Ambiguous (multi-construct)", "No barcode"]
 
     # ── Plot 1: Counts (no percentages, just counts) ──
     fig, ax = plt.subplots(figsize=FIGSIZE["single"])
-    ax.bar(x, n_unique, bw, label=labels[0], color=c_unique,
-           edgecolor="white", linewidth=0.5)
-    ax.bar(x, n_ambig, bw, bottom=n_unique, label=labels[1],
-           color=c_ambig, edgecolor="white", linewidth=0.5)
-    ax.bar(x, n_no_bc, bw, bottom=n_unique + n_ambig, label=labels[2],
-           color=c_nobc, edgecolor="white", linewidth=0.5)
+    ax.bar(
+        x,
+        n_unique,
+        bw,
+        label=labels[0],
+        color=c_unique,
+        edgecolor="white",
+        linewidth=0.5,
+    )
+    ax.bar(
+        x,
+        n_ambig,
+        bw,
+        bottom=n_unique,
+        label=labels[1],
+        color=c_ambig,
+        edgecolor="white",
+        linewidth=0.5,
+    )
+    ax.bar(
+        x,
+        n_no_bc,
+        bw,
+        bottom=n_unique + n_ambig,
+        label=labels[2],
+        color=c_nobc,
+        edgecolor="white",
+        linewidth=0.5,
+    )
 
     for i in range(len(wells)):
         # Counts only — no percentages
         if n_unique[i] / n_seg[i] > 0.04:
-            ax.text(x[i], n_unique[i] / 2, f"{int(n_unique[i]):,}",
-                    ha="center", va="center", fontsize=9, fontweight="bold", color="white")
+            ax.text(
+                x[i],
+                n_unique[i] / 2,
+                f"{int(n_unique[i]):,}",
+                ha="center",
+                va="center",
+                fontsize=9,
+                fontweight="bold",
+                color="white",
+            )
         if n_ambig[i] / n_seg[i] > 0.04:
-            ax.text(x[i], n_unique[i] + n_ambig[i] / 2, f"{int(n_ambig[i]):,}",
-                    ha="center", va="center", fontsize=9, fontweight="bold", color="white")
+            ax.text(
+                x[i],
+                n_unique[i] + n_ambig[i] / 2,
+                f"{int(n_ambig[i]):,}",
+                ha="center",
+                va="center",
+                fontsize=9,
+                fontweight="bold",
+                color="white",
+            )
         if n_no_bc[i] / n_seg[i] > 0.04:
-            ax.text(x[i], n_unique[i] + n_ambig[i] + n_no_bc[i] / 2, f"{int(n_no_bc[i]):,}",
-                    ha="center", va="center", fontsize=9, fontweight="bold", color="#555")
+            ax.text(
+                x[i],
+                n_unique[i] + n_ambig[i] + n_no_bc[i] / 2,
+                f"{int(n_no_bc[i]):,}",
+                ha="center",
+                va="center",
+                fontsize=9,
+                fontweight="bold",
+                color="#555",
+            )
 
     ax.set_ylabel("Cells")
-    ax.set_title("Cell Mapping (counts)")
+    ax.set_title("Cell Mapping", fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(wells)
     ax.set_xlabel("Well")
@@ -669,27 +770,73 @@ def generate_plots(summary_df: pd.DataFrame, out_dir: Path) -> None:
     pct_nobc = n_no_bc / n_seg * 100
 
     fig, ax = plt.subplots(figsize=FIGSIZE["single"])
-    ax.bar(x, pct_unique, bw, label=labels[0], color=c_unique,
-           edgecolor="white", linewidth=0.5)
-    ax.bar(x, pct_ambig, bw, bottom=pct_unique, label=labels[1],
-           color=c_ambig, edgecolor="white", linewidth=0.5)
-    ax.bar(x, pct_nobc, bw, bottom=pct_unique + pct_ambig, label=labels[2],
-           color=c_nobc, edgecolor="white", linewidth=0.5)
+    ax.bar(
+        x,
+        pct_unique,
+        bw,
+        label=labels[0],
+        color=c_unique,
+        edgecolor="white",
+        linewidth=0.5,
+    )
+    ax.bar(
+        x,
+        pct_ambig,
+        bw,
+        bottom=pct_unique,
+        label=labels[1],
+        color=c_ambig,
+        edgecolor="white",
+        linewidth=0.5,
+    )
+    ax.bar(
+        x,
+        pct_nobc,
+        bw,
+        bottom=pct_unique + pct_ambig,
+        label=labels[2],
+        color=c_nobc,
+        edgecolor="white",
+        linewidth=0.5,
+    )
 
     for i in range(len(wells)):
         if pct_unique[i] > 4:
-            ax.text(x[i], pct_unique[i] / 2, f"{pct_unique[i]:.1f}%",
-                    ha="center", va="center", fontsize=11, fontweight="bold", color="white")
+            ax.text(
+                x[i],
+                pct_unique[i] / 2,
+                f"{pct_unique[i]:.1f}%",
+                ha="center",
+                va="center",
+                fontsize=11,
+                fontweight="bold",
+                color="white",
+            )
         if pct_ambig[i] > 4:
-            ax.text(x[i], pct_unique[i] + pct_ambig[i] / 2, f"{pct_ambig[i]:.1f}%",
-                    ha="center", va="center", fontsize=10, fontweight="bold", color="white")
+            ax.text(
+                x[i],
+                pct_unique[i] + pct_ambig[i] / 2,
+                f"{pct_ambig[i]:.1f}%",
+                ha="center",
+                va="center",
+                fontsize=10,
+                fontweight="bold",
+                color="white",
+            )
         if pct_nobc[i] > 4:
-            ax.text(x[i], pct_unique[i] + pct_ambig[i] + pct_nobc[i] / 2,
-                    f"{pct_nobc[i]:.1f}%",
-                    ha="center", va="center", fontsize=10, fontweight="bold", color="#555")
+            ax.text(
+                x[i],
+                pct_unique[i] + pct_ambig[i] + pct_nobc[i] / 2,
+                f"{pct_nobc[i]:.1f}%",
+                ha="center",
+                va="center",
+                fontsize=10,
+                fontweight="bold",
+                color="#555",
+            )
 
     ax.set_ylabel("% of segmented cells")
-    ax.set_title("Cell Mapping (percent)")
+    ax.set_title("Cell Mapping", fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(wells)
     ax.set_xlabel("Well")
@@ -699,6 +846,9 @@ def generate_plots(summary_df: pd.DataFrame, out_dir: Path) -> None:
     save_figure(fig, out_dir / "cell_mapping_pct")
     plt.close(fig)
     print(f"Saved: {out_dir / 'cell_mapping_pct.png'}")
+
+    # Base color legend (for normalization comparison plots)
+    generate_base_legend(out_dir)
 
 
 # ---------------------------------------------------------------------------
@@ -720,7 +870,7 @@ def print_summary(
     print(f"  bases:           {PARAMS['bases']}")
     print(f"  known barcodes:  {known}")
     print(f"  threshold:       {PARAMS['threshold_peaks']}")
-    print(f"  random chance:   {len(known)}/64 = {len(known)/64*100:.1f}%")
+    print(f"  random chance:   {len(known)}/64 = {len(known) / 64 * 100:.1f}%")
 
     # Raw specificity
     print(f"\n{'─' * 72}")
@@ -746,17 +896,17 @@ def print_summary(
             parts = [f"{well:<6} {pos:<5} {n:>7}"]
             for bc in known:
                 info = spec["per_barcode"].get(bc, {"fraction": 0})
-                parts.append(f"  {info['fraction']*100:>6.1f}%")
-            parts.append(f"  {spec['known_fraction']*100:>6.1f}%")
-            parts.append(f"  {(1-spec['known_fraction'])*100:>7.1f}%")
+                parts.append(f"  {info['fraction'] * 100:>6.1f}%")
+            parts.append(f"  {spec['known_fraction'] * 100:>6.1f}%")
+            parts.append(f"  {(1 - spec['known_fraction']) * 100:>7.1f}%")
             print("".join(parts))
 
     if total_raw_reads > 0:
         print(
             f"\n  Raw total: {total_raw_reads} reads, "
-            f"{total_raw_known} known ({total_raw_known/total_raw_reads*100:.1f}%), "
-            f"{total_raw_reads-total_raw_known} unknown "
-            f"({(total_raw_reads-total_raw_known)/total_raw_reads*100:.1f}%)"
+            f"{total_raw_known} known ({total_raw_known / total_raw_reads * 100:.1f}%), "
+            f"{total_raw_reads - total_raw_known} unknown "
+            f"({(total_raw_reads - total_raw_known) / total_raw_reads * 100:.1f}%)"
         )
 
     # Cell-level mapping (from call_cells)
@@ -775,14 +925,18 @@ def print_summary(
         n_ambig = n_mapped - n_unique
         n_no_bc = n_seg - n_mapped
         print(f"\n  {well}: {n_seg} segmented")
-        print(f"    Uniquely mapped: {n_unique:>6} ({n_unique/n_seg*100:.1f}%)")
-        print(f"    Ambiguous:       {n_ambig:>6} ({n_ambig/n_seg*100:.1f}%)")
-        print(f"    No barcode:      {n_no_bc:>6} ({n_no_bc/n_seg*100:.1f}%)")
+        print(f"    Uniquely mapped: {n_unique:>6} ({n_unique / n_seg * 100:.1f}%)")
+        print(f"    Ambiguous:       {n_ambig:>6} ({n_ambig / n_seg * 100:.1f}%)")
+        print(f"    No barcode:      {n_no_bc:>6} ({n_no_bc / n_seg * 100:.1f}%)")
         per_con = det.get("per_construct", {})
         if per_con:
-            print(f"    Per-construct (uniquely mapped):")
+            print("    Per-construct (uniquely mapped):")
             for name, count in per_con.items():
-                print(f"      {name}: {count:>6} ({count/n_unique*100:.1f}%)" if n_unique > 0 else f"      {name}: {count:>6}")
+                print(
+                    f"      {name}: {count:>6} ({count / n_unique * 100:.1f}%)"
+                    if n_unique > 0
+                    else f"      {name}: {count:>6}"
+                )
 
     # Consensus
     print(f"\n{'─' * 72}")
@@ -804,15 +958,27 @@ def print_summary(
     print(f"\n{sep}")
     print("OVERALL")
     total_seg = sum(well_data[w].get("n_cells_total", 0) for w in well_data)
-    total_mapped = sum(well_data[w].get("detection", {}).get("n_mapped", 0) for w in well_data)
-    total_unique = sum(well_data[w].get("detection", {}).get("n_uniquely_mapped", 0) for w in well_data)
+    total_mapped = sum(
+        well_data[w].get("detection", {}).get("n_mapped", 0) for w in well_data
+    )
+    total_unique = sum(
+        well_data[w].get("detection", {}).get("n_uniquely_mapped", 0) for w in well_data
+    )
     if total_seg > 0:
         print(f"  Segmented:         {total_seg}")
-        print(f"  Uniquely mapped:   {total_unique} ({total_unique/total_seg*100:.1f}%)")
-        print(f"  Ambiguous:         {total_mapped-total_unique} ({(total_mapped-total_unique)/total_seg*100:.1f}%)")
-        print(f"  No barcode:        {total_seg-total_mapped} ({(total_seg-total_mapped)/total_seg*100:.1f}%)")
+        print(
+            f"  Uniquely mapped:   {total_unique} ({total_unique / total_seg * 100:.1f}%)"
+        )
+        print(
+            f"  Ambiguous:         {total_mapped - total_unique} ({(total_mapped - total_unique) / total_seg * 100:.1f}%)"
+        )
+        print(
+            f"  No barcode:        {total_seg - total_mapped} ({(total_seg - total_mapped) / total_seg * 100:.1f}%)"
+        )
     if total_raw_reads > 0:
-        print(f"  Raw known:         {total_raw_known} ({total_raw_known/total_raw_reads*100:.1f}%)")
+        print(
+            f"  Raw known:         {total_raw_known} ({total_raw_known / total_raw_reads * 100:.1f}%)"
+        )
     print(sep)
 
 
@@ -883,7 +1049,9 @@ def main():
     else:
         wells = [args.well]
 
-    mode_str = "rerun" if args.rerun else ("cross-well" if args.cross_well else "standard")
+    mode_str = (
+        "rerun" if args.rerun else ("cross-well" if args.cross_well else "standard")
+    )
     print("=" * 72)
     print("ISS MULTI-CONSTRUCT VALIDATION")
     print("=" * 72)
@@ -919,12 +1087,13 @@ def main():
             all_consensus[well].append(cons)
             if cons["barcode"]:
                 match_str = "KNOWN" if cons["barcode"] in known else "unknown"
-                print(f"\n   CONSENSUS: {cons['barcode']}  ({cons['n_peaks']} peaks)  [{match_str}]")
+                print(
+                    f"\n   CONSENSUS: {cons['barcode']}  ({cons['n_peaks']} peaks)  [{match_str}]"
+                )
 
     # ── Raw specificity ──
     well_data: dict[str, dict] = {
-        w: {"consensus": all_consensus[w], "raw_specificity": []}
-        for w in wells
+        w: {"consensus": all_consensus[w], "raw_specificity": []} for w in wells
     }
 
     for pos in positions:
@@ -950,25 +1119,29 @@ def main():
             for well in wells:
                 cw = per_well[well]
                 well_data[well].setdefault("all_df_cells", []).append(cw["df_cells"])
-                well_data[well]["n_reads_total"] = (
-                    well_data[well].get("n_reads_total", 0) + len(cw["df_reads"])
-                )
+                well_data[well]["n_reads_total"] = well_data[well].get(
+                    "n_reads_total", 0
+                ) + len(cw["df_reads"])
     else:
         for pos in positions:
             for well in wells:
                 res = all_results[well][pos]
                 well_data[well].setdefault("all_df_cells", []).append(res["df_cells"])
-                well_data[well]["n_reads_total"] = (
-                    well_data[well].get("n_reads_total", 0) + len(res["df_reads"])
-                )
+                well_data[well]["n_reads_total"] = well_data[well].get(
+                    "n_reads_total", 0
+                ) + len(res["df_reads"])
 
     # ── Cell-level detection analysis (from call_cells) ──
     for well in wells:
-        cell_dfs = [df for df in well_data[well].get("all_df_cells", []) if not df.empty]
+        cell_dfs = [
+            df for df in well_data[well].get("all_df_cells", []) if not df.empty
+        ]
         if not cell_dfs:
             well_data[well]["detection"] = {
-                "n_cells_called": 0, "n_mapped": 0,
-                "n_uniquely_mapped": 0, "per_construct": {},
+                "n_cells_called": 0,
+                "n_mapped": 0,
+                "n_uniquely_mapped": 0,
+                "per_construct": {},
             }
             continue
 

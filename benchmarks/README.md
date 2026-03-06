@@ -15,7 +15,7 @@ Compares methods at four pipeline stages.
 ## Feature Extraction (`feature_extraction.py`)
 
 Two modes:
-- **comparison** (default): Compare CP Measure vs CP Multichannel pipelines
+- **comparison** (default): Compare CP Measure vs CP Emulator pipelines
 - **timing**: Time individual cp_measure functions to identify bottlenecks
 
 **Metrics:** Runtime, memory, feature counts
@@ -51,9 +51,25 @@ Addresses reviewer feedback requesting rigorous quantitative benchmarking and he
 
 **Baseline data:** External comparison uses Funk et al. 2022 supplementary data (Table S2) from the original OPS manuscript.
 
+## Classifier (`classifier.py`)
+
+XGBoost cell stage classifier for validating morphological feature quality.
+- Trains on Interphase vs Mitotic labels using extracted features
+- Generates confusion matrix and training composition plots
+
+**Metrics:** Accuracy, precision, recall, F1, feature importance
+
+## ISS Multi (`iss_multi.py`)
+
+Multi-construct barcode validation for in-situ sequencing quality control.
+- Validates barcode detection across wells and positions
+- Analyzes cell-to-barcode mapping rates
+
+**Metrics:** Barcode counts, cell mapping rates, per-well/position breakdowns
+
 ## Visualization (`visualization.py`)
 
-Generate publication-quality visualizations of benchmark results:
+Generate publication-quality visualizations of benchmark results. Requires Napari viewer — run locally, not via `run_benchmarks.sh`.
 - **segmentation**: Side-by-side segmentation method comparison
 - **spots**: Spot detection overlay comparison
 - **overlay**: Single image with segmentation overlay
@@ -72,6 +88,7 @@ bash run_benchmarks.sh --feature-extraction
 bash run_benchmarks.sh --feature-timing
 bash run_benchmarks.sh --merge
 bash run_benchmarks.sh --cluster
+bash run_benchmarks.sh --classifier
 
 # Run single method/mode directly
 python segmentation.py --method cellpose
@@ -80,8 +97,9 @@ python merge.py                # Analyze merge results from pipeline
 python merge.py --plots-only   # Regenerate plots only
 python cluster.py              # Compare clustering with Funk et al. 2022
 python cluster.py --plots-only # Regenerate plots only
+python classifier.py           # Train and evaluate cell stage classifier
 
-# Generate visualizations
+# Generate visualizations (requires Napari, run locally)
 python visualization.py --type all
 python visualization.py --type segmentation --sample P-1_W-A1_T-1
 python visualization.py --type panel --rows 2 --cols 4

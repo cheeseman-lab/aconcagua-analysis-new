@@ -5,11 +5,12 @@
 # This script runs all benchmarks sequentially:
 # - Segmentation: Cellpose, Cellpose4, StarDist
 # - Spot Calling: Standard, Spotiflow
-# - Feature Extraction: CP Measure vs CP Multichannel comparison
+# - Feature Extraction: CP Measure vs CP Emulator comparison
 # - Feature Timing: Individual cp_measure function timing
 # - Merge: Fast mode vs Stitch mode cell matching
 # - Clustering: Brieflow vs Funk et al. 2022 comparison
 # - ISS Multi: Multi-construct barcode validation
+# - Classifier: XGBoost cell stage classifier
 #
 # Usage: bash run_benchmarks.sh [OPTIONS]
 #
@@ -21,6 +22,7 @@
 #   --merge               Only run merge mode comparison (fast vs stitch)
 #   --cluster             Only run clustering comparison (Brieflow vs Funk et al.)
 #   --iss-multi           Only run ISS multi-construct validation
+#   --classifier          Only run cell stage classifier
 #   --help                Show this help message
 
 set -e  # Exit on error
@@ -51,6 +53,7 @@ RUN_FEATURE_TIMING=true
 RUN_MERGE=true
 RUN_CLUSTER=true
 RUN_ISS_MULTI=true
+RUN_CLASSIFIER=true
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -61,6 +64,7 @@ while [[ $# -gt 0 ]]; do
             RUN_MERGE=false
             RUN_CLUSTER=false
             RUN_ISS_MULTI=false
+            RUN_CLASSIFIER=false
             shift
             ;;
         --spot-calling)
@@ -70,6 +74,7 @@ while [[ $# -gt 0 ]]; do
             RUN_MERGE=false
             RUN_CLUSTER=false
             RUN_ISS_MULTI=false
+            RUN_CLASSIFIER=false
             shift
             ;;
         --feature-extraction)
@@ -79,6 +84,7 @@ while [[ $# -gt 0 ]]; do
             RUN_MERGE=false
             RUN_CLUSTER=false
             RUN_ISS_MULTI=false
+            RUN_CLASSIFIER=false
             shift
             ;;
         --feature-timing)
@@ -88,6 +94,7 @@ while [[ $# -gt 0 ]]; do
             RUN_MERGE=false
             RUN_CLUSTER=false
             RUN_ISS_MULTI=false
+            RUN_CLASSIFIER=false
             shift
             ;;
         --merge)
@@ -97,6 +104,7 @@ while [[ $# -gt 0 ]]; do
             RUN_FEATURE_TIMING=false
             RUN_CLUSTER=false
             RUN_ISS_MULTI=false
+            RUN_CLASSIFIER=false
             shift
             ;;
         --cluster)
@@ -106,6 +114,7 @@ while [[ $# -gt 0 ]]; do
             RUN_FEATURE_TIMING=false
             RUN_MERGE=false
             RUN_ISS_MULTI=false
+            RUN_CLASSIFIER=false
             shift
             ;;
         --iss-multi)
@@ -115,6 +124,17 @@ while [[ $# -gt 0 ]]; do
             RUN_FEATURE_TIMING=false
             RUN_MERGE=false
             RUN_CLUSTER=false
+            RUN_CLASSIFIER=false
+            shift
+            ;;
+        --classifier)
+            RUN_SEGMENTATION=false
+            RUN_SPOT_CALLING=false
+            RUN_FEATURE_EXTRACTION=false
+            RUN_FEATURE_TIMING=false
+            RUN_MERGE=false
+            RUN_CLUSTER=false
+            RUN_ISS_MULTI=false
             shift
             ;;
         --help)
@@ -130,6 +150,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --merge               Only run merge mode comparison (fast vs stitch)"
             echo "  --cluster             Only run clustering comparison (Brieflow vs Funk et al.)"
             echo "  --iss-multi           Only run ISS multi-construct validation"
+            echo "  --classifier          Only run cell stage classifier"
             echo "  --help                Show this help message"
             exit 0
             ;;
@@ -360,6 +381,24 @@ if [ "$RUN_ISS_MULTI" = true ]; then
     fi
 
     log_success "ISS multi-construct validation completed"
+fi
+
+# ============================================================================
+# CLASSIFIER (CELL STAGE)
+# ============================================================================
+
+if [ "$RUN_CLASSIFIER" = true ]; then
+    echo ""
+    echo "============================================================================"
+    echo "CLASSIFIER (CELL STAGE)"
+    echo "============================================================================"
+
+    log_info "Running cell stage classifier benchmark..."
+    if ! run_in_env "$MAIN_ENV" "classifier.py" "main"; then
+        OVERALL_SUCCESS=false
+    fi
+
+    log_success "Cell stage classifier completed"
 fi
 
 # ============================================================================

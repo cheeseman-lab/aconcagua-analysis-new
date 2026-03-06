@@ -339,14 +339,16 @@ def load_distance_data():
     return distances
 
 
-def plot_runtime_comparison(timing_df, output_path):
+def plot_runtime_comparison(timing_df, output_path, approaches=None):
     """Create horizontal stacked bar chart comparing runtime by approach."""
     setup_plot_style()
 
+    if approaches is None:
+        approaches = ["fast", "stitch"]
+
     fig, ax = plt.subplots(figsize=(12, 4))
 
-    approaches = ["fast", "stitch"]
-    y_positions = [1, 0]  # Fast on top, Stitch below
+    y_positions = list(range(len(approaches) - 1, -1, -1))
     bar_height = 0.6
 
     for approach, y_pos in zip(approaches, y_positions):
@@ -408,10 +410,12 @@ def plot_runtime_comparison(timing_df, output_path):
         )
 
     ax.set_yticks(y_positions)
-    ax.set_yticklabels(["Fast", "Stitch"], fontsize=11, fontweight="bold")
+    ax.set_yticklabels(
+        [a.capitalize() for a in approaches], fontsize=11, fontweight="bold"
+    )
     ax.set_xlabel("Runtime (minutes)")
     ax.set_title(f"Merge Runtime Comparison - P-{PLATE}_W-{WELL}")
-    ax.set_ylim(-0.5, 2)
+    ax.set_ylim(-0.5, max(y_positions) + 1)
     ax.set_xlim(0, ax.get_xlim()[1] * 1.15)
 
     plt.tight_layout()
@@ -420,8 +424,10 @@ def plot_runtime_comparison(timing_df, output_path):
     print(f"Saved: {output_path}")
 
 
-def plot_distance_distribution(distances, output_path):
+def plot_distance_distribution(distances, output_path, approaches=None):
     """Create violin plot comparing distance distributions."""
+    if approaches is not None:
+        distances = {k: v for k, v in distances.items() if k in approaches}
     setup_plot_style()
     fig, axes = plt.subplots(1, 2, figsize=FIGSIZE["double"])
 
@@ -443,7 +449,7 @@ def plot_distance_distribution(distances, output_path):
         pc.set_facecolor(colors[i])
         pc.set_alpha(0.7)
 
-    ax.set_xticks([1, 2])
+    ax.set_xticks(list(range(1, len(labels) + 1)))
     ax.set_xticklabels(labels)
     ax.set_ylabel("Distance (pixels)")
     ax.set_title("Match Distance Distribution")
@@ -473,26 +479,115 @@ def plot_distance_distribution(distances, output_path):
     print(f"Saved: {output_path}")
 
 
-def plot_cell_funnel(quality_df, output_path):
-    """Create cell funnel plot showing retention through pipeline stages."""
-    setup_plot_style()
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+def load_merge_summaries():
+    """Load merge summary eval TSVs and compute aggregate totals."""
+    eval_dir = BRIEFLOW_OUTPUT / "merge" / "eval"
+    summary_files = sorted(eval_dir.glob("P-*__merge_summary.tsv"))
+    if not summary_files:
+        return None
 
-    # Left plot: Absolute counts through pipeline
-    ax = axes[0]
+    dfs = [pd.read_csv(f, sep="\t") for f in summary_files]
+    combined = pd.concat(dfs, ignore_index=True)
+
+    # Aggregate totals across all wells/plates
+    totals = {
+        "ph_cells": combined["ph_cells"].sum(),
+        "sbs_cells": combined["sbs_cells"].sum(),
+        "matched_raw": combined["matched_raw"].sum(),
+        "unique_ph_in_merge": combined["unique_ph_in_merge"].sum(),
+        "cells_with_barcode": combined["cells_with_barcode"].sum(),
+        "single_gene_count": combined["single_gene_count"].sum(),
+    }
+    return totals
+
+
+def plot_cell_funnel(quality_df, output_path, approaches=None):
+    """Create cell funnel plot showing retention through pipeline stages.
+
+    Uses aggregate totals from merge summary eval TSVs across all plates/wells.
+    Falls back to quality_df if eval TSVs are not available.
+    """
+    setup_plot_style()
+
+    # Try loading from merge summary eval TSVs first
+    totals = load_merge_summaries()
+
+    if totals is not None:
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        stages = [
+            "Phenotype\nInput",
+            "SBS\nInput",
+            "Total\nMatches",
+            "Deduplicated\nMatched Cells",
+            "With\nBarcode",
+            "Single\nGene",
+        ]
+        values = [
+            totals["ph_cells"],
+            totals["sbs_cells"],
+            totals["matched_raw"],
+            totals["unique_ph_in_merge"],
+            totals["cells_with_barcode"],
+            totals["single_gene_count"],
+        ]
+        x = np.arange(len(stages))
+        width = 0.5
+        color = COLORS.get("fast", "#7f7f7f")
+
+        bars = ax.bar(
+            x,
+            values,
+            width,
+            color=color,
+            edgecolor="white",
+            linewidth=0.5,
+        )
+        for bar, val in zip(bars, values):
+            if val:
+                ax.annotate(
+                    f"{val / 1e6:.1f}M",
+                    xy=(bar.get_x() + bar.get_width() / 2, bar.get_height() / 2),
+                    ha="center",
+                    va="center",
+                    fontsize=11,
+                    fontweight="bold",
+                    color="white",
+                )
+
+        ax.set_ylabel("")
+        ax.set_yticks([])
+        ax.set_title("Cell Counts Through Pipeline", fontweight="bold")
+        ax.set_xticks(x)
+        ax.set_xticklabels(stages, fontsize=9)
+
+        plt.tight_layout()
+        save_figure(fig, output_path)
+        plt.close()
+        print(f"Saved: {output_path}")
+        return
+
+    # Fallback: use quality_df from single well
+    if approaches is not None:
+        quality_df = quality_df[quality_df["approach"].isin(approaches)].copy()
+
+    n_approaches = len(quality_df["approach"].unique())
+    fig, ax = plt.subplots(figsize=(10, 6))
+
     stages = [
         "Phenotype\nInput",
         "SBS\nInput",
-        "Matched",
-        "Final",
+        "Total\nMatches",
+        "Deduplicated\nMatched Cells",
         "With\nBarcode",
         "Single\nGene",
     ]
     x = np.arange(len(stages))
-    width = 0.35
 
-    for i, approach in enumerate(quality_df["approach"].tolist()):
-        row = quality_df[quality_df["approach"] == approach].iloc[0]
+    if n_approaches == 1:
+        width = 0.5
+        approach = quality_df["approach"].iloc[0]
+        row = quality_df.iloc[0]
         values = [
             row["phenotype_cells"],
             row["sbs_cells"],
@@ -503,7 +598,7 @@ def plot_cell_funnel(quality_df, output_path):
         ]
         color = COLORS.get(approach, "#7f7f7f")
         bars = ax.bar(
-            x + i * width - width / 2,
+            x,
             values,
             width,
             label=approach.capitalize(),
@@ -511,11 +606,10 @@ def plot_cell_funnel(quality_df, output_path):
             edgecolor="white",
             linewidth=0.5,
         )
-        # Add value labels
         for bar, val in zip(bars, values):
             if val:
                 ax.annotate(
-                    f"{val / 1e6:.2f}M",
+                    f"{val / 1e6:.1f}M",
                     xy=(bar.get_x() + bar.get_width() / 2, val),
                     xytext=(0, 3),
                     textcoords="offset points",
@@ -524,56 +618,47 @@ def plot_cell_funnel(quality_df, output_path):
                     fontsize=8,
                     fontweight="bold",
                 )
+    else:
+        width = 0.35
+        for i, approach in enumerate(quality_df["approach"].tolist()):
+            row = quality_df[quality_df["approach"] == approach].iloc[0]
+            values = [
+                row["phenotype_cells"],
+                row["sbs_cells"],
+                row["matched_cells"],
+                row["final_cells"],
+                row["cells_with_barcode"],
+                row["cells_single_gene"],
+            ]
+            color = COLORS.get(approach, "#7f7f7f")
+            bars = ax.bar(
+                x + i * width - width / 2,
+                values,
+                width,
+                label=approach.capitalize(),
+                color=color,
+                edgecolor="white",
+                linewidth=0.5,
+            )
+            for bar, val in zip(bars, values):
+                if val:
+                    ax.annotate(
+                        f"{val / 1e6:.1f}M",
+                        xy=(bar.get_x() + bar.get_width() / 2, val),
+                        xytext=(0, 3),
+                        textcoords="offset points",
+                        ha="center",
+                        va="bottom",
+                        fontsize=8,
+                        fontweight="bold",
+                    )
 
     ax.set_ylabel("Cell Count")
-    ax.set_title("Cell Counts Through Pipeline")
+    ax.set_title("Cell Counts Through Pipeline", fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(stages, fontsize=9)
-    ax.legend(loc="upper right")
-
-    # Right plot: Retention rates all relative to phenotype input
-    ax = axes[1]
-    stages = ["Matched", "Final", "With Barcode", "Single Gene"]
-    x = np.arange(len(stages))
-
-    for i, approach in enumerate(quality_df["approach"].tolist()):
-        row = quality_df[quality_df["approach"] == approach].iloc[0]
-        ph_cells = row["phenotype_cells"]
-        values = [
-            row["matched_cells"] / ph_cells * 100,
-            row["final_cells"] / ph_cells * 100,
-            row["cells_with_barcode"] / ph_cells * 100,
-            row["cells_single_gene"] / ph_cells * 100,
-        ]
-        color = COLORS.get(approach, "#7f7f7f")
-        bars = ax.bar(
-            x + i * width - width / 2,
-            values,
-            width,
-            label=approach.capitalize(),
-            color=color,
-            edgecolor="white",
-            linewidth=0.5,
-        )
-        # Add value labels
-        for bar, val in zip(bars, values):
-            ax.annotate(
-                f"{val:.0f}%",
-                xy=(bar.get_x() + bar.get_width() / 2, val),
-                xytext=(0, 3),
-                textcoords="offset points",
-                ha="center",
-                va="bottom",
-                fontsize=9,
-                fontweight="bold",
-            )
-
-    ax.set_ylabel("% of Phenotype Input")
-    ax.set_title("Retention Through Pipeline")
-    ax.set_xticks(x)
-    ax.set_xticklabels(stages, fontsize=9)
-    ax.legend(loc="upper right")
-    ax.set_ylim(0, 130)
+    if n_approaches > 1:
+        ax.legend(loc="upper right")
 
     plt.tight_layout()
     save_figure(fig, output_path)
@@ -581,7 +666,7 @@ def plot_cell_funnel(quality_df, output_path):
     print(f"Saved: {output_path}")
 
 
-def plot_tile_match_visualization(output_path):
+def plot_tile_match_visualization(output_path, fast_only=False):
     """Create visualization comparing merged vs unmerged cells for fast and stitch approaches."""
     setup_plot_style()
 
@@ -747,12 +832,16 @@ def plot_tile_match_visualization(output_path):
             ax.add_patch(rect)
 
     # ========== PLOT 1: Phenotype cells with phenotype tile outlines ==========
-    fig, axes = plt.subplots(2, 2, figsize=(14, 14))
+    if fast_only:
+        fig, axes = plt.subplots(1, 2, figsize=(14, 7))
+        ax_matched, ax_unmatched = axes[0], axes[1]
+    else:
+        fig, axes = plt.subplots(2, 2, figsize=(14, 14))
+        ax_matched, ax_unmatched = axes[0, 0], axes[0, 1]
 
-    # Top-left: Fast matched
-    ax = axes[0, 0]
+    # Fast matched
     matched = region[region["fast_merged"]]
-    ax.scatter(
+    ax_matched.scatter(
         matched["global_j"],
         matched["global_i"],
         c="#2ca02c",
@@ -760,16 +849,16 @@ def plot_tile_match_visualization(output_path):
         alpha=0.5,
         rasterized=True,
     )
-    draw_tiles(ax, ph_tiles, "#1f77b4")
-    ax.set_xlim(x_min - x_pad, x_max + x_pad)
-    ax.set_ylim(y_min - y_pad, y_max + y_pad)
-    ax.set_title(f"Fast - Matched ({len(matched):,})")
-    ax.set_aspect("equal")
+    draw_tiles(ax_matched, ph_tiles, "#1f77b4")
+    ax_matched.set_xlim(x_min - x_pad, x_max + x_pad)
+    ax_matched.set_ylim(y_min - y_pad, y_max + y_pad)
+    ph_prefix = "" if fast_only else "Fast - "
+    ax_matched.set_title(f"{ph_prefix}Matched ({len(matched):,})")
+    ax_matched.set_aspect("equal")
 
-    # Top-right: Fast unmatched
-    ax = axes[0, 1]
+    # Fast unmatched
     unmatched = region[~region["fast_merged"]]
-    ax.scatter(
+    ax_unmatched.scatter(
         unmatched["global_j"],
         unmatched["global_i"],
         c="#d62728",
@@ -777,51 +866,54 @@ def plot_tile_match_visualization(output_path):
         alpha=0.5,
         rasterized=True,
     )
-    draw_tiles(ax, ph_tiles, "#1f77b4")
-    ax.set_xlim(x_min - x_pad, x_max + x_pad)
-    ax.set_ylim(y_min - y_pad, y_max + y_pad)
-    ax.set_title(f"Fast - Unmatched ({len(unmatched):,})")
-    ax.set_aspect("equal")
+    draw_tiles(ax_unmatched, ph_tiles, "#1f77b4")
+    ax_unmatched.set_xlim(x_min - x_pad, x_max + x_pad)
+    ax_unmatched.set_ylim(y_min - y_pad, y_max + y_pad)
+    ax_unmatched.set_title(f"{ph_prefix}Unmatched ({len(unmatched):,})")
+    ax_unmatched.set_aspect("equal")
 
-    # Bottom-left: Stitch matched
-    ax = axes[1, 0]
-    matched = (
-        region[region["stitch_merged"]] if has_stitch else region[region["fast_merged"]]
-    )
-    ax.scatter(
-        matched["global_j"],
-        matched["global_i"],
-        c="#2ca02c",
-        s=2,
-        alpha=0.5,
-        rasterized=True,
-    )
-    draw_tiles(ax, ph_tiles, "#1f77b4")
-    ax.set_xlim(x_min - x_pad, x_max + x_pad)
-    ax.set_ylim(y_min - y_pad, y_max + y_pad)
-    ax.set_title(f"Stitch - Matched ({len(matched):,})")
-    ax.set_aspect("equal")
+    if not fast_only:
+        # Bottom-left: Stitch matched
+        ax = axes[1, 0]
+        matched = (
+            region[region["stitch_merged"]]
+            if has_stitch
+            else region[region["fast_merged"]]
+        )
+        ax.scatter(
+            matched["global_j"],
+            matched["global_i"],
+            c="#2ca02c",
+            s=2,
+            alpha=0.5,
+            rasterized=True,
+        )
+        draw_tiles(ax, ph_tiles, "#1f77b4")
+        ax.set_xlim(x_min - x_pad, x_max + x_pad)
+        ax.set_ylim(y_min - y_pad, y_max + y_pad)
+        ax.set_title(f"Stitch - Matched ({len(matched):,})")
+        ax.set_aspect("equal")
 
-    # Bottom-right: Stitch unmatched
-    ax = axes[1, 1]
-    unmatched = (
-        region[~region["stitch_merged"]]
-        if has_stitch
-        else region[~region["fast_merged"]]
-    )
-    ax.scatter(
-        unmatched["global_j"],
-        unmatched["global_i"],
-        c="#d62728",
-        s=2,
-        alpha=0.5,
-        rasterized=True,
-    )
-    draw_tiles(ax, ph_tiles, "#1f77b4")
-    ax.set_xlim(x_min - x_pad, x_max + x_pad)
-    ax.set_ylim(y_min - y_pad, y_max + y_pad)
-    ax.set_title(f"Stitch - Unmatched ({len(unmatched):,})")
-    ax.set_aspect("equal")
+        # Bottom-right: Stitch unmatched
+        ax = axes[1, 1]
+        unmatched = (
+            region[~region["stitch_merged"]]
+            if has_stitch
+            else region[~region["fast_merged"]]
+        )
+        ax.scatter(
+            unmatched["global_j"],
+            unmatched["global_i"],
+            c="#d62728",
+            s=2,
+            alpha=0.5,
+            rasterized=True,
+        )
+        draw_tiles(ax, ph_tiles, "#1f77b4")
+        ax.set_xlim(x_min - x_pad, x_max + x_pad)
+        ax.set_ylim(y_min - y_pad, y_max + y_pad)
+        ax.set_title(f"Stitch - Unmatched ({len(unmatched):,})")
+        ax.set_aspect("equal")
 
     plt.suptitle(
         f"Phenotype Cells with Phenotype Tile Boundaries - P-{PLATE}_W-{WELL}",
@@ -829,17 +921,22 @@ def plot_tile_match_visualization(output_path):
         fontweight="bold",
     )
     plt.tight_layout()
-    save_figure(fig, output_path.parent / "tiles_phenotype.png")
+    ph_fname = "tiles_phenotype_fast_only.png" if fast_only else "tiles_phenotype.png"
+    save_figure(fig, output_path.parent / ph_fname)
     plt.close()
-    print(f"Saved: {output_path.parent / 'tiles_phenotype.png'}")
+    print(f"Saved: {output_path.parent / ph_fname}")
 
     # ========== PLOT 2: SBS cells with SBS tile outlines ==========
-    fig, axes = plt.subplots(2, 2, figsize=(14, 14))
+    if fast_only:
+        fig, axes = plt.subplots(1, 2, figsize=(14, 7))
+        ax_matched, ax_unmatched = axes[0], axes[1]
+    else:
+        fig, axes = plt.subplots(2, 2, figsize=(14, 14))
+        ax_matched, ax_unmatched = axes[0, 0], axes[0, 1]
 
-    # Top-left: Fast matched
-    ax = axes[0, 0]
+    # Fast matched
     matched = sbs_region[sbs_region["fast_merged"]]
-    ax.scatter(
+    ax_matched.scatter(
         matched["global_j"],
         matched["global_i"],
         c="#2ca02c",
@@ -847,16 +944,16 @@ def plot_tile_match_visualization(output_path):
         alpha=0.5,
         rasterized=True,
     )
-    draw_tiles(ax, sbs_tiles, "#ff7f0e")
-    ax.set_xlim(x_min - x_pad, x_max + x_pad)
-    ax.set_ylim(y_min - y_pad, y_max + y_pad)
-    ax.set_title(f"Fast - Matched ({len(matched):,})")
-    ax.set_aspect("equal")
+    draw_tiles(ax_matched, sbs_tiles, "#ff7f0e")
+    ax_matched.set_xlim(x_min - x_pad, x_max + x_pad)
+    ax_matched.set_ylim(y_min - y_pad, y_max + y_pad)
+    sbs_prefix = "" if fast_only else "Fast - "
+    ax_matched.set_title(f"{sbs_prefix}Matched ({len(matched):,})")
+    ax_matched.set_aspect("equal")
 
-    # Top-right: Fast unmatched
-    ax = axes[0, 1]
+    # Fast unmatched
     unmatched = sbs_region[~sbs_region["fast_merged"]]
-    ax.scatter(
+    ax_unmatched.scatter(
         unmatched["global_j"],
         unmatched["global_i"],
         c="#d62728",
@@ -864,53 +961,54 @@ def plot_tile_match_visualization(output_path):
         alpha=0.5,
         rasterized=True,
     )
-    draw_tiles(ax, sbs_tiles, "#ff7f0e")
-    ax.set_xlim(x_min - x_pad, x_max + x_pad)
-    ax.set_ylim(y_min - y_pad, y_max + y_pad)
-    ax.set_title(f"Fast - Unmatched ({len(unmatched):,})")
-    ax.set_aspect("equal")
+    draw_tiles(ax_unmatched, sbs_tiles, "#ff7f0e")
+    ax_unmatched.set_xlim(x_min - x_pad, x_max + x_pad)
+    ax_unmatched.set_ylim(y_min - y_pad, y_max + y_pad)
+    ax_unmatched.set_title(f"{sbs_prefix}Unmatched ({len(unmatched):,})")
+    ax_unmatched.set_aspect("equal")
 
-    # Bottom-left: Stitch matched
-    ax = axes[1, 0]
-    matched = (
-        sbs_region[sbs_region["stitch_merged"]]
-        if has_stitch
-        else sbs_region[sbs_region["fast_merged"]]
-    )
-    ax.scatter(
-        matched["global_j"],
-        matched["global_i"],
-        c="#2ca02c",
-        s=2,
-        alpha=0.5,
-        rasterized=True,
-    )
-    draw_tiles(ax, sbs_tiles, "#ff7f0e")
-    ax.set_xlim(x_min - x_pad, x_max + x_pad)
-    ax.set_ylim(y_min - y_pad, y_max + y_pad)
-    ax.set_title(f"Stitch - Matched ({len(matched):,})")
-    ax.set_aspect("equal")
+    if not fast_only:
+        # Bottom-left: Stitch matched
+        ax = axes[1, 0]
+        matched = (
+            sbs_region[sbs_region["stitch_merged"]]
+            if has_stitch
+            else sbs_region[sbs_region["fast_merged"]]
+        )
+        ax.scatter(
+            matched["global_j"],
+            matched["global_i"],
+            c="#2ca02c",
+            s=2,
+            alpha=0.5,
+            rasterized=True,
+        )
+        draw_tiles(ax, sbs_tiles, "#ff7f0e")
+        ax.set_xlim(x_min - x_pad, x_max + x_pad)
+        ax.set_ylim(y_min - y_pad, y_max + y_pad)
+        ax.set_title(f"Stitch - Matched ({len(matched):,})")
+        ax.set_aspect("equal")
 
-    # Bottom-right: Stitch unmatched
-    ax = axes[1, 1]
-    unmatched = (
-        sbs_region[~sbs_region["stitch_merged"]]
-        if has_stitch
-        else sbs_region[~sbs_region["fast_merged"]]
-    )
-    ax.scatter(
-        unmatched["global_j"],
-        unmatched["global_i"],
-        c="#d62728",
-        s=2,
-        alpha=0.5,
-        rasterized=True,
-    )
-    draw_tiles(ax, sbs_tiles, "#ff7f0e")
-    ax.set_xlim(x_min - x_pad, x_max + x_pad)
-    ax.set_ylim(y_min - y_pad, y_max + y_pad)
-    ax.set_title(f"Stitch - Unmatched ({len(unmatched):,})")
-    ax.set_aspect("equal")
+        # Bottom-right: Stitch unmatched
+        ax = axes[1, 1]
+        unmatched = (
+            sbs_region[~sbs_region["stitch_merged"]]
+            if has_stitch
+            else sbs_region[~sbs_region["fast_merged"]]
+        )
+        ax.scatter(
+            unmatched["global_j"],
+            unmatched["global_i"],
+            c="#d62728",
+            s=2,
+            alpha=0.5,
+            rasterized=True,
+        )
+        draw_tiles(ax, sbs_tiles, "#ff7f0e")
+        ax.set_xlim(x_min - x_pad, x_max + x_pad)
+        ax.set_ylim(y_min - y_pad, y_max + y_pad)
+        ax.set_title(f"Stitch - Unmatched ({len(unmatched):,})")
+        ax.set_aspect("equal")
 
     plt.suptitle(
         f"SBS Cells with SBS Tile Boundaries - P-{PLATE}_W-{WELL}",
@@ -918,39 +1016,32 @@ def plot_tile_match_visualization(output_path):
         fontweight="bold",
     )
     plt.tight_layout()
-    save_figure(fig, output_path.parent / "tiles_sbs.png")
+    sbs_fname = "tiles_sbs_fast_only.png" if fast_only else "tiles_sbs.png"
+    save_figure(fig, output_path.parent / sbs_fname)
     plt.close()
-    print(f"Saved: {output_path.parent / 'tiles_sbs.png'}")
+    print(f"Saved: {output_path.parent / sbs_fname}")
 
     # ========== OVERLAP ANALYSIS ==========
     # For each cell in the plotted region, determine if it's in a tile overlap
     print("\n=== Overlap Analysis (plotted region) ===")
 
-    def count_covering_tiles(global_j, global_i, tiles_df, tile_size):
-        """Count how many tiles cover a given position."""
-        count = 0
-        for _, t in tiles_df.iterrows():
-            if (
-                t["x_pos"] <= global_j <= t["x_pos"] + tile_size
-                and t["y_pos"] <= global_i <= t["y_pos"] + tile_size
-            ):
-                count += 1
-        return count
+    # Use all cells in plotted region (consistent with tile plot counts)
+    analysis_sample = region.copy()
 
-    # Sample cells for efficiency (use all if < 5000)
-    if len(region) > 5000:
-        analysis_sample = region.sample(n=5000, random_state=42).copy()
-    else:
-        analysis_sample = region.copy()
-
-    # Compute overlap status for phenotype tiles
+    # Compute overlap status for phenotype tiles (vectorized)
     ph_tile_size_val = 2960 * tile_pos["pixel_size_x"].iloc[0]
-    analysis_sample["n_tiles"] = analysis_sample.apply(
-        lambda row: count_covering_tiles(
-            row["global_j"], row["global_i"], tile_pos, ph_tile_size_val
-        ),
-        axis=1,
+    cell_j = analysis_sample["global_j"].values[:, np.newaxis]
+    cell_i = analysis_sample["global_i"].values[:, np.newaxis]
+    tile_x = tile_pos["x_pos"].values[np.newaxis, :]
+    tile_y = tile_pos["y_pos"].values[np.newaxis, :]
+    # Boolean matrix: (n_cells, n_tiles) — True if cell is inside tile
+    inside = (
+        (cell_j >= tile_x)
+        & (cell_j <= tile_x + ph_tile_size_val)
+        & (cell_i >= tile_y)
+        & (cell_i <= tile_y + ph_tile_size_val)
     )
+    analysis_sample["n_tiles"] = inside.sum(axis=1)
 
     no_overlap = analysis_sample[analysis_sample["n_tiles"] == 1]
     in_overlap = analysis_sample[analysis_sample["n_tiles"] >= 2]
@@ -1026,7 +1117,7 @@ def plot_tile_match_visualization(output_path):
     print(f"\nSaved: {output_path.parent / 'overlap_analysis.csv'}")
 
 
-def plot_memory_requirements(output_path):
+def plot_memory_requirements(output_path, approaches_filter=None):
     """Plot memory requirements from slurm config for fast vs stitch approaches."""
     setup_plot_style()
 
@@ -1037,84 +1128,99 @@ def plot_memory_requirements(output_path):
     resources = config.get("set-resources", {})
 
     # Define steps for each approach (matching FAST_JOBS and STITCH_JOBS)
-    fast_steps = list(FAST_JOBS.keys())
-    stitch_steps = list(STITCH_JOBS.keys())
+    step_map = {"fast": list(FAST_JOBS.keys()), "stitch": list(STITCH_JOBS.keys())}
+    if approaches_filter is not None:
+        step_map = {k: v for k, v in step_map.items() if k in approaches_filter}
 
     # Extract memory for each step
     data = []
-    for step in fast_steps:
-        mem = resources.get(step, {}).get(
-            "mem_mb", config.get("default-resources", {}).get("mem_mb", 3000)
-        )
-        data.append({"approach": "Fast", "step": step, "memory_gb": mem / 1000})
-
-    for step in stitch_steps:
-        mem = resources.get(step, {}).get(
-            "mem_mb", config.get("default-resources", {}).get("mem_mb", 3000)
-        )
-        data.append({"approach": "Stitch", "step": step, "memory_gb": mem / 1000})
+    for approach, steps in step_map.items():
+        for step in steps:
+            mem = resources.get(step, {}).get(
+                "mem_mb", config.get("default-resources", {}).get("mem_mb", 3000)
+            )
+            data.append(
+                {
+                    "approach": approach.capitalize(),
+                    "step": step,
+                    "memory_gb": mem / 1000,
+                }
+            )
 
     df = pd.DataFrame(data)
-
-    # Calculate totals
-    fast_total = df[df["approach"] == "Fast"]["memory_gb"].sum()
-    stitch_total = df[df["approach"] == "Stitch"]["memory_gb"].sum()
-
-    # Create figure with two subplots
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=FIGSIZE["double"])
 
     # Use consistent colors from plot_style
     fast_color = COLORS["fast"]
     stitch_color = COLORS["stitch"]
-    fast_df = df[df["approach"] == "Fast"]
-    stitch_df = df[df["approach"] == "Stitch"]
+    approach_colors = {"Fast": fast_color, "Stitch": stitch_color}
 
-    width = 0.7
+    unique_approaches = df["approach"].unique()
 
-    # Plot fast steps
-    ax1.barh(
-        np.arange(len(fast_df)),
-        fast_df["memory_gb"].values,
-        width,
-        label="Fast",
-        color=fast_color,
-        alpha=0.8,
-    )
+    # Create figure
+    if len(unique_approaches) == 1:
+        # Single approach: just per-step bars
+        fig, ax1 = plt.subplots(figsize=FIGSIZE["single"])
+        approach = unique_approaches[0]
+        adf = df[df["approach"] == approach]
+        width = 0.7
+        ax1.barh(
+            np.arange(len(adf)),
+            adf["memory_gb"].values,
+            width,
+            label=approach,
+            color=approach_colors.get(approach, "#7f7f7f"),
+            alpha=0.8,
+        )
+        ax1.set_yticks(range(len(adf)))
+        ax1.set_yticklabels(adf["step"].values)
+        ax1.set_xlabel("Memory Requested (GB)")
+        ax1.set_title(f"Memory Requirements - {approach}")
+    else:
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=FIGSIZE["double"])
+        fast_df = df[df["approach"] == "Fast"]
+        stitch_df = df[df["approach"] == "Stitch"]
+        width = 0.7
 
-    # Plot stitch steps (offset)
-    ax1.barh(
-        np.arange(len(stitch_df)) + len(fast_df) + 1,
-        stitch_df["memory_gb"].values,
-        width,
-        label="Stitch",
-        color=stitch_color,
-        alpha=0.8,
-    )
+        ax1.barh(
+            np.arange(len(fast_df)),
+            fast_df["memory_gb"].values,
+            width,
+            label="Fast",
+            color=fast_color,
+            alpha=0.8,
+        )
+        ax1.barh(
+            np.arange(len(stitch_df)) + len(fast_df) + 1,
+            stitch_df["memory_gb"].values,
+            width,
+            label="Stitch",
+            color=stitch_color,
+            alpha=0.8,
+        )
+        all_steps = list(fast_df["step"].values) + [""] + list(stitch_df["step"].values)
+        ax1.set_yticks(range(len(all_steps)))
+        ax1.set_yticklabels(all_steps)
+        ax1.set_xlabel("Memory Requested (GB)")
+        ax1.set_title("Memory Requirements by Step")
+        ax1.axvline(x=1000, color="red", linestyle="--", alpha=0.5, label="1 TB limit")
+        ax1.legend()
 
-    # Labels
-    all_steps = list(fast_df["step"].values) + [""] + list(stitch_df["step"].values)
-    ax1.set_yticks(range(len(all_steps)))
-    ax1.set_yticklabels(all_steps)
-    ax1.set_xlabel("Memory Requested (GB)")
-    ax1.set_title("Memory Requirements by Step")
-    ax1.axvline(x=1000, color="red", linestyle="--", alpha=0.5, label="1 TB limit")
-    ax1.legend()
-
-    # Right: Total comparison
-    totals = [fast_total, stitch_total]
-    approaches = ["Fast", "Stitch"]
-    bars = ax2.bar(approaches, totals, color=[fast_color, stitch_color], alpha=0.8)
-
-    ax2.axhline(
-        y=1000, color="red", linestyle="--", alpha=0.7, label="1 TB cluster limit"
-    )
-    ax2.set_ylabel("Total Memory Requested (GB)")
-    ax2.set_title("Total Memory Requirements")
-
-    # Add value labels using helper
-    add_value_labels(ax2, bars, fmt="{:.0f} GB")
-
-    ax2.legend()
+        # Right: Total comparison
+        fast_total = fast_df["memory_gb"].sum()
+        stitch_total = stitch_df["memory_gb"].sum()
+        bars = ax2.bar(
+            ["Fast", "Stitch"],
+            [fast_total, stitch_total],
+            color=[fast_color, stitch_color],
+            alpha=0.8,
+        )
+        ax2.axhline(
+            y=1000, color="red", linestyle="--", alpha=0.7, label="1 TB cluster limit"
+        )
+        ax2.set_ylabel("Total Memory Requested (GB)")
+        ax2.set_title("Total Memory Requirements")
+        add_value_labels(ax2, bars, fmt="{:.0f} GB")
+        ax2.legend()
 
     plt.tight_layout()
     save_figure(fig, output_path)
@@ -1177,18 +1283,33 @@ def main():
         quality_df = pd.read_csv(csv_path)
         timing_df = pd.read_csv(timing_csv)
 
-    # Generate plots
+    # Generate plots (both comparison and fast-only versions)
     print("\nGenerating plots...")
 
     plot_runtime_comparison(timing_df, OUTPUT_DIR / "runtime.png")
+    plot_runtime_comparison(
+        timing_df, OUTPUT_DIR / "runtime_fast_only.png", approaches=["fast"]
+    )
 
     distances = load_distance_data()
     if distances:
         plot_distance_distribution(distances, OUTPUT_DIR / "alignment.png")
+        plot_distance_distribution(
+            distances, OUTPUT_DIR / "alignment_fast_only.png", approaches=["fast"]
+        )
 
     plot_cell_funnel(quality_df, OUTPUT_DIR / "retention.png")
+    plot_cell_funnel(
+        quality_df, OUTPUT_DIR / "retention_fast_only.png", approaches=["fast"]
+    )
+
     plot_tile_match_visualization(OUTPUT_DIR / "tiles.png")
+    plot_tile_match_visualization(OUTPUT_DIR / "tiles_fast_only.png", fast_only=True)
+
     plot_memory_requirements(OUTPUT_DIR / "memory.png")
+    plot_memory_requirements(
+        OUTPUT_DIR / "memory_fast_only.png", approaches_filter=["fast"]
+    )
 
     print("\n" + "=" * 60)
     print("BENCHMARK COMPLETE")

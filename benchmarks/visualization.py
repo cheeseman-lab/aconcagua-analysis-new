@@ -47,7 +47,9 @@ import numpy as np
 
 # Remote server settings
 REMOTE_HOST = "fry.wi.mit.edu"
-REMOTE_BASE = "/lab/ops_analysis/cheeseman/aconcagua-analysis-new/benchmarks/results"
+REMOTE_BASE = (
+    "/lab/ops_analysis_ssd/cheeseman/aconcagua-analysis-new/benchmarks/results"
+)
 
 # Local cache for downloaded files
 LOCAL_CACHE = Path(tempfile.gettempdir()) / "napari_viz_cache"
@@ -90,10 +92,10 @@ PHENOTYPE_CONFIG = {
     "pixels_per_micron": 1 / 0.3035714285714286,
     "channel_names": ["DAPI", "Tubulin", "yH2AX", "Actin"],
     "contrast_limits": {
-        "DAPI": [254.0, 17640.0],
-        "Tubulin": [600, 2400.0],
-        "yH2AX": [0.0, 7143.4],
-        "Actin": [350, 2400.0],
+        "DAPI": [254.0, 10000.0],
+        "Tubulin": [600, 1500.0],
+        "yH2AX": [0.0, 4000.0],
+        "Actin": [350, 1500.0],
     },
 }
 
@@ -104,14 +106,14 @@ SBS_CONFIG = {
     "pixels_per_micron": 1 / 1.214286,
     "cycle_index": 0,
     "dapi_opacity": 0.5,
-    "dapi_contrast": 0.15,
+    "dapi_contrast": 0.10,
     "channel_names": ["G", "T", "A", "C"],
     "channel_colors": ["green", "red", "magenta", "cyan"],
     "contrast_limits": {
-        "G": [4000, 30000],
-        "T": [4000, 30000],
-        "A": [12000, 30000],
-        "C": [12000, 30000],
+        "G": [4000, 18000],
+        "T": [4000, 18000],
+        "A": [12000, 20000],
+        "C": [12000, 20000],
     },
 }
 
@@ -121,10 +123,10 @@ ILLUM_CONFIG = {
 }
 
 # Remote paths for raw pipeline output
-REMOTE_PHENOTYPE_DIR = "/lab/ops_analysis/cheeseman/aconcagua-analysis-new/analysis/brieflow_output/phenotype/images"
-REMOTE_SBS_DIR = "/lab/ops_analysis/cheeseman/aconcagua-analysis-new/analysis/brieflow_output/sbs/images"
-REMOTE_IC_FIELDS_DIR = "/lab/ops_analysis/cheeseman/aconcagua-analysis-new/analysis/brieflow_output/preprocess/ic_fields/phenotype"
-REMOTE_PREPROCESS_DIR = "/lab/ops_analysis/cheeseman/aconcagua-analysis-new/analysis/brieflow_output/preprocess/images/phenotype"
+REMOTE_PHENOTYPE_DIR = "/lab/ops_analysis_ssd/cheeseman/aconcagua-analysis-new/analysis/brieflow_output/phenotype/images"
+REMOTE_SBS_DIR = "/lab/ops_analysis_ssd/cheeseman/aconcagua-analysis-new/analysis/brieflow_output/sbs/images"
+REMOTE_IC_FIELDS_DIR = "/lab/ops_analysis_ssd/cheeseman/aconcagua-analysis-new/analysis/brieflow_output/preprocess/ic_fields/phenotype"
+REMOTE_PREPROCESS_DIR = "/archive/cheeseman/ops_analysis/aconcagua-analysis/analysis/brieflow_output/preprocess/images/phenotype"
 
 # ============================================================================
 # UTILITY FUNCTIONS
@@ -1077,7 +1079,7 @@ def load_illum_data(sample_id=None):
     """
     print("\nLoading illumination correction data...")
 
-    data = {"illum_function": None, "example_image": None}
+    data = {"illum_function": None, "raw_image": None, "corrected_image": None}
 
     # Get list of IC fields
     ic_files = list_ic_fields()
@@ -1108,7 +1110,7 @@ def load_illum_data(sample_id=None):
         print(f"  Error downloading IC field: {e}")
         return data
 
-    # Find a random tile for this plate-well from preprocess images
+    # Find a random tile for this plate-well from preprocess images (raw)
     try:
         output = run_ssh_command(
             f"ls {REMOTE_PREPROCESS_DIR}/ | grep '{plate_well}_T-' | grep '__image.tiff' | shuf | head -1"
@@ -1116,9 +1118,19 @@ def load_illum_data(sample_id=None):
         if output.strip():
             raw_image_file = output.strip()
             raw_remote = f"{REMOTE_PREPROCESS_DIR}/{raw_image_file}"
-            data["example_image"] = download_file(raw_remote)
-            data["example_name"] = raw_image_file.replace("__image.tiff", "")
+            data["raw_image"] = download_file(raw_remote)
+            # Extract tile sample ID (e.g., P-1_W-A1_T-0)
+            tile_sample = raw_image_file.replace("__image.tiff", "")
+            data["tile_sample"] = tile_sample
             print(f"  Downloaded raw image: {raw_image_file}")
+
+            # Download the matching corrected (aligned) image from phenotype output
+            corrected_remote = f"{REMOTE_PHENOTYPE_DIR}/{tile_sample}__aligned.tiff"
+            try:
+                data["corrected_image"] = download_file(corrected_remote)
+                print(f"  Downloaded corrected image: {tile_sample}__aligned.tiff")
+            except RuntimeError as e:
+                print(f"  Warning: Could not download corrected image: {e}")
     except RuntimeError as e:
         print(f"  Error downloading raw image: {e}")
 
@@ -1135,7 +1147,7 @@ def run_illum_visualization(sample_id=None, output_dir=None):
     # Load data
     data = load_illum_data(sample_id)
 
-    if not data.get("illum_function") and not data.get("example_image"):
+    if not data.get("illum_function") and not data.get("raw_image"):
         print("Error: No illumination data found")
         return
 
@@ -1147,6 +1159,12 @@ def run_illum_visualization(sample_id=None, output_dir=None):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    # Helper to extract DAPI channel from multi-channel image
+    def extract_dapi(img):
+        if img.ndim == 3:
+            return img[0] if img.shape[0] <= 5 else img[:, :, 0]
+        return img
+
     # Images to process: (image_array, title, filename_prefix)
     images_to_process = []
 
@@ -1154,30 +1172,36 @@ def run_illum_visualization(sample_id=None, output_dir=None):
     if data.get("illum_function"):
         illum_img = tifffile.imread(data["illum_function"])
         print(f"  Illum function shape: {illum_img.shape}")
-        # If multi-channel, take first (DAPI)
-        if illum_img.ndim == 3:
-            illum_img = illum_img[0] if illum_img.shape[0] <= 5 else illum_img[:, :, 0]
+        illum_dapi = extract_dapi(illum_img)
         images_to_process.append(
             (
-                illum_img,
+                illum_dapi,
                 "Illumination correction function, DAPI channel",
                 "illum_function",
             )
         )
 
-    # Load and prepare example DAPI image
-    if data.get("example_image"):
-        example_img = tifffile.imread(data["example_image"])
-        print(f"  Example image shape: {example_img.shape}")
-        # Extract DAPI channel (first channel)
-        if example_img.ndim == 3:
-            if example_img.shape[0] <= 5:  # Channels first
-                dapi = example_img[0]
-            else:  # Channels last
-                dapi = example_img[:, :, 0]
-        else:
-            dapi = example_img
-        images_to_process.append((dapi, "Example DAPI channel image", "example_dapi"))
+    # Load raw DAPI (before IC)
+    if data.get("raw_image"):
+        raw_img = tifffile.imread(data["raw_image"])
+        print(f"  Raw image shape: {raw_img.shape}")
+        raw_dapi = extract_dapi(raw_img)
+        images_to_process.append(
+            (raw_dapi, "Raw DAPI (before illumination correction)", "raw_dapi")
+        )
+
+    # Load corrected DAPI (after IC) — the aligned phenotype image
+    if data.get("corrected_image"):
+        corrected_img = tifffile.imread(data["corrected_image"])
+        print(f"  Corrected image shape: {corrected_img.shape}")
+        corrected_dapi = extract_dapi(corrected_img)
+        images_to_process.append(
+            (
+                corrected_dapi,
+                "Corrected DAPI (after illumination correction)",
+                "corrected_dapi",
+            )
+        )
 
     # Scale bar modes
     scale_bar_modes = [
@@ -1276,8 +1300,8 @@ Examples:
     )
     parser.add_argument(
         "--mode",
-        choices=["segmentation", "spots", "phenotype", "sbs", "illum"],
-        help="Visualization mode",
+        choices=["segmentation", "spots", "phenotype", "sbs", "illum", "all"],
+        help="Visualization mode ('all' runs each mode sequentially)",
     )
     parser.add_argument(
         "--sample",
@@ -1341,63 +1365,71 @@ def main():
         return
 
     if not args.mode:
-        print("Error: --mode is required (segmentation, spots, phenotype, or sbs)")
+        print(
+            "Error: --mode is required (segmentation, spots, phenotype, sbs, illum, or all)"
+        )
         print("Use --list-samples to see available samples")
         return
 
-    if args.mode == "segmentation":
-        samples = list_segmentation_samples()
-        if not args.sample:
-            args.sample = samples[0] if samples else None
-        if not args.sample:
-            print("Error: No segmentation samples found")
-            return
-        if args.sample not in samples:
-            print(f"Warning: {args.sample} not in available samples, trying anyway...")
+    modes = (
+        ["segmentation", "spots", "phenotype", "sbs", "illum"]
+        if args.mode == "all"
+        else [args.mode]
+    )
 
-        run_segmentation_visualization(args.sample, args.output_dir)
+    for mode in modes:
+        print(f"\n{'=' * 60}")
+        print(f"  MODE: {mode}")
+        print(f"{'=' * 60}")
 
-    elif args.mode == "spots":
-        samples = list_spot_samples()
-        if not args.sample:
-            args.sample = samples[0] if samples else None
-        if not args.sample:
-            print("Error: No spot calling samples found")
-            return
-        if args.sample not in samples:
-            print(f"Warning: {args.sample} not in available samples, trying anyway...")
+        if mode == "segmentation":
+            samples = list_segmentation_samples()
+            sample = args.sample or (samples[0] if samples else None)
+            if not sample:
+                print("Error: No segmentation samples found")
+                continue
+            if sample not in samples:
+                print(f"Warning: {sample} not in available samples, trying anyway...")
+            run_segmentation_visualization(sample, args.output_dir)
 
-        run_spot_visualization(args.sample, args.output_dir)
+        elif mode == "spots":
+            samples = list_spot_samples()
+            sample = args.sample or (samples[0] if samples else None)
+            if not sample:
+                print("Error: No spot calling samples found")
+                continue
+            if sample not in samples:
+                print(f"Warning: {sample} not in available samples, trying anyway...")
+            run_spot_visualization(sample, args.output_dir)
 
-    elif args.mode == "phenotype":
-        samples = list_phenotype_samples()
-        if not args.sample:
-            # Pick a random sample
-            import random
+        elif mode == "phenotype":
+            if args.sample:
+                sample = args.sample
+            else:
+                samples = list_phenotype_samples()
+                if not samples:
+                    print("Error: No phenotype samples found")
+                    continue
+                import random
 
-            args.sample = random.choice(samples) if samples else None
-        if not args.sample:
-            print("Error: No phenotype samples found")
-            return
+                sample = random.choice(samples)
+            run_phenotype_visualization(sample, args.output_dir)
 
-        run_phenotype_visualization(args.sample, args.output_dir)
+        elif mode == "sbs":
+            if args.sample:
+                sample = args.sample
+            else:
+                samples = list_sbs_samples()
+                if not samples:
+                    print("Error: No SBS samples found")
+                    continue
+                import random
 
-    elif args.mode == "sbs":
-        samples = list_sbs_samples()
-        if not args.sample:
-            # Pick a random sample
-            import random
+                sample = random.choice(samples)
+            run_sbs_visualization(sample, args.output_dir)
 
-            args.sample = random.choice(samples) if samples else None
-        if not args.sample:
-            print("Error: No SBS samples found")
-            return
-
-        run_sbs_visualization(args.sample, args.output_dir)
-
-    elif args.mode == "illum":
-        # sample_id is optional - used for the example DAPI image
-        run_illum_visualization(args.sample, args.output_dir)
+        elif mode == "illum":
+            run_illum_visualization(args.sample, args.output_dir)
 
 
 if __name__ == "__main__":

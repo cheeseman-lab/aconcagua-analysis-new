@@ -2,7 +2,7 @@
 Feature Extraction Benchmark
 
 Two benchmark modes:
-- comparison: Compare CP Measure vs CP Multichannel pipelines
+- comparison: Compare CP Measure vs CP Emulator pipelines
 - timing: Time individual cp_measure functions to identify bottlenecks
 
 Usage:
@@ -336,7 +336,7 @@ def load_feature_dataframes():
 
     print(f"Loaded {len(measure_df)} rows from {len(measure_dfs)} files")
     print(f"CP Measure columns: {len(measure_df.columns)}")
-    print(f"CP Multichannel columns: {len(multi_df.columns)}")
+    print(f"CP Emulator columns: {len(multi_df.columns)}")
 
     return measure_df, multi_df
 
@@ -469,7 +469,7 @@ def generate_correlation_plots(corr_df):
     counts = cluster_summary["n_features"].values
 
     colors = plt.cm.RdYlGn((means + 1) / 2)  # Map [-1, 1] to colormap
-    bars = ax.barh(
+    ax.barh(
         range(len(clusters)),
         means,
         xerr=stds,
@@ -572,7 +572,7 @@ def generate_correlation_plots(corr_df):
         fig, ax = plt.subplots(figsize=(10, fig_height))
 
         colors = plt.cm.RdYlGn((cluster_data["pearson_r"].values + 1) / 2)
-        bars = ax.barh(
+        ax.barh(
             range(len(cluster_data)),
             cluster_data["pearson_r"].values,
             color=colors,
@@ -692,8 +692,8 @@ def generate_scatter_plots(corr_df, measure_df, multi_df, max_features_per_clust
         cluster_data = corr_df[
             (corr_df["cluster"] == cluster_name)
             & (corr_df["pearson_r"].notna())
-            & (corr_df["emulator_exists"] == True)
-            & (corr_df["measure_exists"] == True)
+            & (corr_df["emulator_exists"])
+            & (corr_df["measure_exists"])
         ].copy()
 
         if len(cluster_data) == 0:
@@ -835,7 +835,7 @@ def get_memory_usage():
 
 
 # =============================================================================
-# COMPARISON MODE - Compare CP Measure vs CP Multichannel pipelines
+# COMPARISON MODE - Compare CP Measure vs CP Emulator pipelines
 # =============================================================================
 
 
@@ -933,7 +933,7 @@ def prepare_test_images():
 
 
 def run_comparison_benchmark(images):
-    """Compare CP Measure vs CP Multichannel on test images."""
+    """Compare CP Measure vs CP Emulator on test images."""
     from lib.phenotype.extract_phenotype_cp_measure import extract_phenotype_cp_measure
     from lib.phenotype.extract_phenotype_cp_multichannel import (
         extract_phenotype_cp_multichannel,
@@ -998,8 +998,8 @@ def run_comparison_benchmark(images):
         except Exception as e:
             print(f"  CP Measure error: {e}")
 
-        # CP Multichannel
-        print("  Running CP Multichannel...")
+        # CP Emulator
+        print("  Running CP Emulator...")
         try:
             gc.collect()
             start_mem = get_memory_usage()
@@ -1037,7 +1037,7 @@ def run_comparison_benchmark(images):
             del features
             gc.collect()
         except Exception as e:
-            print(f"  CP Multichannel error: {e}")
+            print(f"  CP Emulator error: {e}")
 
         del data, nuclei, cells, cytoplasms
         gc.collect()
@@ -1052,7 +1052,7 @@ def run_comparison_benchmark(images):
 
 def generate_comparison_summary(results_df, run_correlation=True):
     """Generate summary for comparison benchmark."""
-    from plot_style import setup_plot_style, COLORS
+    from plot_style import setup_plot_style, COLORS, FIGSIZE
 
     # Apply consistent plot styling
     setup_plot_style()
@@ -1080,17 +1080,14 @@ def generate_comparison_summary(results_df, run_correlation=True):
     ].mean()
     speedup = cp_measure_time / cp_multi_time if cp_multi_time > 0 else 0
 
-    # 1. IMPROVED RUNTIME COMPARISON PLOT
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-
-    # Left: Bar chart with actual values
-    ax = axes[0]
+    # 1. RUNTIME PER TILE PLOT (square)
     method_colors = {
         "cp_measure": COLORS.get("cp_measure", "#8c564b"),
         "cp_multichannel": COLORS.get("cp_multichannel", "#e377c2"),
     }
+    fig, ax = plt.subplots(figsize=FIGSIZE["square"])
     bars = ax.bar(
-        ["CP Measure", "CP Multichannel"],
+        ["CP Measure", "CP Emulator"],
         [cp_measure_time, cp_multi_time],
         color=[method_colors["cp_measure"], method_colors["cp_multichannel"]],
         edgecolor="black",
@@ -1112,35 +1109,8 @@ def generate_comparison_summary(results_df, run_correlation=True):
         )
 
     ax.set_ylabel("Runtime (seconds)", fontsize=12)
-    ax.set_title("Runtime Comparison", fontsize=14, fontweight="bold")
+    ax.set_title("Runtime per Tile", fontsize=14, fontweight="bold")
     ax.set_ylim(0, cp_measure_time * 1.15)
-
-    # Right: Speedup visualization
-    ax2 = axes[1]
-    ax2.barh(
-        ["Speedup Factor"],
-        [speedup],
-        color="forestgreen",
-        edgecolor="black",
-        height=0.5,
-    )
-    ax2.axvline(x=1, color="red", linestyle="--", linewidth=2, label="No speedup (1x)")
-    ax2.set_xlabel("Speedup (x times faster)", fontsize=12)
-    ax2.set_title(
-        f"CP Multichannel is {speedup:.0f}x Faster", fontsize=14, fontweight="bold"
-    )
-    ax2.set_xlim(0, speedup * 1.15)
-    ax2.annotate(
-        f"{speedup:.0f}x",
-        xy=(speedup, 0),
-        xytext=(5, 0),
-        textcoords="offset points",
-        ha="left",
-        va="center",
-        fontweight="bold",
-        fontsize=16,
-        color="forestgreen",
-    )
 
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / "runtime_comparison.png", dpi=300, bbox_inches="tight")
@@ -1154,9 +1124,9 @@ def generate_comparison_summary(results_df, run_correlation=True):
         "memory_mb"
     ].mean()
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=FIGSIZE["square"])
     bars = ax.bar(
-        ["CP Measure", "CP Multichannel"],
+        ["CP Measure", "CP Emulator"],
         [cp_measure_mem, cp_multi_mem],
         color=[method_colors["cp_measure"], method_colors["cp_multichannel"]],
         edgecolor="black",
@@ -1190,9 +1160,9 @@ def generate_comparison_summary(results_df, run_correlation=True):
         "feature_count"
     ].mean()
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=FIGSIZE["square"])
     bars = ax.bar(
-        ["CP Measure", "CP Multichannel"],
+        ["CP Measure", "CP Emulator"],
         [cp_measure_feat, cp_multi_feat],
         color=[method_colors["cp_measure"], method_colors["cp_multichannel"]],
         edgecolor="black",
@@ -1233,7 +1203,7 @@ def generate_comparison_summary(results_df, run_correlation=True):
         print(f"  Memory: {m['memory_mb'].mean():.1f} MB")
         print(f"  Features: {m['feature_count'].mean():.0f}")
 
-    print(f"\nSPEEDUP: CP Multichannel is {speedup:.1f}x faster than CP Measure")
+    print(f"\nSPEEDUP: CP Emulator is {speedup:.1f}x faster than CP Measure")
 
     # 4. RUN CORRELATION ANALYSIS
     if run_correlation:

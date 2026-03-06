@@ -5,6 +5,23 @@ Provides consistent, publication-quality plots with Helvetica font.
 """
 
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+
+
+def _register_system_fonts():
+    """Register system fonts so matplotlib can find Arial, Liberation Sans, etc."""
+    font_dirs = [
+        "/usr/share/fonts/truetype/msttcorefonts",
+        "/usr/share/fonts/truetype/liberation",
+        "/usr/share/fonts/truetype",
+    ]
+    for d in font_dirs:
+        font_files = fm.findSystemFonts(fontpaths=[d])
+        for f in font_files:
+            try:
+                fm.fontManager.addfont(f)
+            except Exception:
+                pass
 
 
 def setup_plot_style():
@@ -15,14 +32,17 @@ def setup_plot_style():
     # Reset to default first
     plt.rcdefaults()
 
+    # Register system fonts (conda env may not see them by default)
+    _register_system_fonts()
+
     # Font configuration - Helvetica-like fonts with fallbacks
     plt.rcParams.update(
         {
             "font.family": "sans-serif",
             "font.sans-serif": [
+                "Arial",
                 "Nimbus Sans",
                 "Liberation Sans",
-                "Arial",
                 "DejaVu Sans",
             ],
             "font.size": 12,

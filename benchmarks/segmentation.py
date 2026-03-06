@@ -553,8 +553,8 @@ def generate_benchmark_summary(results_df):
         for container in ax.containers:
             ax.bar_label(container, fmt=fmt)
 
-    # Create runtime comparison plot
-    plt.figure(figsize=(8, 5))
+    # Create runtime comparison plot (square)
+    plt.figure(figsize=(8, 8))
     # Create a dictionary that maps methods to colors
     method_colors = dict(zip(sorted(results_df["method"].unique()), colors))
     # Plot bars with specific colors based on method
@@ -567,15 +567,15 @@ def generate_benchmark_summary(results_df):
         palette=method_colors,
     )
     add_value_labels(ax, "%.2f")
-    plt.title("Segmentation Method Runtime Comparison", fontweight="bold")
+    plt.title("Runtime per Tile", fontweight="bold")
     plt.ylabel("Runtime (seconds)")
     plt.xlabel("Segmentation Method")
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / "runtime_comparison.png", dpi=300, bbox_inches="tight")
     plt.close()
 
-    # Create memory usage comparison plot
-    plt.figure(figsize=(8, 5))
+    # Create memory usage comparison plot (square)
+    plt.figure(figsize=(8, 8))
     ax = sns.barplot(
         x="method",
         y="memory_mb",
@@ -592,7 +592,7 @@ def generate_benchmark_summary(results_df):
     plt.savefig(OUTPUT_DIR / "memory_comparison.png", dpi=300, bbox_inches="tight")
     plt.close()
 
-    # Create count comparison plots
+    # Create count comparison plots (2x2)
     fig, axes = plt.subplots(2, 2, figsize=(10, 8), sharex=True)
     fig.suptitle("Cell and Nuclei Counts by Method", fontweight="bold", y=0.98)
 
@@ -607,8 +607,8 @@ def generate_benchmark_summary(results_df):
         palette=method_colors,
     )
     add_value_labels(ax1, "%.0f")
-    ax1.set_title("Initial Nuclei Count", fontweight="bold")
-    ax1.set_ylabel("Count")
+    ax1.set_title("Mean Initial Nuclei per Tile", fontweight="bold")
+    ax1.set_ylabel("Mean Count per Tile")
     ax1.set_xlabel("")
 
     ax2 = axes[0, 1]
@@ -622,8 +622,8 @@ def generate_benchmark_summary(results_df):
         palette=method_colors,
     )
     add_value_labels(ax2, "%.0f")
-    ax2.set_title("Initial Cell Count", fontweight="bold")
-    ax2.set_ylabel("Count")
+    ax2.set_title("Mean Initial Cells per Tile", fontweight="bold")
+    ax2.set_ylabel("Mean Count per Tile")
     ax2.set_xlabel("")
 
     ax3 = axes[1, 0]
@@ -637,8 +637,8 @@ def generate_benchmark_summary(results_df):
         palette=method_colors,
     )
     add_value_labels(ax3, "%.0f")
-    ax3.set_title("Final Cell Count", fontweight="bold")
-    ax3.set_ylabel("Count")
+    ax3.set_title("Mean Final Cells per Tile", fontweight="bold")
+    ax3.set_ylabel("Mean Count per Tile")
     ax3.set_xlabel("Method")
 
     ax4 = axes[1, 1]
@@ -652,7 +652,7 @@ def generate_benchmark_summary(results_df):
         palette=method_colors,
     )
     add_value_labels(ax4, "%.0f")
-    ax4.set_title("Segmentation Method Runtime Comparison", fontweight="bold")
+    ax4.set_title("Runtime per Tile", fontweight="bold")
     ax4.set_ylabel("Runtime (seconds)")
     ax4.set_xlabel("Method")
 
@@ -696,37 +696,6 @@ def generate_benchmark_summary(results_df):
 
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / "retention_rates.png", dpi=300, bbox_inches="tight")
-    plt.close()
-
-    # Create scatter plot comparing initial nuclei vs. cell counts
-    plt.figure(figsize=(8, 6))
-    scatter = sns.scatterplot(
-        data=results_df,
-        x="initial_nuclei",
-        y="initial_cells",
-        hue="method",
-        style="method",
-        s=80,
-        alpha=0.8,
-        palette=method_colors,
-    )
-
-    # Add reference line (y=x)
-    xmin, xmax = plt.xlim()
-    ymin, ymax = plt.ylim()
-    lims = [max(xmin, ymin), min(xmax, ymax)]
-    plt.plot(lims, lims, "k--", alpha=0.5, zorder=0)
-
-    # Improve legend
-    plt.legend(title="Method", frameon=True, framealpha=0.9, edgecolor="lightgray")
-
-    plt.title("Initial Nuclei vs. Cell Counts", fontweight="bold")
-    plt.xlabel("Initial Nuclei Count")
-    plt.ylabel("Initial Cell Count")
-    plt.tight_layout()
-    plt.savefig(
-        OUTPUT_DIR / "initial_count_correlation.png", dpi=300, bbox_inches="tight"
-    )
     plt.close()
 
     # Create retention by stage plots
@@ -786,104 +755,6 @@ def generate_benchmark_summary(results_df):
     plt.savefig(OUTPUT_DIR / "processing_pipeline.png", dpi=300, bbox_inches="tight")
     plt.close()
 
-    # Calculate edge removal and reconciliation efficiency by method
-    # Edge removal efficiency (percentage of objects kept after edge removal)
-    results_df["edge_removal_nuclei_efficiency"] = np.where(
-        results_df["initial_nuclei"] > 0,
-        (results_df["after_edge_removal_nuclei"] / results_df["initial_nuclei"]) * 100,
-        0,
-    )
-
-    results_df["edge_removal_cells_efficiency"] = np.where(
-        results_df["initial_cells"] > 0,
-        (results_df["after_edge_removal_cells"] / results_df["initial_cells"]) * 100,
-        0,
-    )
-
-    # Reconciliation efficiency (percentage of edge-removed objects kept after reconciliation)
-    results_df["reconciliation_nuclei_efficiency"] = np.where(
-        results_df["after_edge_removal_nuclei"] > 0,
-        (results_df["final_nuclei"] / results_df["after_edge_removal_nuclei"]) * 100,
-        0,
-    )
-
-    results_df["reconciliation_cells_efficiency"] = np.where(
-        results_df["after_edge_removal_cells"] > 0,
-        (results_df["final_cells"] / results_df["after_edge_removal_cells"]) * 100,
-        0,
-    )
-
-    fig, axes = plt.subplots(2, 2, figsize=(10, 8))
-    fig.suptitle("Pipeline Efficiency by Method", fontweight="bold", y=0.98)
-
-    ax1 = axes[0, 0]
-    sns.barplot(
-        x="method",
-        y="edge_removal_nuclei_efficiency",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        ax=ax1,
-        palette=method_colors,
-    )
-    add_value_labels(ax1, "%.1f%%")
-    ax1.set_title("Edge Removal Efficiency - Nuclei", fontweight="bold")
-    ax1.set_ylabel("Efficiency (%)")
-    ax1.set_xlabel("")
-    ax1.set_ylim(0, 105)
-
-    ax2 = axes[0, 1]
-    sns.barplot(
-        x="method",
-        y="edge_removal_cells_efficiency",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        ax=ax2,
-        palette=method_colors,
-    )
-    add_value_labels(ax2, "%.1f%%")
-    ax2.set_title("Edge Removal Efficiency - Cells", fontweight="bold")
-    ax2.set_ylabel("Efficiency (%)")
-    ax2.set_xlabel("")
-    ax2.set_ylim(0, 105)
-
-    ax3 = axes[1, 0]
-    sns.barplot(
-        x="method",
-        y="reconciliation_nuclei_efficiency",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        ax=ax3,
-        palette=method_colors,
-    )
-    add_value_labels(ax3, "%.1f%%")
-    ax3.set_title("Reconciliation Efficiency - Nuclei", fontweight="bold")
-    ax3.set_ylabel("Efficiency (%)")
-    ax3.set_xlabel("Method")
-    ax3.set_ylim(0, 105)
-
-    ax4 = axes[1, 1]
-    sns.barplot(
-        x="method",
-        y="reconciliation_cells_efficiency",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        ax=ax4,
-        palette=method_colors,
-    )
-    add_value_labels(ax4, "%.1f%%")
-    ax4.set_title("Reconciliation Efficiency - Cells", fontweight="bold")
-    ax4.set_ylabel("Efficiency (%)")
-    ax4.set_xlabel("Method")
-    ax4.set_ylim(0, 105)
-
-    plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "pipeline_efficiency.png", dpi=300, bbox_inches="tight")
-    plt.close()
-
     # Print key findings to console
     print("\n=== SEGMENTATION BENCHMARK SUMMARY ===")
     for method in results_df["method"].unique():
@@ -902,12 +773,6 @@ def generate_benchmark_summary(results_df):
         )
         print(
             f"Retention rates: {method_df['nuclei_retention'].mean():.1f}% nuclei, {method_df['cell_retention'].mean():.1f}% cells"
-        )
-        print(
-            f"Edge removal efficiency: {method_df['edge_removal_nuclei_efficiency'].mean():.1f}% nuclei, {method_df['edge_removal_cells_efficiency'].mean():.1f}% cells"
-        )
-        print(
-            f"Reconciliation efficiency: {method_df['reconciliation_nuclei_efficiency'].mean():.1f}% nuclei, {method_df['reconciliation_cells_efficiency'].mean():.1f}% cells"
         )
 
 
