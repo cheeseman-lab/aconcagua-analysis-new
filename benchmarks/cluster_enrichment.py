@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 # Import shared plot styling
-from plot_style import setup_plot_style, save_figure
+from plot_style import setup_plot_style, save_figure, COLORS
 
 # Configure paths
 BENCHMARKS_DIR = Path(__file__).parent.resolve()
@@ -184,60 +184,91 @@ def build_resolution_sweep_data():
     return pd.DataFrame(results)
 
 
+def _extract_metrics(data):
+    """Extract standard metrics dict from loaded enrichment data."""
+    m = data["metrics"]
+    return {
+        "string_f1": m.get("STRING", {}).get("f1_score", np.nan),
+        "string_precision": m.get("STRING", {}).get("precision", np.nan),
+        "string_recall": m.get("STRING", {}).get("recall", np.nan),
+        "corum_enrich": m.get("CORUM", {}).get("proportion_enriched", np.nan),
+        "kegg_enrich": m.get("KEGG", {}).get("proportion_enriched", np.nan),
+        "num_clusters": data["num_clusters"],
+    }
+
+
+def load_shuffled_enrichment(cell_class, k):
+    """Load shuffled control enrichment results."""
+    results_dir = (
+        BRIEFLOW_OUTPUT / "DAPI_TUBULIN_GH2AX_PHALLOIDIN" / cell_class / str(k)
+    )
+    metrics_file = results_dir / "CB-Shuffled__global_metrics.json"
+
+    if not metrics_file.exists():
+        return None
+
+    with open(metrics_file, "r") as f:
+        metrics = json.load(f)
+
+    # Shuffled uses same clustering file for cluster count
+    clustering_file = results_dir / "phate_leiden_clustering_shuffled.tsv"
+    if clustering_file.exists():
+        clustering_df = pd.read_table(clustering_file)
+        num_clusters = clustering_df["cluster"].nunique()
+    else:
+        # Fall back to the real clustering count
+        clustering_file = results_dir / "phate_leiden_clustering.tsv"
+        if clustering_file.exists():
+            clustering_df = pd.read_table(clustering_file)
+            num_clusters = clustering_df["cluster"].nunique()
+        else:
+            num_clusters = None
+
+    return {
+        "metrics": metrics,
+        "num_clusters": num_clusters,
+        "k": k,
+        "cell_class": cell_class,
+    }
+
+
 def build_ideal_comparison_table():
-    """Build comparison table at ideal resolutions."""
+    """Build comparison table at ideal resolutions (Brieflow, Funk, Shuffled)."""
     results = []
 
     for config in IDEAL_CONFIGS:
         cell_class = config["cell_class"]
 
-        # Load Funk at ideal resolution
         funk = load_funk_enrichment(cell_class, config["funk_k"])
-
-        # Load Brieflow at ideal resolution
         brieflow = load_brieflow_enrichment(cell_class, config["brieflow_k"])
+        shuffled = load_shuffled_enrichment(cell_class, config["brieflow_k"])
 
         if funk and brieflow:
             row = {
                 "cell_class": cell_class,
                 "display_name": config["display_name"],
-                # Funk metrics
-                "funk_k": config["funk_k"],
-                "funk_num_clusters": funk["num_clusters"],
-                "funk_string_f1": funk["metrics"]
-                .get("STRING", {})
-                .get("f1_score", np.nan),
-                "funk_string_precision": funk["metrics"]
-                .get("STRING", {})
-                .get("precision", np.nan),
-                "funk_string_recall": funk["metrics"]
-                .get("STRING", {})
-                .get("recall", np.nan),
-                "funk_corum_enrich": funk["metrics"]
-                .get("CORUM", {})
-                .get("proportion_enriched", np.nan),
-                "funk_kegg_enrich": funk["metrics"]
-                .get("KEGG", {})
-                .get("proportion_enriched", np.nan),
-                # Brieflow metrics
-                "brieflow_k": config["brieflow_k"],
-                "brieflow_num_clusters": brieflow["num_clusters"],
-                "brieflow_string_f1": brieflow["metrics"]
-                .get("STRING", {})
-                .get("f1_score", np.nan),
-                "brieflow_string_precision": brieflow["metrics"]
-                .get("STRING", {})
-                .get("precision", np.nan),
-                "brieflow_string_recall": brieflow["metrics"]
-                .get("STRING", {})
-                .get("recall", np.nan),
-                "brieflow_corum_enrich": brieflow["metrics"]
-                .get("CORUM", {})
-                .get("proportion_enriched", np.nan),
-                "brieflow_kegg_enrich": brieflow["metrics"]
-                .get("KEGG", {})
-                .get("proportion_enriched", np.nan),
             }
+            # Add prefixed metrics for each pipeline
+            for prefix, data in [
+                ("funk", funk),
+                ("brieflow", brieflow),
+            ]:
+                m = _extract_metrics(data)
+                row[f"{prefix}_k"] = data["k"]
+                for key, val in m.items():
+                    row[f"{prefix}_{key}"] = val
+
+            # Shuffled (may not exist)
+            if shuffled:
+                m = _extract_metrics(shuffled)
+                row["shuffled_k"] = shuffled["k"]
+                for key, val in m.items():
+                    row[f"shuffled_{key}"] = val
+            else:
+                row["shuffled_k"] = np.nan
+                for key in ["string_f1", "corum_enrich", "kegg_enrich", "num_clusters"]:
+                    row[f"shuffled_{key}"] = np.nan
+
             results.append(row)
 
     df = pd.DataFrame(results)
@@ -257,107 +288,93 @@ def build_ideal_comparison_table():
 
 
 def plot_ideal_comparison(comparison_df, output_path):
-    """Plot head-to-head comparison at ideal resolutions."""
+    """Plot head-to-head comparison at ideal resolutions (3-panel: STRING, CORUM, KEGG).
+
+    Each panel shows grouped bars: Brieflow, Funk, Shuffled per cell class.
+    """
     setup_plot_style()
 
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    has_shuffled = "shuffled_string_f1" in comparison_df.columns and comparison_df[
+        "shuffled_string_f1"
+    ].notna().any()
+
+    fig, axes = plt.subplots(1, 3, figsize=(14, 5))
 
     metrics = [
-        ("string_f1", "STRING F1 Score", axes[0, 0], True),
-        ("corum_enrich", "CORUM Enrichment (%)", axes[0, 1], False),
-        ("kegg_enrich", "KEGG Enrichment (%)", axes[1, 0], False),
-        ("num_clusters", "Number of Clusters", axes[1, 1], False),
+        ("string_f1", "STRING F1 Score", axes[0]),
+        ("corum_enrich", "CORUM Enrichment (%)", axes[1]),
+        ("kegg_enrich", "KEGG Enrichment (%)", axes[2]),
     ]
 
-    for metric, title, ax, show_legend in metrics:
-        x = np.arange(len(comparison_df))
-        width = 0.35
+    n_groups = len(comparison_df)
+    n_bars = 3 if has_shuffled else 2
+    width = 0.25
+    offsets = np.linspace(-(n_bars - 1) * width / 2, (n_bars - 1) * width / 2, n_bars)
 
-        funk_values = comparison_df[f"funk_{metric}"].values
-        brieflow_values = comparison_df[f"brieflow_{metric}"].values
+    bar_configs = [
+        ("brieflow", "Brieflow", COLORS["brieflow"]),
+        ("funk", "Funk", COLORS["funk"]),
+    ]
+    if has_shuffled:
+        bar_configs.append(("shuffled", "Shuffled", "#999999"))
 
-        # Convert proportions to percentages for enrichment metrics
-        if "enrich" in metric:
-            funk_values = funk_values * 100
-            brieflow_values = brieflow_values * 100
+    for metric, title, ax in metrics:
+        x = np.arange(n_groups)
 
-        # Only add labels on first plot to avoid duplicate legends
-        funk_label = "Funk et al. 2022" if show_legend else None
-        brieflow_label = "Brieflow" if show_legend else None
+        all_values = []
+        for i, (prefix, label, color) in enumerate(bar_configs):
+            values = comparison_df[f"{prefix}_{metric}"].values.copy()
+            if "enrich" in metric:
+                values = values * 100
+            all_values.append(values)
 
-        bars1 = ax.bar(
-            x - width / 2,
-            funk_values,
-            width,
-            label=funk_label,
-            color="#d62728",
-            alpha=0.8,
-        )
-        bars2 = ax.bar(
-            x + width / 2,
-            brieflow_values,
-            width,
-            label=brieflow_label,
-            color="#2ca02c",
-            alpha=0.8,
-        )
+            ax.bar(
+                x + offsets[i],
+                values,
+                width,
+                label=label,
+                color=color,
+                alpha=0.85,
+            )
 
-        # Add value labels
-        for bars in [bars1, bars2]:
-            for bar in bars:
-                height = bar.get_height()
-                if not np.isnan(height):
-                    if "f1" in metric:
-                        label = f"{height:.3f}"
-                    elif "enrich" in metric:
-                        label = f"{height:.1f}%"
-                    else:
-                        label = f"{int(height)}"
-                    ax.annotate(
-                        label,
-                        xy=(bar.get_x() + bar.get_width() / 2, height),
-                        xytext=(0, 3),
-                        textcoords="offset points",
-                        ha="center",
-                        va="bottom",
-                        fontsize=9,
-                    )
-
-        # Add improvement annotations
-        if metric != "num_clusters":
-            for i in range(len(comparison_df)):
-                improvement = (
-                    (brieflow_values[i] - funk_values[i]) / funk_values[i]
-                ) * 100
-                color = "green" if improvement > 0 else "red"
-                y_pos = max(funk_values[i], brieflow_values[i]) * 1.15
-                ax.text(
-                    i,
-                    y_pos,
-                    f"{improvement:+.0f}%",
+            # Value labels on bars
+            for j, val in enumerate(values):
+                if np.isnan(val):
+                    continue
+                if "f1" in metric:
+                    txt = f"{val:.3f}"
+                else:
+                    txt = f"{val:.1f}%"
+                ax.annotate(
+                    txt,
+                    xy=(x[j] + offsets[i], max(val, 0)),
+                    xytext=(0, 4),
+                    textcoords="offset points",
                     ha="center",
-                    color=color,
-                    fontweight="bold",
+                    va="bottom",
                     fontsize=10,
+                    fontweight="bold",
                 )
 
-        ax.set_ylabel(title)
+        ax.set_ylabel(title, fontsize=13, fontweight="bold")
         ax.set_xticks(x)
-        ax.set_xticklabels(comparison_df["display_name"])
-
-        # Only show legend on first subplot
-        if show_legend:
-            ax.legend(loc="upper left", fontsize=10)
-
+        ax.set_xticklabels(comparison_df["display_name"], fontsize=12)
+        ax.tick_params(axis="y", labelsize=11)
         ax.grid(True, alpha=0.3, axis="y")
 
-    plt.suptitle(
+        # Pad y-axis
+        ymax = max(np.nanmax(v) for v in all_values)
+        ax.set_ylim(0, ymax * 1.3)
+
+    # Single shared legend in the rightmost panel
+    axes[2].legend(loc="upper right", fontsize=11, framealpha=0.9)
+
+    fig.suptitle(
         "Clustering Method Comparison at Ideal Resolutions",
-        fontsize=14,
+        fontsize=16,
         fontweight="bold",
-        y=0.995,
     )
-    plt.tight_layout()
+    fig.tight_layout()
     save_figure(fig, output_path)
     plt.close()
     print(f"Saved: {output_path}")
@@ -370,7 +387,7 @@ def plot_resolution_sweep(sweep_df, output_path):
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
 
     cell_classes = ["Interphase", "Mitotic"]
-    colors = {"Funk et al. 2022": "#d62728", "Brieflow": "#2ca02c"}
+    colors = {"Funk et al. 2022": COLORS["funk"], "Brieflow": COLORS["brieflow"]}
     markers = {"Funk et al. 2022": "o", "Brieflow": "s"}
 
     # Plot all subplots but only add labels on the first one
@@ -452,7 +469,7 @@ def plot_pr_curves(sweep_df, output_path):
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
     cell_classes = ["Interphase", "Mitotic"]
-    colors = {"Funk et al. 2022": "#d62728", "Brieflow": "#2ca02c"}
+    colors = {"Funk et al. 2022": COLORS["funk"], "Brieflow": COLORS["brieflow"]}
 
     # First pass: determine global axis limits
     all_recall = []

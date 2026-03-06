@@ -377,6 +377,11 @@ if [ "$RUN_CLUSTER" = true ]; then
         OVERALL_SUCCESS=false
     fi
 
+    log_info "Running cluster PHATE visualizations..."
+    if ! run_in_env "$MAIN_ENV" "cluster_phate.py" "main"; then
+        OVERALL_SUCCESS=false
+    fi
+
     log_info "Running cluster MozzareLLM analysis..."
     if ! run_in_env "$MAIN_ENV" "cluster_mozzarellm.py" "main" "--include-shuffled"; then
         OVERALL_SUCCESS=false

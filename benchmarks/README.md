@@ -39,6 +39,7 @@ Two modes:
 | `cluster_overlap.py` | Jaccard similarity between Brieflow↔Funk clusters | `results/cluster/overlap/` |
 | `cluster_validation.py` | Co-clustering preservation of known gene groups | `results/cluster/validation/` |
 | `cluster_similarity.py` | Feature embedding Pearson correlation heatmaps | `results/cluster/similarity/` |
+| `cluster_phate.py` | PHATE scatter plots + zoomed correlation heatmaps | `results/cluster/phate/` |
 
 ### MozzareLLM
 
@@ -107,6 +108,7 @@ python classifier.py           # Train and evaluate cell stage classifier
 python cluster_overlap.py
 python cluster_validation.py
 python cluster_similarity.py
+python cluster_phate.py
 python cluster_mozzarellm.py --include-shuffled
 python cluster_tables.py       # Generate S1-S9 tables + Excel
 

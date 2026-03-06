@@ -128,9 +128,9 @@ COLORS = {
     # Merge methods
     "fast": "#1f77b4",  # Blue
     "stitch": "#ff7f0e",  # Orange
-    # Clustering comparison
-    "brieflow": "#2ca02c",  # Green
-    "funk": "#d62728",  # Red
+    # Clustering comparison (colorblind-friendly)
+    "brieflow": "#0077BB",  # Teal blue
+    "funk": "#EE7733",  # Coral orange
 }
 
 # Standard figure sizes
