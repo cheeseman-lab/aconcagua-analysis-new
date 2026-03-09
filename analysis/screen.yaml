@@ -1,60 +1,161 @@
 # Screen Information
 experiment:
   id: "aconcagua"
-  notebook_entries: ""
-  dates:
-    start: ""
-    end: ""
+  type: "Fixed-cell optical pooled CRISPR screen"
+  reference: "Funk et al. 2022 (Cell)"
+  doi: "https://doi.org/10.1016/j.cell.2022.12.009"
 
-# Cellular Conditions
+# Cell Line
 cellular:
-  cell_line: "HeLa"
-  imaging_timepoint: "78 hours"
-  treatment:
-    summary: "CRISPR knockout perturbation screen"
-    details: "Optical Pooled Screen (OPS) using CRISPR knockout to perturb ~5,299 genes. Cells were imaged via fluorescence microscopy."
+  cell_line: "HeLa-TetR-Cas9 (A7)"
+  species: "Human"
+  culture_media: "DMEM with sodium pyruvate and GlutaMAX (Life Technologies 10569044), 10% heat-inactivated FBS (Sigma F4135), 100 U/mL pen-strep (TFS 15140122)"
+  cas9_induction:
+    inducer: "Doxycycline"
+    concentration: "2 ug/mL"
+    duration: "78 hours"
+  puromycin_selection:
+    concentration: "2 ug/mL"
+    duration: "4 days"
+  seeding:
+    density: "300,000 cells/well (~30,000 cells/cm2)"
+    time_before_fixation: "48 hours"
   plates: 8
+  plate_type: "6-well glass-bottom (Cellvis P06-1.5H-N)"
   wells_per_plate: "5-6"
+
+# CRISPR Library
+library:
+  vector: "CROPseq-puro-v2 (Addgene #127458)"
+  total_guides: 20445
+  guides_per_gene: 4  # except RGPD5 (3 guides)
+  nontargeting_controls: 250
+  barcode_length: 11  # 11-mer 5' demultiplexing prefix
+  min_levenshtein_distance_between_guides: 2
+  number_of_genes: 5299
+  gene_selection:
+    depmap_genes: 3991  # dependency probability >0.35 in >=10% of >600 cell lines
+    additional_essential: 1081  # essential in >=2 published screens
+  cloning: "Golden Gate assembly with Esp3I restriction sites"
+  oligo_synthesis: "Agilent"
+  nontargeting_fraction: "5%"
 
 # Sequencing by Synthesis (SBS)
 sbs:
   cycles: 11
-  cycle_order: "1-11"
-  background_channel: "DAPI"
-  library_details:
-    number_of_genes: 5299
-    guides_per_gene: "~4 (20,445 total guides)"
-    barcode_length: "11-mer"
+  sequencing_kit: "Illumina MiSeq 500 cycle Nano kit (MS-103-1003)"
+  sequencing_primer: "oSBS_CROPseq-v2 (1 uM in 2X SSC, 30 min at 37C)"
+  incorporation: "3 min at 60C (Nano kit reagent 1)"
+  cleavage: "6 min at 60C (Nano kit reagent 4)"
+  wash_buffer: "PR2 (Nano kit)"
+  wash_protocol: "6 washes x 5 min at 60C"
+  imaging_buffer: "200 ng/mL DAPI in 2X SSC"
+  objective: "10X 0.45 NA CFI Plan Apo Lambda (Nikon MRD00105)"
+  binning: "2x2"
+  channels:
+    - name: "DAPI"
+      laser: "408 nm, 0.8% power"
+      filters: "Custom Chroma dual-band 408/473 dichroic and emission"
+      exposure: "50 ms"
+    - name: "MiSeq G"
+      laser: "545 nm, 30% power"
+      excitation_filter: "Semrock FF01-543/3"
+      dichroic: "Chroma T555LPXR"
+      emission_filter: "Chroma ET575/30"
+      exposure: "200 ms"
+    - name: "MiSeq T"
+      laser: "545 nm, 30% power"
+      dichroic: "Chroma T565LPXR"
+      emission_filter: "Semrock FF01-615/24"
+      exposure: "200 ms"
+    - name: "MiSeq A"
+      laser: "635 nm, 30% power"
+      dichroic: "Chroma ZET635RDC"
+      emission_filter: "Semrock FF01-680/42"
+      exposure: "200 ms"
+    - name: "MiSeq C"
+      laser: "635 nm, 30% power"
+      dichroic: "Chroma ZET635RDC"
+      emission_filter: "Semrock FF01-732/68"
+      exposure: "200 ms"
 
-# Phenotype (PH) Steps
+# Phenotype (PH) Imaging
 phenotype:
+  objective: "20X 0.75 NA CFI Plan Apo Lambda (Nikon MRD00205)"
+  z_slices: 4
+  z_interval: "1.5 um"
   background_channel_cell: "DAPI"
   background_channel_body: "PHALLOIDIN"
 
-  rounds:
-    - round_number: 1
-      stains:
-        - name: "DAPI"
-          marker_of: "Nuclei (DNA)"
-          channel: "DAPI"
-        - name: "Tubulin"
-          marker_of: "Microtubules / Cytoskeleton"
-          channel: "GFP"
+  channels:
+    - name: "DAPI"
+      marker_of: "Nuclei (DNA)"
+      laser: "408 nm, 0.8% power"
+      filters: "Custom Chroma dual-band 408/473 dichroic and emission"
+      exposure: "50 ms"
+    - name: "Tubulin (alpha-tubulin-FITC)"
+      marker_of: "Microtubules / Cytoskeleton"
+      laser: "473 nm"
+      filters: "Custom Chroma 408/473 filter set"
+      antibody: "Anti-alpha-tubulin-FITC (Sigma F2168, 1:500)"
+    - name: "gamma-H2AX (Alexa Fluor 594)"
+      marker_of: "DNA damage foci"
+      laser: "545 nm, 30% power"
+      dichroic: "Chroma T565LPXR"
+      emission_filter: "Semrock FF01-615/24"
+      exposure: "200 ms"
+      antibody: "Rabbit anti-gamma H2A.X phospho S139 (Abcam ab81299, 1:2000)"
+      secondary: "Goat anti-rabbit disulfide-linked to AF594 (Invitrogen 31212 / TFS A10270, 1:500)"
+      cleavage: "50 mM TCEP in 2X SSC, 1 hour RT (cleaved before SBS)"
+    - name: "Phalloidin (Alexa Fluor 750)"
+      marker_of: "Actin / Cell body"
+      laser: "750 nm"
+      dichroic: "Semrock FF765-Di01"
+      emission_filter: "Custom Chroma ET820/110"
+      reagent: "Alexa Fluor Plus 750 Phalloidin (TFS A30105, 1:1000)"
 
-    - round_number: 2
-      stains:
-        - name: "gamma-H2AX"
-          marker_of: "DNA damage foci"
-          channel: "A594"
-        - name: "Phalloidin"
-          marker_of: "Actin / Cell body"
-          channel: "AF750"
+# Fixation and In Situ Protocol
+protocol:
+  fixation: "4% paraformaldehyde in PBS, 30 min"
+  permeabilization: "70% ethanol, 30 min"
+  wash_buffer: "PBS-T (PBS + 0.05% Tween-20)"
+  reverse_transcription:
+    buffer: "1x RevertAid RT buffer"
+    dntps: "250 uM"
+    bsa: "0.2 mg/mL"
+    rt_primer: "1 uM LNA-modified oRT_CROPseq-v2"
+    rnase_inhibitor: "0.8 U/uL Ribolock"
+    enzyme: "4.8 U/uL RevertAid H minus RT"
+    incubation: "Overnight at 37C"
+  post_fixation: "3% PFA + 0.1% glutaraldehyde, 30 min RT"
+  padlock_ligation:
+    buffer: "1x Ampligase buffer"
+    rnase_h: "0.4 U/uL"
+    padlock_probe: "100 nM oPD_CROPseq-v2"
+    taqit: "0.02 U/uL"
+    ampligase: "0.5 U/uL"
+    dntps: "50 nM"
+    incubation: "5 min at 37C, 90 min at 45C"
+  rolling_circle_amplification:
+    buffer: "1x Phi29 buffer"
+    dntps: "250 uM"
+    bsa: "0.2 mg/mL"
+    glycerol: "5%"
+    enzyme: "1 U/uL Phi29 DNA polymerase"
+    incubation: "Overnight at 30C"
 
-# Data Generated
+# Microscope Hardware
+microscope:
+  system: "Nikon Ti-2 inverted epifluorescence"
+  features: "Automated stage control, hardware autofocus"
+  camera: "Iris 9 sCMOS (Teledyne Photometrics)"
+  control_software: "NIS-Elements AR"
+  light_engine: "CELESTA (Lumencor)"
+
+# Data
 data:
   storage_format: "nd2"
   location: "/lab/ops_analysis_ssd/cheeseman/aconcagua-analysis-new/"
-  notes: "Cell painting-derived panel: DAPI, Tubulin, gamma-H2AX, Phalloidin. Processed via brieflow pipeline."
 
 # Data Provenance
 provenance:
