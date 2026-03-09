@@ -1,22 +1,23 @@
 """
-Validation Gene Cluster Tracking: Brieflow vs Funk et al. 2022
+Cluster Validation: Brieflow Preservation of Funk et al. 2022 Highlighted Clusters
 
-Two levels of analysis:
+Tracks all 57 individual Funk clusters highlighted in the paper (text discussion
+and heatmap pathway groups) through the Brieflow pipeline. For each Funk cluster:
 
-  Level 1 — Individual clusters: tracks co-clustering preservation for
-            specific clusters highlighted in the paper text (Funk and Brieflow).
+  1. Finds the dominant Brieflow cluster its genes land in
+  2. Computes preservation (fraction of genes retained)
+  3. Looks up MozzareLLM confidence on both the Funk and receiving Brieflow cluster
 
-  Level 2 — Pathway groups: tracks broader functional categories that span
-            multiple Funk clusters (e.g. "translation" = clusters 66,136,21,...).
-            Measures how many pipeline clusters the group scatters into
-            (normalized entropy) and mean within-group preservation.
+For fragmented clusters (<50% preservation), analyzes all receiving Brieflow
+clusters to show that gene redistribution typically moves genes into more
+specific, higher-confidence modules.
 
 Outputs:
-    results/cluster/validation/validation_tracking.tsv        (level 1)
-    results/cluster/validation/validation_gene_detail.tsv     (level 1)
-    results/cluster/validation/validation_preservation.png    (level 1)
-    results/cluster/validation/group_tracking.tsv             (level 2)
-    results/cluster/validation/group_preservation.png         (level 2)
+    results/cluster/validation/cluster_tracking.tsv          per-cluster metrics
+    results/cluster/validation/redistribution_detail.tsv     redistribution flow detail
+    results/cluster/validation/cluster_preservation.png      Fig A: all 57 clusters
+    results/cluster/validation/cluster_preservation_text.png Fig B: 15 text-discussed clusters
+    results/cluster/validation/redistribution_sankey.png     Fig C: Sankey diagram
 
 Usage:
     python cluster_validation.py
@@ -24,11 +25,11 @@ Usage:
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 from collections import Counter
 from pathlib import Path
 
-from plot_style import setup_plot_style, COLORS, save_figure
+from plot_style import setup_plot_style, save_figure
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -40,74 +41,29 @@ EXTERNAL_DIR = BENCHMARKS_DIR / "external"
 CLUSTER_DIR = (
     ANALYSIS_DIR / "brieflow_output" / "cluster" / "DAPI_TUBULIN_GH2AX_PHALLOIDIN"
 )
+FUNK_CLUSTER_DIR = EXTERNAL_DIR / "results" / "cluster"
 OUTPUT_DIR = BENCHMARKS_DIR / "results" / "cluster" / "validation"
 
 # Funk supplementary CSV with published cluster assignments
 FUNK_PUBLISHED_CSV = EXTERNAL_DIR / "1-s2.0-S0092867422013599-mmc4.csv"
 
-# Ideal resolutions (matching cluster_benchmarks.py)
+# Ideal resolutions
 IDEAL_CONFIGS = {
     "Interphase": {"brieflow_k": 12, "funk_k": 10},
     "Mitotic": {"brieflow_k": 5, "funk_k": 9},
 }
 
-
 # ---------------------------------------------------------------------------
-# Data loading
-# ---------------------------------------------------------------------------
-
-
-def load_funk_published():
-    """Load Funk's published cluster assignments from supplementary CSV."""
-    df = pd.read_csv(FUNK_PUBLISHED_CSV)
-    # Standardize column access
-    df = df.rename(
-        columns={
-            "\ufeffGene symbol": "Gene symbol",  # handle BOM
-        }
-    )
-    # Use first column if 'Gene symbol' still not found
-    if "Gene symbol" not in df.columns:
-        df = df.rename(columns={df.columns[0]: "Gene symbol"})
-    return df
-
-
-def load_funk_reclustered(cell_class):
-    """Load Funk re-clustered at ideal k."""
-    k = IDEAL_CONFIGS[cell_class]["funk_k"]
-    path = (
-        EXTERNAL_DIR
-        / "results"
-        / "cluster"
-        / f"Funk_{cell_class}_k{k}"
-        / "phate_leiden_clustering.tsv"
-    )
-    df = pd.read_csv(path, sep="\t")
-    return df
-
-
-def load_brieflow_clustered(cell_class):
-    """Load Brieflow clustering at ideal k."""
-    k = IDEAL_CONFIGS[cell_class]["brieflow_k"]
-    path = CLUSTER_DIR / cell_class / str(k) / "phate_leiden_clustering.tsv"
-    df = pd.read_csv(path, sep="\t")
-    return df
-
-
-# ---------------------------------------------------------------------------
-# Define validation gene groups
+# All Funk clusters highlighted in the paper (text + heatmap groups)
 # ---------------------------------------------------------------------------
 
+# Clusters discussed in the paper text (for filtering)
+FUNK_TEXT_CLUSTERS = {66, 23, 14, 136, 15, 21, 167, 197, 37, 149, 121, 148, 104, 29}
+FUNK_TEXT_CLUSTERS_MITOTIC = {109}
 
-def build_validation_groups(funk_published_df, brieflow_interphase_df):
-    """Build validation gene groups from published clusters and Brieflow clusters.
-
-    Returns list of dicts with keys: name, source, cell_class, genes, description.
-    """
-    groups = []
-
-    # --- Funk Interphase groups (from published supplementary Table S3) ---
-    funk_interphase_groups = {
+FUNK_HIGHLIGHTED_CLUSTERS = {
+    "Interphase": {
+        # Discussed in text
         66: "40S ribosome subunits",
         23: "60S ribosome subunits",
         14: "tRNA ligases & eIF2 initiation",
@@ -122,290 +78,154 @@ def build_validation_groups(funk_published_df, brieflow_interphase_df):
         148: "Cytokinesis factors",
         104: "Nuclear transport / pore",
         29: "Cell adhesion / integrins",
-    }
-
-    for cluster_id, description in funk_interphase_groups.items():
-        genes = (
-            funk_published_df[funk_published_df["Interphase cluster"] == cluster_id][
-                "Gene symbol"
-            ]
-            .dropna()
-            .tolist()
-        )
-        if genes:
-            groups.append(
-                {
-                    "name": f"Funk_I_{cluster_id}",
-                    "source": "Funk published",
-                    "cell_class": "Interphase",
-                    "original_cluster": cluster_id,
-                    "genes": genes,
-                    "description": description,
-                }
-            )
-
-    # --- Funk Mitotic group: M109 / ZNF335 cluster ---
-    m109_genes = (
-        funk_published_df[
-            funk_published_df["Mitotic cluster"].astype(str).str.strip() == "109"
-        ]["Gene symbol"]
-        .dropna()
-        .tolist()
-    )
-    if m109_genes:
-        groups.append(
-            {
-                "name": "Funk_M_109",
-                "source": "Funk published",
-                "cell_class": "Mitotic",
-                "original_cluster": 109,
-                "genes": m109_genes,
-                "description": "ZNF335 / spindle / gamma-tubulin",
-            }
-        )
-
-    # --- Brieflow Interphase groups (from Brieflow k=12 clustering) ---
-    brieflow_interphase_groups = {
-        5: "Ribosome biogenesis (C18orf21/NEPRO)",
-        "10+61+87": "Mitochondrial clusters (respiratory chain)",
-        60: "mRNA processing / vesicular trafficking (CCR4-NOT / exocyst)",
-        95: "MYC-dependent transcription (ZMYND8/KAT2A/SETD2)",
-    }
-
-    for cluster_key, description in brieflow_interphase_groups.items():
-        if isinstance(cluster_key, str) and "+" in cluster_key:
-            # Combined clusters
-            cluster_ids = [int(x) for x in cluster_key.split("+")]
-            genes = (
-                brieflow_interphase_df[
-                    brieflow_interphase_df["cluster"].isin(cluster_ids)
-                ]["gene_symbol_0"]
-                .dropna()
-                .tolist()
-            )
-            name = f"Brieflow_I_{cluster_key}"
-        else:
-            genes = (
-                brieflow_interphase_df[
-                    brieflow_interphase_df["cluster"] == cluster_key
-                ]["gene_symbol_0"]
-                .dropna()
-                .tolist()
-            )
-            name = f"Brieflow_I_{cluster_key}"
-
-        # Filter out control genes
-        genes = [g for g in genes if not g.startswith("nontargeting")]
-
-        if genes:
-            groups.append(
-                {
-                    "name": name,
-                    "source": "Brieflow",
-                    "cell_class": "Interphase",
-                    "original_cluster": cluster_key,
-                    "genes": genes,
-                    "description": description,
-                }
-            )
-
-    return groups
-
-
-# ---------------------------------------------------------------------------
-# Level 2: Pathway group definitions
-# ---------------------------------------------------------------------------
-
-# Funk's broader functional categories (each maps to multiple published clusters)
-FUNK_INTERPHASE_PATHWAY_GROUPS = {
-    "I_translation": {
-        "clusters": [66, 136, 21, 112, 216, 23, 15, 14, 203],
-        "description": "Ribosome subunits, biogenesis, tRNA ligases, translation factors",
+        # From heatmap pathway groups
+        112: "Translation factors",
+        216: "Translation regulation",
+        203: "Translation-associated",
+        155: "Transcriptional regulators",
+        8: "Transcription co-factors",
+        60: "Transcription / RNA pol",
+        199: "Transcription-associated",
+        192: "Transcription regulation",
+        45: "Transcription factors",
+        52: "Splicing factors",
+        138: "RNA modification",
+        110: "Spliceosome components",
+        215: "RNA processing",
+        157: "mRNA processing",
+        145: "RNA metabolism",
+        217: "Exosome / RNA decay",
+        213: "Ubiquitin ligases",
+        106: "Proteasome regulators",
+        200: "Ubiquitin-proteasome",
+        95: "Cell cycle regulators",
+        46: "Cell cycle control",
+        218: "Cell cycle-associated",
+        26: "DNA replication",
+        13: "DNA repair",
+        195: "DNA damage response",
+        179: "Replication-associated",
+        3: "DNA damage / replication",
+        212: "Chaperonin / tubulin folding",
+        184: "Actin cytoskeleton",
+        201: "Vesicle transport",
+        54: "ER-Golgi trafficking",
+        140: "Membrane trafficking",
     },
-    "I_transcription": {
-        "clusters": [155, 8, 60, 199, 192, 45],
-        "description": "Transcriptional regulators and co-factors",
-    },
-    "I_rna_processing": {
-        "clusters": [52, 138, 110, 215, 157, 145, 217],
-        "description": "Splicing, RNA modification, exosome",
-    },
-    "I_protein_degradation": {
-        "clusters": [213, 106, 167, 200],
-        "description": "Proteasome, ubiquitin-proteasome system",
-    },
-    "I_cell_cycle": {
-        "clusters": [148, 95, 46, 218],
-        "description": "Cytokinesis, cell cycle control",
-    },
-    "I_dna_replication_damage": {
-        "clusters": [26, 13, 195, 179, 3],
-        "description": "DNA replication, repair, damage response",
-    },
-    "I_chaperone_tubulin": {
-        "clusters": [212],
-        "description": "Chaperonin / tubulin folding",
-    },
-    "I_actin_adhesion": {
-        "clusters": [29, 184],
-        "description": "Actin cytoskeleton, integrins, adhesion",
-    },
-    "I_vesicle_trafficking": {
-        "clusters": [201, 54, 140],
-        "description": "Vesicle transport, ER-Golgi",
-    },
-    "I_nuclear_pore": {
-        "clusters": [104],
-        "description": "Nuclear pore complex, nuclear transport",
-    },
-}
-
-FUNK_MITOTIC_PATHWAY_GROUPS = {
-    "M_spindle_assembly": {
-        "clusters": [205, 109, 214, 11],
-        "description": "Tubulin, spindle bipolarity, augmin, chromosome alignment",
-    },
-    "M_translation": {
-        "clusters": [17, 21, 0],
-        "description": "Translation (mitotic)",
-    },
-    "M_mrna_splicing": {
-        "clusters": [33, 6],
-        "description": "mRNA splicing",
-    },
-    "M_protein_degradation": {
-        "clusters": [88],
-        "description": "Proteasome",
-    },
-    "M_dna_replication": {
-        "clusters": [34],
-        "description": "DNA replication",
+    "Mitotic": {
+        109: "ZNF335 / spindle / gamma-tubulin",
+        205: "Tubulin / spindle",
+        214: "Augmin complex",
+        11: "Chromosome alignment",
+        17: "Translation (mitotic)",
+        21: "Ribosome (mitotic)",
+        0: "Translation factors (mitotic)",
+        33: "Splicing (mitotic)",
+        6: "mRNA processing (mitotic)",
+        88: "Proteasome (mitotic)",
+        34: "DNA replication (mitotic)",
     },
 }
 
 
-def build_pathway_groups(funk_published_df):
-    """Build pathway-level gene groups from Funk's functional categories.
+# ---------------------------------------------------------------------------
+# Data loading
+# ---------------------------------------------------------------------------
 
-    Returns list of dicts with keys: name, cell_class, clusters, genes, description.
-    """
-    groups = []
 
-    for group_name, info in FUNK_INTERPHASE_PATHWAY_GROUPS.items():
-        genes = (
-            funk_published_df[
-                funk_published_df["Interphase cluster"].isin(info["clusters"])
-            ]["Gene symbol"]
-            .dropna()
-            .tolist()
+def load_funk_published():
+    """Load Funk's published cluster assignments from supplementary CSV."""
+    df = pd.read_csv(FUNK_PUBLISHED_CSV)
+    df = df.rename(columns={"\ufeffGene symbol": "Gene symbol"})
+    if "Gene symbol" not in df.columns:
+        df = df.rename(columns={df.columns[0]: "Gene symbol"})
+    return df
+
+
+def load_mozzarellm_summaries(cell_class, pipeline):
+    """Load MozzareLLM summaries. Returns {cluster_id: confidence}, {cluster_id: process}."""
+    if pipeline == "brieflow":
+        k = IDEAL_CONFIGS[cell_class]["brieflow_k"]
+        path = (
+            CLUSTER_DIR
+            / cell_class
+            / str(k)
+            / "mozzarellm"
+            / "claude-opus-4-6_summaries.tsv"
         )
-        if genes:
-            groups.append(
-                {
-                    "name": group_name,
-                    "cell_class": "Interphase",
-                    "funk_clusters": info["clusters"],
-                    "n_funk_clusters": len(info["clusters"]),
-                    "genes": genes,
-                    "description": info["description"],
-                }
-            )
+    else:
+        k = IDEAL_CONFIGS[cell_class]["funk_k"]
+        path = (
+            FUNK_CLUSTER_DIR
+            / f"Funk_{cell_class}_k{k}"
+            / "mozzarellm"
+            / "claude-opus-4-6_summaries.tsv"
+        )
+    df = pd.read_csv(path, sep="\t")
+    confidence = dict(zip(df["cluster_id"].astype(int), df["pathway_confidence"]))
+    process = dict(zip(df["cluster_id"].astype(int), df["dominant_process"]))
+    return confidence, process
 
-    for group_name, info in FUNK_MITOTIC_PATHWAY_GROUPS.items():
-        # Mitotic cluster column may have mixed types; coerce to numeric
+
+def load_brieflow_clustered(cell_class):
+    """Load Brieflow clustering at ideal k."""
+    k = IDEAL_CONFIGS[cell_class]["brieflow_k"]
+    path = CLUSTER_DIR / cell_class / str(k) / "phate_leiden_clustering.tsv"
+    return pd.read_csv(path, sep="\t")
+
+
+# ---------------------------------------------------------------------------
+# Core analysis
+# ---------------------------------------------------------------------------
+
+
+def get_funk_genes(funk_published, cell_class, cluster_id):
+    """Get gene list for a Funk published cluster."""
+    if cell_class == "Interphase":
+        genes = funk_published[
+            funk_published["Interphase cluster"] == cluster_id
+        ]["Gene symbol"].dropna().tolist()
+    else:
         mitotic_cl = pd.to_numeric(
-            funk_published_df["Mitotic cluster"], errors="coerce"
+            funk_published["Mitotic cluster"], errors="coerce"
         )
-        genes = (
-            funk_published_df[mitotic_cl.isin(info["clusters"])]["Gene symbol"]
-            .dropna()
-            .tolist()
-        )
-        if genes:
-            groups.append(
-                {
-                    "name": group_name,
-                    "cell_class": "Mitotic",
-                    "funk_clusters": info["clusters"],
-                    "n_funk_clusters": len(info["clusters"]),
-                    "genes": genes,
-                    "description": info["description"],
-                }
-            )
-
-    return groups
+        genes = funk_published[mitotic_cl == cluster_id][
+            "Gene symbol"
+        ].dropna().tolist()
+    return genes
 
 
-def compute_group_metrics(genes, cluster_assignments, gene_col="gene_symbol"):
-    """Compute group-level cluster spread metrics.
+def track_cluster(genes, brieflow_df):
+    """Track a set of genes into Brieflow clustering.
 
     Returns:
-        n_found: genes found in this clustering
-        n_clusters: number of distinct clusters the genes land in
-        normalized_entropy: Shannon entropy / log(n_found), 0=all in one cluster, 1=uniform
-        dominant_preservation: fraction in the single largest cluster
-        distribution: Counter of cluster assignments
+        preservation: fraction of found genes in dominant cluster
+        dominant_cluster: Brieflow cluster receiving the most genes
+        n_found: genes found in Brieflow
+        distribution: Counter of Brieflow cluster assignments
     """
-    df = cluster_assignments[cluster_assignments[gene_col].isin(genes)]
-    n_found = len(df)
+    matched = brieflow_df[brieflow_df["gene_symbol_0"].isin(genes)]
+    n_found = len(matched)
 
     if n_found == 0:
-        return 0, 0, np.nan, 0.0, Counter()
+        return 0.0, None, 0, Counter()
 
-    distribution = Counter(df["cluster"].values)
-    n_clusters = len(distribution)
-
-    # Normalized Shannon entropy
-    counts = np.array(list(distribution.values()), dtype=float)
-    probs = counts / counts.sum()
-    entropy = -np.sum(probs * np.log(probs))
-    max_entropy = np.log(n_found) if n_found > 1 else 1.0
-    normalized_entropy = entropy / max_entropy if max_entropy > 0 else 0.0
-
-    dominant_count = distribution.most_common(1)[0][1]
-    dominant_preservation = dominant_count / n_found
-
-    return n_found, n_clusters, normalized_entropy, dominant_preservation, distribution
-
-
-# ---------------------------------------------------------------------------
-# Co-clustering preservation (Level 1)
-# ---------------------------------------------------------------------------
-
-
-def compute_preservation(genes, cluster_assignments, gene_col="gene_symbol"):
-    """Compute co-clustering preservation for a gene group.
-
-    Returns:
-        preservation: fraction of genes in the dominant cluster
-        dominant_cluster: the cluster containing the most genes
-        n_found: number of genes found in the clustering
-        n_total: total genes in the group
-        distribution: Counter of cluster assignments
-    """
-    df = cluster_assignments[cluster_assignments[gene_col].isin(genes)]
-    n_found = len(df)
-    n_total = len(genes)
-
-    if n_found == 0:
-        return 0.0, None, 0, n_total, Counter()
-
-    distribution = Counter(df["cluster"].values)
+    distribution = Counter(matched["cluster"].values)
     dominant_cluster, dominant_count = distribution.most_common(1)[0]
     preservation = dominant_count / n_found
 
-    return preservation, dominant_cluster, n_found, n_total, distribution
+    return preservation, dominant_cluster, n_found, distribution
 
 
 # ---------------------------------------------------------------------------
-# Main analysis
+# Main
 # ---------------------------------------------------------------------------
 
 
 def run_validation():
     """Run the full validation analysis."""
     print("=" * 80)
-    print("VALIDATION GENE CLUSTER TRACKING")
+    print("CLUSTER VALIDATION: Brieflow Preservation of Funk Highlighted Clusters")
     print("=" * 80)
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -415,204 +235,222 @@ def run_validation():
     funk_published = load_funk_published()
     print(f"  Funk published: {len(funk_published)} genes")
 
-    # Load re-clustered data
-    cluster_data = {}
+    brieflow_data = {}
     for cell_class in ["Interphase", "Mitotic"]:
-        funk_re = load_funk_reclustered(cell_class)
-        brieflow = load_brieflow_clustered(cell_class)
-        cluster_data[cell_class] = {
-            "funk_reclustered": funk_re,
-            "brieflow": brieflow,
-        }
-        fk = IDEAL_CONFIGS[cell_class]["funk_k"]
-        bk = IDEAL_CONFIGS[cell_class]["brieflow_k"]
-        print(
-            f"  {cell_class}: Funk k={fk} ({len(funk_re)} genes), Brieflow k={bk} ({len(brieflow)} genes)"
-        )
+        brieflow_data[cell_class] = load_brieflow_clustered(cell_class)
+        print(f"  Brieflow {cell_class}: {len(brieflow_data[cell_class])} genes")
 
-    # Build validation groups
-    brieflow_interphase = cluster_data["Interphase"]["brieflow"]
-    groups = build_validation_groups(funk_published, brieflow_interphase)
-    print(f"\n  Validation groups: {len(groups)}")
+    # Load MozzareLLM confidence (keyed by cell class to avoid ID collisions)
+    funk_conf = {}
+    funk_proc = {}
+    brieflow_conf = {}
+    brieflow_proc = {}
+    for cell_class in ["Interphase", "Mitotic"]:
+        fc, fp = load_mozzarellm_summaries(cell_class, "funk")
+        funk_conf[cell_class] = fc
+        funk_proc[cell_class] = fp
+        bc, bp = load_mozzarellm_summaries(cell_class, "brieflow")
+        brieflow_conf[cell_class] = bc
+        brieflow_proc[cell_class] = bp
 
-    # Compute preservation for each group
-    print("\nComputing co-clustering preservation...")
-    summary_rows = []
-    detail_rows = []
-
-    for group in groups:
-        cell_class = group["cell_class"]
-        genes = group["genes"]
-        cd = cluster_data[cell_class]
-
-        # Funk re-clustered preservation
-        funk_pres, funk_dom, funk_found, _, funk_dist = compute_preservation(
-            genes, cd["funk_reclustered"], gene_col="gene_symbol"
-        )
-
-        # Brieflow preservation
-        brieflow_pres, brieflow_dom, brieflow_found, _, brieflow_dist = (
-            compute_preservation(genes, cd["brieflow"], gene_col="gene_symbol_0")
-        )
-
-        summary_rows.append(
-            {
-                "group": group["name"],
-                "source": group["source"],
-                "cell_class": cell_class,
-                "description": group["description"],
-                "n_genes": len(genes),
-                "funk_k": IDEAL_CONFIGS[cell_class]["funk_k"],
-                "funk_found": funk_found,
-                "funk_preservation": funk_pres,
-                "funk_dominant_cluster": funk_dom,
-                "funk_n_clusters": len(funk_dist),
-                "brieflow_k": IDEAL_CONFIGS[cell_class]["brieflow_k"],
-                "brieflow_found": brieflow_found,
-                "brieflow_preservation": brieflow_pres,
-                "brieflow_dominant_cluster": brieflow_dom,
-                "brieflow_n_clusters": len(brieflow_dist),
-            }
-        )
-
-        # Per-gene detail
-        funk_lookup = dict(
-            zip(
-                cd["funk_reclustered"]["gene_symbol"],
-                cd["funk_reclustered"]["cluster"],
-            )
-        )
-        brieflow_lookup = dict(
-            zip(
-                cd["brieflow"]["gene_symbol_0"],
-                cd["brieflow"]["cluster"],
-            )
-        )
-
-        # Funk published lookup
-        if cell_class == "Interphase":
-            pub_col = "Interphase cluster"
-        else:
-            pub_col = "Mitotic cluster"
-        pub_lookup = dict(
-            zip(
-                funk_published["Gene symbol"],
-                funk_published[pub_col],
-            )
-        )
-
-        for gene in genes:
-            detail_rows.append(
-                {
-                    "gene": gene,
-                    "group": group["name"],
-                    "description": group["description"],
-                    "cell_class": cell_class,
-                    "funk_published_cluster": pub_lookup.get(gene, None),
-                    "funk_reclustered_cluster": funk_lookup.get(gene, None),
-                    "brieflow_cluster": brieflow_lookup.get(gene, None),
-                }
-            )
-
-    # Build DataFrames
-    summary_df = pd.DataFrame(summary_rows)
-    detail_df = pd.DataFrame(detail_rows)
-
-    # Save tables
-    summary_df.to_csv(OUTPUT_DIR / "validation_tracking.tsv", sep="\t", index=False)
-    print(f"\n  Saved: {OUTPUT_DIR / 'validation_tracking.tsv'}")
-
-    detail_df.to_csv(OUTPUT_DIR / "validation_gene_detail.tsv", sep="\t", index=False)
-    print(f"  Saved: {OUTPUT_DIR / 'validation_gene_detail.tsv'}")
-
-    # Print summary
-    print("\n" + "=" * 80)
-    print("PRESERVATION SUMMARY")
-    print("=" * 80)
-    print(
-        f"\n{'Group':<22s} {'Src':<8s} {'N':>4s}  "
-        f"{'Funk Pres':>10s} {'Funk #Cl':>8s}  "
-        f"{'BL Pres':>10s} {'BL #Cl':>8s}  {'Description'}"
+    # Count total highlighted clusters
+    n_total_clusters = sum(
+        len(clusters) for clusters in FUNK_HIGHLIGHTED_CLUSTERS.values()
     )
+    print(f"\n  Funk highlighted clusters: {n_total_clusters}")
+
+    # -----------------------------------------------------------------------
+    # Track each cluster through Brieflow
+    # -----------------------------------------------------------------------
+    print("\nTracking clusters through Brieflow...")
+    rows = []
+
+    for cell_class, clusters in FUNK_HIGHLIGHTED_CLUSTERS.items():
+        for funk_cl_id, description in sorted(clusters.items()):
+            genes = get_funk_genes(funk_published, cell_class, funk_cl_id)
+            if not genes:
+                continue
+
+            preservation, bl_dom_cl, n_found, distribution = track_cluster(
+                genes, brieflow_data[cell_class]
+            )
+
+            # Classify preservation
+            if preservation >= 0.80:
+                tier = "Well-preserved"
+            elif preservation >= 0.50:
+                tier = "Partially preserved"
+            else:
+                tier = "Fragmented"
+
+            # MozzareLLM confidence (cell_class-aware to avoid ID collision)
+            fk_confidence = funk_conf[cell_class].get(funk_cl_id, "N/A")
+            fk_process = funk_proc[cell_class].get(funk_cl_id, "")
+            bl_confidence = (
+                brieflow_conf[cell_class].get(bl_dom_cl, "N/A")
+                if bl_dom_cl is not None
+                else "N/A"
+            )
+            bl_process = (
+                brieflow_proc[cell_class].get(bl_dom_cl, "")
+                if bl_dom_cl is not None
+                else ""
+            )
+
+            # Track whether discussed in text vs heatmap only
+            in_text = (
+                (cell_class == "Interphase" and funk_cl_id in FUNK_TEXT_CLUSTERS)
+                or (cell_class == "Mitotic" and funk_cl_id in FUNK_TEXT_CLUSTERS_MITOTIC)
+            )
+
+            rows.append({
+                "cell_class": cell_class,
+                "funk_cluster": funk_cl_id,
+                "description": description,
+                "highlighted_in": "text" if in_text else "heatmap",
+                "n_genes": len(genes),
+                "n_found_in_brieflow": n_found,
+                "preservation": preservation,
+                "tier": tier,
+                "brieflow_dominant_cluster": bl_dom_cl,
+                "n_brieflow_clusters": len(distribution),
+                "funk_confidence": fk_confidence,
+                "funk_process": fk_process,
+                "brieflow_confidence": bl_confidence,
+                "brieflow_process": bl_process,
+            })
+
+    df = pd.DataFrame(rows)
+    df.to_csv(OUTPUT_DIR / "cluster_tracking.tsv", sep="\t", index=False)
+    print(f"  Saved: {OUTPUT_DIR / 'cluster_tracking.tsv'}")
+
+    # -----------------------------------------------------------------------
+    # Summary statistics
+    # -----------------------------------------------------------------------
+    n_total = len(df)
+    n_well = (df["tier"] == "Well-preserved").sum()
+    n_partial = (df["tier"] == "Partially preserved").sum()
+    n_frag = (df["tier"] == "Fragmented").sum()
+    n_preserved = n_well + n_partial
+
+    funk_hc = (df["funk_confidence"] == "High").sum()
+    bl_hc = (df["brieflow_confidence"] == "High").sum()
+    mean_well_pres = df.loc[df["tier"] == "Well-preserved", "preservation"].mean()
+
+    print("\n" + "=" * 80)
+    print("SUMMARY")
+    print("=" * 80)
+    print(f"\n  Total Funk highlighted clusters: {n_total}")
+    print(f"  Well-preserved (>=80%):          {n_well} ({100*n_well/n_total:.1f}%)")
+    print(f"  Partially preserved (>=50%):     {n_partial} ({100*n_partial/n_total:.1f}%)")
+    print(f"  Fragmented (<50%):               {n_frag} ({100*n_frag/n_total:.1f}%)")
+    print(f"  Total preserved (>=50%):         {n_preserved} ({100*n_preserved/n_total:.1f}%)")
+    if n_well > 0:
+        print(f"  Mean preservation (well-pres):   {mean_well_pres:.1%}")
+    print(f"\n  Funk high-confidence:            {funk_hc}/{n_total} ({100*funk_hc/n_total:.1f}%)")
+    print(f"  Brieflow receiving high-conf:    {bl_hc}/{n_total} ({100*bl_hc/n_total:.1f}%)")
+
+    # Detailed table
+    print(f"\n{'CL':>4s} {'Class':<11s} {'N':>3s} {'Pres':>6s} {'Tier':<20s} "
+          f"{'FK Conf':<8s} {'BL Cl':>5s} {'BL Conf':<8s} {'Description'}")
     print("-" * 110)
-    for _, row in summary_df.iterrows():
+    for _, row in df.sort_values(
+        ["cell_class", "preservation"], ascending=[True, False]
+    ).iterrows():
+        bl_cl_str = (
+            str(int(row["brieflow_dominant_cluster"]))
+            if pd.notna(row["brieflow_dominant_cluster"])
+            else "—"
+        )
         print(
-            f"{row['group']:<22s} {row['source']:<8s} {row['n_genes']:>4d}  "
-            f"{row['funk_preservation']:>10.1%} {row['funk_n_clusters']:>8d}  "
-            f"{row['brieflow_preservation']:>10.1%} {row['brieflow_n_clusters']:>8d}  "
+            f"{row['funk_cluster']:>4d} {row['cell_class']:<11s} {row['n_genes']:>3d} "
+            f"{row['preservation']:>6.0%} {row['tier']:<20s} "
+            f"{row['funk_confidence']:<8s} {bl_cl_str:>5s} {row['brieflow_confidence']:<8s} "
             f"{row['description']}"
         )
 
-    # Plot level 1
-    plot_preservation(summary_df, OUTPUT_DIR / "validation_preservation.png")
-
-    # ===================================================================
-    # Level 2: Pathway group analysis
-    # ===================================================================
+    # -----------------------------------------------------------------------
+    # Redistribution analysis (non-well-preserved text clusters)
+    # -----------------------------------------------------------------------
     print("\n" + "=" * 80)
-    print("LEVEL 2: PATHWAY GROUP PRESERVATION")
+    print("REDISTRIBUTION ANALYSIS (text-discussed clusters)")
     print("=" * 80)
 
-    pathway_groups = build_pathway_groups(funk_published)
-    print(f"\n  Pathway groups: {len(pathway_groups)}")
+    text_df = df[df["highlighted_in"] == "text"]
+    redistributed = text_df[text_df["tier"] != "Well-preserved"]
+    min_genes = 2
 
-    group_rows = []
-    for pg in pathway_groups:
-        cell_class = pg["cell_class"]
-        genes = pg["genes"]
-        cd = cluster_data[cell_class]
+    redist_rows = []
+    for _, row in redistributed.iterrows():
+        cell_class = row["cell_class"]
+        funk_cl_id = int(row["funk_cluster"])
+        genes = get_funk_genes(funk_published, cell_class, funk_cl_id)
 
-        # Funk re-clustered
-        funk_found, funk_ncl, funk_ent, funk_dom_pres, funk_dist = (
-            compute_group_metrics(genes, cd["funk_reclustered"], gene_col="gene_symbol")
-        )
+        matched = brieflow_data[cell_class][
+            brieflow_data[cell_class]["gene_symbol_0"].isin(genes)
+        ]
+        dist = Counter(matched["cluster"].values)
+        receivers = [
+            (cl, cnt) for cl, cnt in dist.most_common() if cnt >= min_genes
+        ]
 
-        # Brieflow
-        bl_found, bl_ncl, bl_ent, bl_dom_pres, bl_dist = compute_group_metrics(
-            genes, cd["brieflow"], gene_col="gene_symbol_0"
-        )
-
-        group_rows.append(
-            {
-                "pathway_group": pg["name"],
+        for bl_cl, n_genes_recv in receivers:
+            redist_rows.append({
+                "funk_cluster": funk_cl_id,
                 "cell_class": cell_class,
-                "description": pg["description"],
-                "n_genes": len(genes),
-                "n_funk_published_clusters": pg["n_funk_clusters"],
-                "funk_k": IDEAL_CONFIGS[cell_class]["funk_k"],
-                "funk_found": funk_found,
-                "funk_n_clusters": funk_ncl,
-                "funk_normalized_entropy": funk_ent,
-                "funk_dominant_preservation": funk_dom_pres,
-                "brieflow_k": IDEAL_CONFIGS[cell_class]["brieflow_k"],
-                "brieflow_found": bl_found,
-                "brieflow_n_clusters": bl_ncl,
-                "brieflow_normalized_entropy": bl_ent,
-                "brieflow_dominant_preservation": bl_dom_pres,
-            }
-        )
+                "funk_description": row["description"],
+                "funk_confidence": row["funk_confidence"],
+                "funk_n_genes": row["n_genes"],
+                "brieflow_cluster": bl_cl,
+                "n_genes_received": n_genes_recv,
+                "brieflow_confidence": brieflow_conf[cell_class].get(bl_cl, "N/A"),
+                "brieflow_process": brieflow_proc[cell_class].get(bl_cl, ""),
+            })
 
-    group_df = pd.DataFrame(group_rows)
-    group_df.to_csv(OUTPUT_DIR / "group_tracking.tsv", sep="\t", index=False)
-    print(f"  Saved: {OUTPUT_DIR / 'group_tracking.tsv'}")
+    redist_df = pd.DataFrame(redist_rows)
+    redist_df.to_csv(OUTPUT_DIR / "redistribution_detail.tsv", sep="\t", index=False)
+    print(f"  Saved: {OUTPUT_DIR / 'redistribution_detail.tsv'}")
 
-    # Print summary
-    print(
-        f"\n{'Group':<25s} {'N':>5s} {'Funk#Pub':>8s}  "
-        f"{'Funk#Cl':>7s} {'FunkEnt':>8s}  "
-        f"{'BL#Cl':>7s} {'BL_Ent':>8s}  {'Description'}"
+    # Summary
+    n_receivers = len(redist_df)
+    n_recv_high = (redist_df["brieflow_confidence"] == "High").sum()
+    n_recv_med = (redist_df["brieflow_confidence"] == "Medium").sum()
+    n_recv_low = (redist_df["brieflow_confidence"] == "Low").sum()
+    genes_in_high = redist_df.loc[
+        redist_df["brieflow_confidence"] == "High", "n_genes_received"
+    ].sum()
+    genes_total = redist_df["n_genes_received"].sum()
+
+    print(f"\n  Non-well-preserved text clusters: {len(redistributed)}")
+    print(f"    Partially preserved: {(redistributed['tier'] == 'Partially preserved').sum()}")
+    print(f"    Fragmented: {(redistributed['tier'] == 'Fragmented').sum()}")
+    print(f"\n  Receiving Brieflow clusters (>={min_genes} genes): {n_receivers}")
+    print(f"    High-conf:   {n_recv_high} ({100*n_recv_high/n_receivers:.0f}%)")
+    print(f"    Medium-conf: {n_recv_med} ({100*n_recv_med/n_receivers:.0f}%)")
+    print(f"    Low-conf:    {n_recv_low} ({100*n_recv_low/n_receivers:.0f}%)")
+    print(f"\n  Genes in High-conf receivers: {genes_in_high}/{genes_total} "
+          f"({100*genes_in_high/genes_total:.0f}%)")
+
+    # -----------------------------------------------------------------------
+    # Figure A: Preservation bars — all 57 clusters (supplemental)
+    # -----------------------------------------------------------------------
+    plot_preservation(df, OUTPUT_DIR / "cluster_preservation.png")
+
+    # -----------------------------------------------------------------------
+    # Figure B: Preservation bars — 15 text-discussed clusters
+    # -----------------------------------------------------------------------
+    plot_preservation(
+        text_df, OUTPUT_DIR / "cluster_preservation_text.png",
+        title="Brieflow Preservation of Funk Text-Discussed Clusters",
     )
-    print("-" * 115)
-    for _, row in group_df.iterrows():
-        print(
-            f"{row['pathway_group']:<25s} {row['n_genes']:>5d} {row['n_funk_published_clusters']:>8d}  "
-            f"{row['funk_n_clusters']:>7d} {row['funk_normalized_entropy']:>8.3f}  "
-            f"{row['brieflow_n_clusters']:>7d} {row['brieflow_normalized_entropy']:>8.3f}  "
-            f"{row['description']}"
-        )
 
-    # Plot level 2
-    plot_group_preservation(group_df, OUTPUT_DIR / "group_preservation.png")
+    # -----------------------------------------------------------------------
+    # Figure C: Redistribution Sankey — text clusters, non-well-preserved
+    # -----------------------------------------------------------------------
+    plot_fragmentation_sankey(
+        redist_df, brieflow_conf, brieflow_proc,
+        OUTPUT_DIR / "redistribution_sankey.png",
+    )
 
     print("\n" + "=" * 80)
     print("VALIDATION COMPLETE")
@@ -621,64 +459,75 @@ def run_validation():
 
 
 # ---------------------------------------------------------------------------
-# Plotting
+# Figure A: Preservation bar chart
 # ---------------------------------------------------------------------------
 
+TIER_COLORS = {
+    "Well-preserved": "#2ca02c",
+    "Partially preserved": "#ffbb78",
+    "Fragmented": "#d62728",
+}
 
-def plot_preservation(summary_df, output_path):
-    """Horizontal bar chart comparing preservation scores."""
+
+def plot_preservation(df, output_path, title="Brieflow Preservation of Funk-Highlighted Clusters"):
+    """Sorted horizontal bar chart of preservation for highlighted clusters."""
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Patch
+
     setup_plot_style()
 
-    df = summary_df.copy()
-    n = len(df)
+    df_sorted = df.sort_values("preservation", ascending=True).reset_index(drop=True)
+    n = len(df_sorted)
 
-    fig, ax = plt.subplots(figsize=(10, max(6, n * 0.45)))
+    fig, ax = plt.subplots(figsize=(14, max(6, n * 0.5)))
 
     y = np.arange(n)
-    bar_height = 0.35
+    colors = [TIER_COLORS[t] for t in df_sorted["tier"]]
 
-    # Bars
-    bars_funk = ax.barh(
-        y + bar_height / 2,
-        df["funk_preservation"],
-        bar_height,
-        label="Funk re-clustered",
-        color=COLORS["funk"],
-        alpha=0.85,
-    )
-    bars_brieflow = ax.barh(
-        y - bar_height / 2,
-        df["brieflow_preservation"],
-        bar_height,
-        label="Brieflow",
-        color=COLORS["brieflow"],
-        alpha=0.85,
-    )
+    ax.barh(y, df_sorted["preservation"], color=colors, alpha=0.85, height=0.85)
 
-    # Value labels
-    for bars in [bars_funk, bars_brieflow]:
-        for bar in bars:
-            width = bar.get_width()
-            if width > 0:
-                ax.text(
-                    width + 0.01,
-                    bar.get_y() + bar.get_height() / 2,
-                    f"{width:.0%}",
-                    va="center",
-                    fontsize=9,
-                )
+    # Threshold lines
+    ax.axvline(0.50, color="gray", linestyle="--", linewidth=0.8, alpha=0.5)
+    ax.axvline(0.80, color="gray", linestyle="--", linewidth=0.8, alpha=0.5)
 
-    # Labels
-    labels = [f"{row['group']}\n({row['n_genes']} genes)" for _, row in df.iterrows()]
-    ax.set_yticks(y)
-    ax.set_yticklabels(labels, fontsize=9)
-    ax.set_xlabel("Co-clustering Preservation (fraction in dominant cluster)")
+    # Labels inside bars
+    for i, (_, row) in enumerate(df_sorted.iterrows()):
+        pres = row["preservation"]
+        desc = row["description"]
+        if row.get("cell_class") == "Mitotic" and "(mitotic)" not in desc.lower():
+            desc = f"{desc} (mitotic)"
+        label = f"{desc} ({row['n_genes']})"
+        pct = f"{pres:.0%}"
+
+        if pres >= 0.35:
+            # Label inside bar, left-aligned
+            ax.text(
+                0.01, i, f"  {label}", va="center", ha="left",
+                fontsize=11, color="white", fontweight="bold",
+            )
+            # Percentage at right edge of bar
+            ax.text(
+                pres - 0.01, i, pct, va="center", ha="right",
+                fontsize=11, color="white", fontweight="bold",
+            )
+        else:
+            # Short bars: label outside
+            ax.text(
+                pres + 0.01, i, f"{label}  {pct}", va="center", ha="left",
+                fontsize=11, color="black",
+            )
+
+    ax.set_yticks([])
+    ax.set_xlabel("Preservation (fraction in dominant Brieflow cluster)", fontsize=13)
     ax.set_xlim(0, 1.15)
-    ax.invert_yaxis()
-    ax.legend(loc="lower right", fontsize=10)
-    ax.set_title(
-        "Validation Gene Group Preservation Across Pipelines", fontweight="bold"
-    )
+    ax.set_title(title, fontweight="bold", fontsize=18, fontfamily="Arial")
+
+    legend_elements = [
+        Patch(facecolor=TIER_COLORS["Well-preserved"], label="Well-preserved (≥80%)"),
+        Patch(facecolor=TIER_COLORS["Partially preserved"], label="Partially preserved (≥50%)"),
+        Patch(facecolor=TIER_COLORS["Fragmented"], label="Fragmented (<50%)"),
+    ]
+    ax.legend(handles=legend_elements, loc="lower right", fontsize=12)
 
     plt.tight_layout()
     save_figure(fig, output_path)
@@ -686,99 +535,145 @@ def plot_preservation(summary_df, output_path):
     print(f"  Saved: {output_path}")
 
 
-def plot_group_preservation(group_df, output_path):
-    """Two-panel plot for pathway group preservation: cluster count and entropy."""
-    setup_plot_style()
+# ---------------------------------------------------------------------------
+# Figure B: Fragmentation Sankey
+# ---------------------------------------------------------------------------
 
-    df = group_df.copy()
-    n = len(df)
+CONF_NODE_COLORS = {
+    "High": "rgb(30,140,30)",
+    "Medium": "rgb(230,160,40)",
+    "Low": "rgb(200,40,40)",
+}
+CONF_LINK_COLORS = {
+    "High": "rgba(30,140,30,0.35)",
+    "Medium": "rgba(230,160,40,0.35)",
+    "Low": "rgba(200,40,40,0.35)",
+}
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, max(5, n * 0.5)))
 
-    y = np.arange(n)
-    bar_height = 0.35
-    labels = [
-        f"{row['pathway_group']}\n({row['n_genes']} genes)" for _, row in df.iterrows()
-    ]
+def _shorten_process(proc, maxlen=60):
+    """Lightly truncate process name, keeping as much as possible."""
+    if len(proc) > maxlen:
+        proc = proc[: maxlen - 3] + "..."
+    return proc
 
-    # --- Left panel: number of clusters ---
-    ax1.barh(
-        y + bar_height / 2,
-        df["funk_n_clusters"],
-        bar_height,
-        label="Funk re-clustered",
-        color=COLORS["funk"],
-        alpha=0.85,
+
+def plot_fragmentation_sankey(frag_df, brieflow_conf, brieflow_proc, output_path,
+                              min_genes=3):
+    """Sankey diagram: fragmented Funk clusters → Brieflow receiving clusters.
+
+    Args:
+        frag_df: DataFrame from fragmentation analysis
+        brieflow_conf: {cell_class: {cluster_id: confidence}} — cell_class-keyed
+        brieflow_proc: {cell_class: {cluster_id: process}} — cell_class-keyed
+        output_path: where to save the PNG
+        min_genes: minimum genes per flow to include
+    """
+    df = frag_df[frag_df["n_genes_received"] >= min_genes].copy()
+
+    # Resolve confidence using cell_class-aware lookup
+    df["bl_conf"] = df.apply(
+        lambda r: brieflow_conf[r["cell_class"]].get(
+            int(r["brieflow_cluster"]), "N/A"
+        ),
+        axis=1,
     )
-    ax1.barh(
-        y - bar_height / 2,
-        df["brieflow_n_clusters"],
-        bar_height,
-        label="Brieflow",
-        color=COLORS["brieflow"],
-        alpha=0.85,
+    df["bl_proc"] = df.apply(
+        lambda r: brieflow_proc[r["cell_class"]].get(
+            int(r["brieflow_cluster"]), "?"
+        ),
+        axis=1,
     )
-    # Reference: number of original Funk published clusters
-    for i, row in df.iterrows():
-        ax1.plot(
-            row["n_funk_published_clusters"],
-            i,
-            marker="d",
-            color="black",
-            markersize=7,
-            zorder=5,
+
+    # Funk cluster info
+    funk_info = df.groupby("funk_cluster").first()[
+        ["cell_class", "funk_description", "funk_confidence", "funk_n_genes"]
+    ].to_dict("index")
+
+    funk_ids = sorted(df["funk_cluster"].unique())
+
+    # Right-side nodes keyed by (cell_class, cluster) to avoid ID collisions
+    bl_keys = sorted(
+        df[["cell_class", "brieflow_cluster"]].drop_duplicates().itertuples(
+            index=False
         )
-    ax1.plot(
-        [],
-        [],
-        marker="d",
-        color="black",
-        linestyle="none",
-        label="Funk published #clusters",
     )
 
-    ax1.set_yticks(y)
-    ax1.set_yticklabels(labels, fontsize=9)
-    ax1.set_xlabel("Number of Clusters")
-    ax1.invert_yaxis()
-    ax1.legend(loc="lower right", fontsize=9)
-    ax1.set_title("Cluster Spread per Pathway Group", fontweight="bold")
+    # Build node lists
+    nodes, node_colors = [], []
 
-    # --- Right panel: normalized entropy ---
-    ax2.barh(
-        y + bar_height / 2,
-        df["funk_normalized_entropy"],
-        bar_height,
-        label="Funk re-clustered",
-        color=COLORS["funk"],
-        alpha=0.85,
-    )
-    ax2.barh(
-        y - bar_height / 2,
-        df["brieflow_normalized_entropy"],
-        bar_height,
-        label="Brieflow",
-        color=COLORS["brieflow"],
-        alpha=0.85,
+    funk_idx = {}
+    for i, fk in enumerate(funk_ids):
+        info = funk_info[fk]
+        desc = info["funk_description"]
+        if info["cell_class"] == "Mitotic" and "(mitotic)" not in desc.lower():
+            desc = f"{desc} (mitotic)"
+        nodes.append(desc)
+        node_colors.append(CONF_NODE_COLORS[info["funk_confidence"]])
+        funk_idx[fk] = i
+
+    bl_idx = {}
+    offset = len(funk_ids)
+    for j, (cc, bl_cl) in enumerate(bl_keys):
+        proc = _shorten_process(
+            brieflow_proc[cc].get(int(bl_cl), "?")
+        )
+        conf = brieflow_conf[cc].get(int(bl_cl), "N/A")
+        nodes.append(proc)
+        node_colors.append(
+            CONF_NODE_COLORS.get(conf, "rgb(150,150,150)")
+        )
+        bl_idx[(cc, bl_cl)] = offset + j
+
+    # Build links
+    sources, targets, values, link_colors = [], [], [], []
+    for _, row in df.iterrows():
+        sources.append(funk_idx[row["funk_cluster"]])
+        targets.append(bl_idx[(row["cell_class"], row["brieflow_cluster"])])
+        values.append(row["n_genes_received"])
+        link_colors.append(
+            CONF_LINK_COLORS.get(row["bl_conf"], "rgba(150,150,150,0.2)")
+        )
+
+    fig = go.Figure(
+        data=[
+            go.Sankey(
+                arrangement="snap",
+                node=dict(
+                    pad=14,
+                    thickness=20,
+                    line=dict(color="black", width=0.5),
+                    label=nodes,
+                    color=node_colors,
+                ),
+                link=dict(
+                    source=sources,
+                    target=targets,
+                    value=values,
+                    color=link_colors,
+                ),
+            )
+        ]
     )
 
-    ax2.set_yticks(y)
-    ax2.set_yticklabels([], fontsize=9)
-    ax2.set_xlabel("Normalized Entropy (0=tight, 1=uniform)")
-    ax2.set_xlim(0, 1.0)
-    ax2.invert_yaxis()
-    ax2.legend(loc="lower right", fontsize=9)
-    ax2.set_title("Cluster Assignment Entropy", fontweight="bold")
-
-    fig.suptitle(
-        "Pathway Group Preservation Across Pipelines",
-        fontsize=14,
-        fontweight="bold",
-        y=1.01,
+    fig.update_layout(
+        title=dict(
+            text=(
+                "<b>Fragmented Funk Clusters → Brieflow Receiving Clusters</b><br>"
+                "<sup>Node color: "
+                "<b style='color:rgb(30,140,30)'>■ High</b>  "
+                "<b style='color:rgb(230,160,40)'>■ Medium</b>  "
+                "<b style='color:rgb(200,40,40)'>■ Low</b> confidence</sup>"
+            ),
+            font_size=15,
+        ),
+        font=dict(size=11, family="Arial"),
+        width=1800,
+        height=950,
+        margin=dict(l=5, r=5, t=80, b=10),
     )
-    plt.tight_layout()
-    save_figure(fig, output_path)
-    plt.close()
+
+    fig.write_image(str(output_path), scale=4)
     print(f"  Saved: {output_path}")
 
 
