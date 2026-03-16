@@ -498,13 +498,14 @@ def benchmark_segmentation_methods():
 def generate_benchmark_summary(results_df):
     """Generate summary statistics and plots from benchmark results"""
     import numpy as np
-    from plot_style import setup_plot_style
+    from plot_style import setup_plot_style, box_strip, FIGSIZE, COLORS, save_figure
 
     # Apply consistent plot styling
     setup_plot_style()
 
-    # Use viridis color map for bars
-    colors = plt.cm.viridis(np.linspace(0, 0.9, len(results_df["method"].unique())))
+    # Use consistent method colors
+    method_order = sorted(results_df["method"].unique())
+    palette = {m: COLORS.get(m, "#7f7f7f") for m in method_order}
 
     # Sort methods alphabetically
     results_df = results_df.sort_values("method")
@@ -548,154 +549,48 @@ def generate_benchmark_summary(results_df):
     # Save summary to file
     summary.to_csv(OUTPUT_DIR / "benchmark_summary.csv")
 
-    # Define a function for adding value labels to bars
-    def add_value_labels(ax, fmt):
-        for container in ax.containers:
-            ax.bar_label(container, fmt=fmt)
-
-    # Create runtime comparison plot (square)
-    plt.figure(figsize=(8, 8))
-    # Create a dictionary that maps methods to colors
-    method_colors = dict(zip(sorted(results_df["method"].unique()), colors))
-    # Plot bars with specific colors based on method
-    ax = sns.barplot(
-        x="method",
-        y="runtime_seconds",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        palette=method_colors,
-    )
-    add_value_labels(ax, "%.2f")
-    plt.title("Runtime per Tile", fontweight="bold")
-    plt.ylabel("Runtime (seconds)")
-    plt.xlabel("Segmentation Method")
+    # Runtime comparison (square)
+    fig, ax = plt.subplots(figsize=FIGSIZE["square"])
+    box_strip(ax, results_df, "method", "runtime_seconds", palette, method_order,
+              ylabel="Runtime (seconds)", title="Runtime per Tile")
     plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "runtime_comparison.png", dpi=300, bbox_inches="tight")
+    save_figure(fig, OUTPUT_DIR / "runtime_comparison.png")
     plt.close()
 
-    # Create memory usage comparison plot (square)
-    plt.figure(figsize=(8, 8))
-    ax = sns.barplot(
-        x="method",
-        y="memory_mb",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        palette=method_colors,
-    )
-    add_value_labels(ax, "%.1f")
-    plt.title("Segmentation Method Memory Usage", fontweight="bold")
-    plt.ylabel("Memory Usage (MB)")
-    plt.xlabel("Segmentation Method")
+    # Memory usage comparison (square)
+    fig, ax = plt.subplots(figsize=FIGSIZE["square"])
+    box_strip(ax, results_df, "method", "memory_mb", palette, method_order,
+              ylabel="Memory Usage (MB)", title="Memory Usage per Tile")
     plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "memory_comparison.png", dpi=300, bbox_inches="tight")
+    save_figure(fig, OUTPUT_DIR / "memory_comparison.png")
     plt.close()
 
-    # Create count comparison plots (2x2)
+    # Count comparison (2x2)
     fig, axes = plt.subplots(2, 2, figsize=(10, 8), sharex=True)
     fig.suptitle("Cell and Nuclei Counts by Method", fontweight="bold", y=0.98)
-
-    ax1 = axes[0, 0]
-    sns.barplot(
-        x="method",
-        y="initial_nuclei",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        ax=ax1,
-        palette=method_colors,
-    )
-    add_value_labels(ax1, "%.0f")
-    ax1.set_title("Mean Initial Nuclei per Tile", fontweight="bold")
-    ax1.set_ylabel("Mean Count per Tile")
-    ax1.set_xlabel("")
-
-    ax2 = axes[0, 1]
-    sns.barplot(
-        x="method",
-        y="initial_cells",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        ax=ax2,
-        palette=method_colors,
-    )
-    add_value_labels(ax2, "%.0f")
-    ax2.set_title("Mean Initial Cells per Tile", fontweight="bold")
-    ax2.set_ylabel("Mean Count per Tile")
-    ax2.set_xlabel("")
-
-    ax3 = axes[1, 0]
-    sns.barplot(
-        x="method",
-        y="final_cells",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        ax=ax3,
-        palette=method_colors,
-    )
-    add_value_labels(ax3, "%.0f")
-    ax3.set_title("Mean Final Cells per Tile", fontweight="bold")
-    ax3.set_ylabel("Mean Count per Tile")
-    ax3.set_xlabel("Method")
-
-    ax4 = axes[1, 1]
-    sns.barplot(
-        x="method",
-        y="runtime_seconds",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        ax=ax4,
-        palette=method_colors,
-    )
-    add_value_labels(ax4, "%.0f")
-    ax4.set_title("Runtime per Tile", fontweight="bold")
-    ax4.set_ylabel("Runtime (seconds)")
-    ax4.set_xlabel("Method")
-
+    for ax, col, title in zip(
+        axes.flat,
+        ["initial_nuclei", "initial_cells", "final_cells", "runtime_seconds"],
+        ["Initial Nuclei", "Initial Cells", "Final Cells", "Runtime (s)"],
+    ):
+        box_strip(ax, results_df, "method", col, palette, method_order,
+                  ylabel="Count per Tile" if "nuclei" in col or "cells" in col else "Seconds",
+                  title=title, fmt="int" if "cells" in col or "nuclei" in col else "auto")
     plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "count_comparison.png", dpi=300, bbox_inches="tight")
+    save_figure(fig, OUTPUT_DIR / "count_comparison.png")
     plt.close()
 
-    # Create retention rate plots
+    # Retention rate plots
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
     fig.suptitle("Retention Rates by Method", fontweight="bold", y=0.98)
-
-    sns.barplot(
-        x="method",
-        y="nuclei_retention",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        ax=ax1,
-        palette=method_colors,
-    )
-    add_value_labels(ax1, "%.1f%%")
-    ax1.set_title("Nuclei Retention Rate")
-    ax1.set_ylabel("Retention Rate (%)")
-    ax1.set_xlabel("Method")
-    ax1.set_ylim(0, 105)
-
-    sns.barplot(
-        x="method",
-        y="cell_retention",
-        data=results_df,
-        errorbar=None,
-        alpha=0.8,
-        ax=ax2,
-        palette=method_colors,
-    )
-    add_value_labels(ax2, "%.1f%%")
-    ax2.set_title("Cell Retention Rate")
-    ax2.set_ylabel("Retention Rate (%)")
-    ax2.set_xlabel("Method")
-    ax2.set_ylim(0, 105)
-
+    box_strip(ax1, results_df, "method", "nuclei_retention", palette, method_order,
+              ylabel="Retention Rate (%)", title="Nuclei Retention", fmt="pct",
+              ylim=(0, 105))
+    box_strip(ax2, results_df, "method", "cell_retention", palette, method_order,
+              ylabel="Retention Rate (%)", title="Cell Retention", fmt="pct",
+              ylim=(0, 105))
     plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "retention_rates.png", dpi=300, bbox_inches="tight")
+    save_figure(fig, OUTPUT_DIR / "retention_rates.png")
     plt.close()
 
     # Create retention by stage plots

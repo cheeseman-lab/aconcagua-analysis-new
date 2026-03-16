@@ -590,293 +590,61 @@ def generate_visualization(results_df=None):
     """Generate publication-quality visualization comparing Spotiflow vs Standard methods.
 
     Args:
-        results_df: DataFrame with benchmark results. If None, loads from method_summary.csv
+        results_df: DataFrame with benchmark results. If None, loads from benchmark_results.csv
     """
-    from plot_style import setup_plot_style
+    from plot_style import setup_plot_style, box_strip, FIGSIZE, COLORS, save_figure
 
     # Apply consistent plot styling
     setup_plot_style()
 
-    # Load or generate the method summary data
+    # Load raw per-tile results
     if results_df is None:
-        summary_path = OUTPUT_DIR / "method_summary.csv"
-        if summary_path.exists():
-            df = pd.read_csv(summary_path, header=[0, 1])
-        else:
-            print("No method_summary.csv found. Run benchmark first.")
-            return
-    else:
-        # Generate method summary from results_df - only use numeric columns
-        numeric_cols = results_df.select_dtypes(include=[np.number]).columns.tolist()
-        method_summary = results_df.groupby("method")[numeric_cols].agg(["mean", "std"])
-        method_summary.to_csv(OUTPUT_DIR / "method_summary.csv")
-        df = method_summary.reset_index()
-
-    # Extract data for plotting - handle both DataFrame formats
-    if isinstance(df.columns, pd.MultiIndex):
-        # Multi-level columns from method_summary.csv
-        # Try different column name patterns
-        spots_col = None
-        mapping_col = None
-
-        for col in df.columns:
-            if (
-                "filtered_total_reads" in str(col).lower()
-                or "total_reads" in str(col).lower()
-            ):
-                if "mean" in str(col).lower():
-                    spots_col = col
-            if (
-                "1_or_more_genes__percent" in str(col).lower()
-                or "mapping" in str(col).lower()
-            ):
-                if "mean" in str(col).lower():
-                    mapping_col = col
-
-        # Fallback to total_reads if filtered not available
-        if spots_col is None:
-            for col in df.columns:
-                if isinstance(col, tuple) and "total_reads" in col[0]:
-                    if col[1] == "mean":
-                        spots_col = col
-                        break
-
-        if mapping_col is None:
-            for col in df.columns:
-                if isinstance(col, tuple) and "1_or_more_genes" in col[0]:
-                    if col[1] == "mean":
-                        mapping_col = col
-                        break
-    else:
-        pass
-
-    # Create plot data
-    plot_data = pd.DataFrame(
-        {
-            "Method": ["Spotiflow", "Standard"],
-            "Total Spots": [
-                results_df[results_df["method"] == "spotiflow"]["total_reads"].mean()
-                if results_df is not None
-                else df.loc[0, spots_col],
-                results_df[results_df["method"] == "standard"]["total_reads"].mean()
-                if results_df is not None
-                else df.loc[1, spots_col],
-            ],
-            "Spots Error": [
-                results_df[results_df["method"] == "spotiflow"]["total_reads"].std()
-                if results_df is not None
-                else df.loc[0, (spots_col[0], "std")],
-                results_df[results_df["method"] == "standard"]["total_reads"].std()
-                if results_df is not None
-                else df.loc[1, (spots_col[0], "std")],
-            ],
-            "Mapping Rate (%)": [
-                results_df[results_df["method"] == "spotiflow"][
-                    "1_or_more_genes__percent"
-                ].mean()
-                if results_df is not None
-                and "1_or_more_genes__percent" in results_df.columns
-                else 0,
-                results_df[results_df["method"] == "standard"][
-                    "1_or_more_genes__percent"
-                ].mean()
-                if results_df is not None
-                and "1_or_more_genes__percent" in results_df.columns
-                else 0,
-            ],
-            "Mapping Rate Error": [
-                results_df[results_df["method"] == "spotiflow"][
-                    "1_or_more_genes__percent"
-                ].std()
-                if results_df is not None
-                and "1_or_more_genes__percent" in results_df.columns
-                else 0,
-                results_df[results_df["method"] == "standard"][
-                    "1_or_more_genes__percent"
-                ].std()
-                if results_df is not None
-                and "1_or_more_genes__percent" in results_df.columns
-                else 0,
-            ],
-        }
-    )
-
-    # Define colors with higher opacity
-    spotiflow_color = "#FFD700"  # Yellow
-    standard_color = "#E41A1C"  # Red
-    colors = [spotiflow_color, standard_color]
-    opacity = 0.7  # Set opacity level
-
-    # ========== Runtime & Memory comparison ==========
-    from plot_style import FIGSIZE, save_figure
-
-    fig, (ax_rt, ax_mem) = plt.subplots(1, 2, figsize=FIGSIZE["double"])
-
-    methods = ["Spotiflow", "Standard"]
-    rt_vals = [
-        plot_data["Runtime (s)"].iloc[0] if "Runtime (s)" in plot_data else 0,
-        plot_data["Runtime (s)"].iloc[1] if "Runtime (s)" in plot_data else 0,
-    ]
-    mem_vals = [
-        plot_data["Memory (MB)"].iloc[0] if "Memory (MB)" in plot_data else 0,
-        plot_data["Memory (MB)"].iloc[1] if "Memory (MB)" in plot_data else 0,
-    ]
-
-    # Check if runtime/memory data is available, else compute from raw results
-    if all(v == 0 for v in rt_vals):
         raw_path = OUTPUT_DIR / "benchmark_results.csv"
         if raw_path.exists():
-            raw_df = pd.read_csv(raw_path)
-            rt_vals = [
-                raw_df[raw_df["method"] == "spotiflow"]["runtime_seconds"].mean(),
-                raw_df[raw_df["method"] == "standard"]["runtime_seconds"].mean(),
-            ]
-            mem_vals = [
-                raw_df[raw_df["method"] == "spotiflow"]["memory_mb"].mean(),
-                raw_df[raw_df["method"] == "standard"]["memory_mb"].mean(),
-            ]
+            results_df = pd.read_csv(raw_path)
+        else:
+            print("No benchmark_results.csv found. Run benchmark first.")
+            return
 
-    bars_rt = ax_rt.bar(
-        methods, rt_vals, color=colors, alpha=opacity, edgecolor="black", linewidth=1
-    )
-    ax_rt.set_ylabel("Runtime (seconds)", fontsize=14)
-    ax_rt.set_title("Runtime per Tile", fontsize=16, fontweight="bold")
-    for bar, val in zip(bars_rt, rt_vals):
-        ax_rt.text(
-            bar.get_x() + bar.get_width() / 2,
-            bar.get_height() + 0.5,
-            f"{val:.1f}s",
-            ha="center",
-            va="bottom",
-            fontsize=12,
-            fontweight="bold",
-        )
+    # Also save the summary for reference
+    numeric_cols = results_df.select_dtypes(include=[np.number]).columns.tolist()
+    method_summary = results_df.groupby("method")[numeric_cols].agg(["mean", "std"])
+    method_summary.to_csv(OUTPUT_DIR / "method_summary.csv")
+    # Display labels and palette
+    label_map = {"spotiflow": "Spotiflow", "standard": "Standard"}
+    results_df["Method"] = results_df["method"].map(label_map)
+    method_order = ["Spotiflow", "Standard"]
+    palette = {
+        "Spotiflow": COLORS.get("spotiflow", "#9467bd"),
+        "Standard": COLORS.get("standard", "#d62728"),
+    }
 
-    bars_mem = ax_mem.bar(
-        methods, mem_vals, color=colors, alpha=opacity, edgecolor="black", linewidth=1
-    )
-    ax_mem.set_ylabel("Memory (MB)", fontsize=14)
-    ax_mem.set_title("Peak Memory per Tile", fontsize=16, fontweight="bold")
-    for bar, val in zip(bars_mem, mem_vals):
-        ax_mem.text(
-            bar.get_x() + bar.get_width() / 2,
-            bar.get_height() + 5,
-            f"{val:.0f}",
-            ha="center",
-            va="bottom",
-            fontsize=12,
-            fontweight="bold",
-        )
-
-    for ax in [ax_rt, ax_mem]:
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-
+    # Runtime & Memory comparison
+    fig, (ax_rt, ax_mem) = plt.subplots(1, 2, figsize=FIGSIZE["double"])
+    box_strip(ax_rt, results_df, "Method", "runtime_seconds", palette, method_order,
+              ylabel="Runtime (seconds)", title="Runtime per Tile")
+    box_strip(ax_mem, results_df, "Method", "memory_mb", palette, method_order,
+              ylabel="Memory (MB)", title="Peak Memory per Tile")
     plt.tight_layout()
     save_figure(fig, OUTPUT_DIR / "runtime_memory_comparison.png")
     plt.close()
     print(f"Saved: {OUTPUT_DIR / 'runtime_memory_comparison.png'}")
 
-    # ========== Square comparison figure ==========
-    # Create a SQUARE figure
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 10), dpi=300)
-    fig.patch.set_facecolor("#F8F8F8")  # Set figure background
-
-    # Create bar plot for Total Spots with error bars - using alpha for opacity
-    bars1 = ax1.bar(
-        [0, 1],  # Using numerical positions instead of labels
-        plot_data["Total Spots"],
-        yerr=plot_data["Spots Error"],
-        color=[spotiflow_color, standard_color],
-        alpha=opacity,
-        width=0.8,  # Wider bars so they almost touch
-        capsize=7,  # Larger cap size
-        edgecolor="black",
-        linewidth=1,
-    )
-
-    # Add values in the middle of bars
-    for bar in bars1:
-        height = bar.get_height()
-        ax1.text(
-            bar.get_x() + bar.get_width() / 2.0,
-            height / 2,  # Middle of the bar
-            f"{int(height):,}",
-            ha="center",
-            va="center",
-            fontsize=24,
-            fontweight="bold",
-            color="black",
-        )
-
-    # Create bar plot for Mapping Rate with error bars - using alpha for opacity
-    bars2 = ax2.bar(
-        [0, 1],  # Using numerical positions instead of labels
-        plot_data["Mapping Rate (%)"],
-        yerr=plot_data["Mapping Rate Error"],
-        color=[spotiflow_color, standard_color],
-        alpha=opacity,
-        width=0.8,  # Wider bars so they almost touch
-        capsize=7,  # Larger cap size
-        edgecolor="black",
-        linewidth=1,
-    )
-
-    # Add values in the middle of bars
-    for bar in bars2:
-        height = bar.get_height()
-        ax2.text(
-            bar.get_x() + bar.get_width() / 2.0,
-            height / 2,  # Middle of the bar
-            f"{height:.1f}%",
-            ha="center",
-            va="center",
-            fontsize=24,
-            fontweight="bold",
-            color="black",
-        )
-
-    # Customize the appearance
-    for ax in [ax1, ax2]:
-        ax.set_facecolor("#F8F8F8")  # Matching background
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.tick_params(axis="both", which="major", labelsize=18)
-        ax.set_axisbelow(True)
-        # Remove vertical grid lines
-        ax.yaxis.grid(False)
-        ax.set_yticklabels([])
-
-        # Set custom x-tick labels
-        ax.set_xticks([0, 1])
-        ax.set_xticklabels(["Spotiflow", "Standard"], fontsize=24)
-
-    # Set titles above the plots
-    ax1.set_title("Filtered Spots", fontsize=32, fontweight="bold", pad=20)
-    ax1.set_ylabel("Number of Spots", fontsize=24)
-    ax1.set_ylim(
-        0, max(plot_data["Total Spots"]) * 1.3
-    )  # More space for error bars and title
-
-    ax2.set_title("Mapped Cells", fontsize=32, fontweight="bold", pad=20)
-    ax2.set_ylabel("Percentage of Cells (%)", fontsize=24)
-    ax2.set_ylim(0, 105)  # Slightly higher to ensure error bars are fully visible
-
-    # Adjust layout and make sure the figure remains square
-    plt.tight_layout()
-
-    # Save the figure
-    plt.savefig(
-        OUTPUT_DIR / "spotiflow_vs_standard_comparison_square.png",
-        dpi=300,
-        bbox_inches="tight",
-        facecolor="#F8F8F8",
-    )
-    print(
-        f"Visualization saved to {OUTPUT_DIR / 'spotiflow_vs_standard_comparison_square.png'}"
-    )
-
-    plt.close()
+    # Spots + mapping rate comparison
+    if "total_reads" in results_df.columns:
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 6))
+        box_strip(ax1, results_df, "Method", "total_reads", palette, method_order,
+                  ylabel="Total Filtered Spots", title="Filtered Spots per Tile",
+                  fmt="int")
+        if "1_or_more_genes__percent" in results_df.columns:
+            box_strip(ax2, results_df, "Method", "1_or_more_genes__percent",
+                      palette, method_order,
+                      ylabel="Mapping Rate (%)", title="Cells Mapped to 1+ Gene (%)",
+                      fmt="pct")
+        plt.tight_layout()
+        save_figure(fig, OUTPUT_DIR / "spots_mapping_comparison.png")
+        plt.close()
+        print(f"Saved: {OUTPUT_DIR / 'spots_mapping_comparison.png'}")
 
 
 if __name__ == "__main__":

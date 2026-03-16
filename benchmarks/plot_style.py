@@ -161,6 +161,122 @@ def get_method_colors(methods, palette="default"):
         return sns.color_palette(palette, len(methods))
 
 
+def _significance_stars(p):
+    """Convert p-value to star notation."""
+    if p < 0.001:
+        return "***"
+    elif p < 0.01:
+        return "**"
+    elif p < 0.05:
+        return "*"
+    return "ns"
+
+
+def _add_significance_brackets(ax, data, x, y, groups):
+    """Add pairwise Mann-Whitney U significance brackets between all group pairs."""
+    from itertools import combinations
+    from scipy.stats import mannwhitneyu
+
+    pairs = list(combinations(range(len(groups)), 2))
+    if not pairs:
+        return
+
+    # Get current y-axis range to place brackets above data
+    y_max = data[y].max()
+    y_range = data[y].max() - data[y].min()
+    bracket_height = y_range * 0.04
+    bracket_start = y_max + y_range * 0.08
+
+    for k, (i, j) in enumerate(pairs):
+        vals_a = data[data[x] == groups[i]][y].dropna()
+        vals_b = data[data[x] == groups[j]][y].dropna()
+        if len(vals_a) < 2 or len(vals_b) < 2:
+            continue
+
+        _, p = mannwhitneyu(vals_a, vals_b, alternative="two-sided")
+        stars = _significance_stars(p)
+
+        y_pos = bracket_start + k * y_range * 0.08
+        # Draw bracket
+        ax.plot([i, i, j, j], [y_pos, y_pos + bracket_height,
+                                y_pos + bracket_height, y_pos],
+                color="black", linewidth=1, clip_on=False)
+        # Draw stars
+        ax.text((i + j) / 2, y_pos + bracket_height, stars,
+                ha="center", va="bottom", fontsize=10, color="black")
+
+    # Adjust ylim to fit brackets
+    new_top = bracket_start + len(pairs) * y_range * 0.08 + y_range * 0.05
+    current_bottom = ax.get_ylim()[0]
+    ax.set_ylim(current_bottom, new_top)
+
+
+def box_strip(ax, data, x, y, palette, order=None, ylabel=None, title=None,
+              fmt="auto", ylim=None):
+    """Draw box-and-whisker + jittered strip plot on a single axes.
+
+    Better than bar charts for small sample sizes (n~8) because it shows
+    the full distribution: median, IQR (box), range (whiskers), and all
+    individual data points. Pairwise Mann-Whitney U significance brackets
+    are added automatically.
+
+    Args:
+        ax: Matplotlib axes
+        data: DataFrame with the data
+        x: Column name for categories (x-axis)
+        y: Column name for values (y-axis)
+        palette: Dict mapping category names to colors
+        order: List of category names in display order
+        ylabel: Y-axis label
+        title: Axes title
+        fmt: Format for median annotation — "auto", "pct", "int", or a format spec
+        ylim: Tuple for y-axis limits
+    """
+    import seaborn as sns
+
+    sns.boxplot(
+        data=data, x=x, y=y, hue=x, order=order, palette=palette,
+        linewidth=1.2, fliersize=0, ax=ax, legend=False,
+        boxprops=dict(alpha=0.6),
+        medianprops=dict(color="black", linewidth=1.5),
+    )
+    sns.stripplot(
+        data=data, x=x, y=y, order=order, color="black",
+        size=5, jitter=0.12, ax=ax, alpha=0.7, zorder=10, legend=False,
+    )
+    if ylabel:
+        ax.set_ylabel(ylabel)
+    if title:
+        ax.set_title(title, fontweight="bold")
+    ax.set_xlabel("")
+    if ylim:
+        ax.set_ylim(ylim)
+
+    # Annotate median
+    groups = order if order else sorted(data[x].unique())
+    for i, g in enumerate(groups):
+        vals = data[data[x] == g][y].dropna()
+        if len(vals) == 0:
+            continue
+        med = vals.median()
+        if fmt == "auto":
+            label = f"{med:.1f}" if med < 1000 else f"{med:,.0f}"
+        elif fmt == "pct":
+            label = f"{med:.1f}%"
+        elif fmt == "int":
+            label = f"{int(med):,}"
+        else:
+            label = f"{med:{fmt}}"
+        ax.text(i, med, f"  {label}", ha="left", va="center",
+                fontsize=9, fontweight="bold", color="black")
+
+    # Add significance brackets (pairwise Mann-Whitney U)
+    _add_significance_brackets(ax, data, x, y, groups)
+    # Re-apply explicit ylim if provided (overrides bracket adjustment)
+    if ylim:
+        ax.set_ylim(ylim)
+
+
 def add_value_labels(ax, bars, fmt="{:.0f}", fontsize=10, offset=5):
     """Add value labels on top of bar chart bars.
 
@@ -185,17 +301,18 @@ def add_value_labels(ax, bars, fmt="{:.0f}", fontsize=10, offset=5):
         )
 
 
-def save_figure(fig, path, dpi=300):
-    """Save figure as high-DPI PNG.
+def save_figure(fig, path, dpi=300, transparent=False):
+    """Save figure, respecting the file extension (png, pdf, svg, etc.).
 
     Args:
         fig: Matplotlib figure
-        path: Path (with or without .png extension)
-        dpi: Resolution (default 300)
+        path: Path with desired extension
+        dpi: Resolution for raster formats (default 300)
+        transparent: If True, save with transparent background
     """
     from pathlib import Path
 
     path = Path(path)
-    if path.suffix != ".png":
+    if not path.suffix:
         path = path.with_suffix(".png")
-    fig.savefig(path, dpi=dpi, bbox_inches="tight")
+    fig.savefig(path, dpi=dpi, bbox_inches="tight", transparent=transparent)
