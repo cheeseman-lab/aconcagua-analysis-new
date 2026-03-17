@@ -120,8 +120,8 @@ COLORS = {
     "cellpose4": "#ff7f0e",  # Orange
     "stardist": "#2ca02c",  # Green
     # Spot calling methods
-    "standard": "#d62728",  # Red
-    "spotiflow": "#9467bd",  # Purple
+    "standard": "#E41A1C",  # Red
+    "spotiflow": "#FFD700",  # Yellow
     # Feature extraction methods
     "cp_measure": "#8c564b",  # Brown
     "cp_multichannel": "#e377c2",  # Pink
@@ -172,7 +172,7 @@ def _significance_stars(p):
     return "ns"
 
 
-def _add_significance_brackets(ax, data, x, y, groups):
+def _add_significance_brackets(ax, data, x, y, groups, ylim=None):
     """Add pairwise Mann-Whitney U significance brackets between all group pairs."""
     from itertools import combinations
     from scipy.stats import mannwhitneyu
@@ -183,9 +183,22 @@ def _add_significance_brackets(ax, data, x, y, groups):
 
     # Get current y-axis range to place brackets above data
     y_max = data[y].max()
-    y_range = data[y].max() - data[y].min()
-    bracket_height = y_range * 0.04
-    bracket_start = y_max + y_range * 0.08
+    y_min = data[y].min()
+    y_range = y_max - y_min
+    bracket_height = y_range * 0.02
+    bracket_start = y_max + y_range * 0.05
+
+    # If ylim is set, compress brackets to fit within the specified range
+    if ylim is not None:
+        ceiling = ylim[1]
+        available = ceiling - y_max
+        n_brackets = len(pairs)
+        per_bracket = available / (n_brackets + 1.5)
+        bracket_height = per_bracket * 0.3
+        bracket_start = y_max + per_bracket * 0.5
+        bracket_step = per_bracket
+    else:
+        bracket_step = y_range * 0.06
 
     for k, (i, j) in enumerate(pairs):
         vals_a = data[data[x] == groups[i]][y].dropna()
@@ -196,19 +209,20 @@ def _add_significance_brackets(ax, data, x, y, groups):
         _, p = mannwhitneyu(vals_a, vals_b, alternative="two-sided")
         stars = _significance_stars(p)
 
-        y_pos = bracket_start + k * y_range * 0.08
+        y_pos = bracket_start + k * bracket_step
         # Draw bracket
         ax.plot([i, i, j, j], [y_pos, y_pos + bracket_height,
                                 y_pos + bracket_height, y_pos],
                 color="black", linewidth=1, clip_on=False)
         # Draw stars
         ax.text((i + j) / 2, y_pos + bracket_height, stars,
-                ha="center", va="bottom", fontsize=10, color="black")
+                ha="center", va="bottom", fontsize=8, color="black")
 
-    # Adjust ylim to fit brackets
-    new_top = bracket_start + len(pairs) * y_range * 0.08 + y_range * 0.05
-    current_bottom = ax.get_ylim()[0]
-    ax.set_ylim(current_bottom, new_top)
+    # Adjust ylim to fit brackets (only when no explicit ylim)
+    if ylim is None:
+        new_top = bracket_start + len(pairs) * bracket_step + y_range * 0.05
+        current_bottom = ax.get_ylim()[0]
+        ax.set_ylim(current_bottom, new_top)
 
 
 def box_strip(ax, data, x, y, palette, order=None, ylabel=None, title=None,
@@ -252,29 +266,76 @@ def box_strip(ax, data, x, y, palette, order=None, ylabel=None, title=None,
     if ylim:
         ax.set_ylim(ylim)
 
-    # Annotate median
+    # Collect medians (returned so callers can print for publication)
     groups = order if order else sorted(data[x].unique())
-    for i, g in enumerate(groups):
+    medians = {}
+    for g in groups:
         vals = data[data[x] == g][y].dropna()
-        if len(vals) == 0:
-            continue
-        med = vals.median()
-        if fmt == "auto":
-            label = f"{med:.1f}" if med < 1000 else f"{med:,.0f}"
-        elif fmt == "pct":
-            label = f"{med:.1f}%"
-        elif fmt == "int":
-            label = f"{int(med):,}"
-        else:
-            label = f"{med:{fmt}}"
-        ax.text(i, med, f"  {label}", ha="left", va="center",
-                fontsize=9, fontweight="bold", color="black")
+        if len(vals) > 0:
+            medians[g] = vals.median()
 
     # Add significance brackets (pairwise Mann-Whitney U)
-    _add_significance_brackets(ax, data, x, y, groups)
+    _add_significance_brackets(ax, data, x, y, groups, ylim=ylim)
     # Re-apply explicit ylim if provided (overrides bracket adjustment)
     if ylim:
         ax.set_ylim(ylim)
+
+    return medians
+
+
+def print_summary_table(title, data, x, metrics, fmt_map=None):
+    """Print a publication-ready summary table with median ± IQR for each metric.
+
+    Args:
+        title: Table title
+        data: DataFrame with the data
+        x: Column name for groups (rows of the table)
+        metrics: List of (column_name, display_name) tuples
+        fmt_map: Optional dict mapping column_name to format function.
+                 Default formats: ".1f" for floats, ",.0f" for large numbers.
+    """
+    groups = sorted(data[x].unique())
+    # Build header
+    col_widths = [max(18, max(len(str(g)) for g in groups) + 2)]
+    for _, display in metrics:
+        col_widths.append(max(20, len(display) + 2))
+
+    header = f"{'Method':<{col_widths[0]}}"
+    for i, (_, display) in enumerate(metrics):
+        header += f"  {display:>{col_widths[i+1]}}"
+
+    print(f"\n{'=' * len(header)}")
+    print(f"  {title}")
+    print(f"{'=' * len(header)}")
+    print(header)
+    print("-" * len(header))
+
+    for g in groups:
+        vals_by_col = {}
+        for col, _ in metrics:
+            v = data[data[x] == g][col].dropna()
+            vals_by_col[col] = v
+
+        row = f"{str(g):<{col_widths[0]}}"
+        for i, (col, _) in enumerate(metrics):
+            v = vals_by_col[col]
+            med = v.median()
+            iqr_lo = v.quantile(0.25)
+            iqr_hi = v.quantile(0.75)
+
+            if fmt_map and col in fmt_map:
+                cell = fmt_map[col](med, iqr_lo, iqr_hi)
+            elif abs(med) >= 1000:
+                cell = f"{med:,.0f} [{iqr_lo:,.0f}–{iqr_hi:,.0f}]"
+            elif abs(med) >= 1:
+                cell = f"{med:.1f} [{iqr_lo:.1f}–{iqr_hi:.1f}]"
+            else:
+                cell = f"{med:.2f} [{iqr_lo:.2f}–{iqr_hi:.2f}]"
+            row += f"  {cell:>{col_widths[i+1]}}"
+        print(row)
+
+    print(f"{'=' * len(header)}")
+    print("  Values: median [IQR]\n")
 
 
 def add_value_labels(ax, bars, fmt="{:.0f}", fontsize=10, offset=5):

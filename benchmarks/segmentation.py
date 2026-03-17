@@ -498,7 +498,7 @@ def benchmark_segmentation_methods():
 def generate_benchmark_summary(results_df):
     """Generate summary statistics and plots from benchmark results"""
     import numpy as np
-    from plot_style import setup_plot_style, box_strip, FIGSIZE, COLORS, save_figure
+    from plot_style import setup_plot_style, box_strip, FIGSIZE, COLORS, save_figure, print_summary_table
 
     # Apply consistent plot styling
     setup_plot_style()
@@ -566,8 +566,9 @@ def generate_benchmark_summary(results_df):
     plt.close()
 
     # Count comparison (2x2)
-    fig, axes = plt.subplots(2, 2, figsize=(10, 8), sharex=True)
-    fig.suptitle("Cell and Nuclei Counts by Method", fontweight="bold", y=0.98)
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10), sharex=True)
+    fig.suptitle("Cell and Nuclei Counts by Method", fontsize=18, fontweight="bold", y=0.98)
+    fig.subplots_adjust(hspace=0.35)
     for ax, col, title in zip(
         axes.flat,
         ["initial_nuclei", "initial_cells", "final_cells", "runtime_seconds"],
@@ -576,7 +577,14 @@ def generate_benchmark_summary(results_df):
         box_strip(ax, results_df, "method", col, palette, method_order,
                   ylabel="Count per Tile" if "nuclei" in col or "cells" in col else "Seconds",
                   title=title, fmt="int" if "cells" in col or "nuclei" in col else "auto")
-    plt.tight_layout()
+        ax.set_title(title, fontsize=16, fontweight="bold")
+        ax.set_ylabel(ax.get_ylabel(), fontsize=13)
+    # Shared legend at the bottom
+    handles = [plt.matplotlib.patches.Patch(color=palette[m], label=m, alpha=0.6)
+               for m in method_order]
+    fig.legend(handles=handles, loc="lower center", ncol=len(method_order),
+               fontsize=13, frameon=True, bbox_to_anchor=(0.5, -0.02))
+    plt.tight_layout(rect=[0, 0.04, 1, 1])
     save_figure(fig, OUTPUT_DIR / "count_comparison.png")
     plt.close()
 
@@ -650,25 +658,25 @@ def generate_benchmark_summary(results_df):
     plt.savefig(OUTPUT_DIR / "processing_pipeline.png", dpi=300, bbox_inches="tight")
     plt.close()
 
-    # Print key findings to console
-    print("\n=== SEGMENTATION BENCHMARK SUMMARY ===")
-    for method in results_df["method"].unique():
-        method_df = results_df[results_df["method"] == method]
-        print(f"\n--- {method.upper()} ---")
-        print(f"Average runtime: {method_df['runtime_seconds'].mean():.2f} seconds")
-        print(f"Average memory usage: {method_df['memory_mb'].mean():.1f} MB")
-        print(
-            f"Initial counts: {method_df['initial_nuclei'].mean():.1f} nuclei, {method_df['initial_cells'].mean():.1f} cells"
-        )
-        print(
-            f"After edge removal: {method_df['after_edge_removal_nuclei'].mean():.1f} nuclei, {method_df['after_edge_removal_cells'].mean():.1f} cells"
-        )
-        print(
-            f"Final counts: {method_df['final_nuclei'].mean():.1f} nuclei, {method_df['final_cells'].mean():.1f} cells"
-        )
-        print(
-            f"Retention rates: {method_df['nuclei_retention'].mean():.1f}% nuclei, {method_df['cell_retention'].mean():.1f}% cells"
-        )
+    # Print publication-ready summary tables
+    pct_fmt = lambda m, lo, hi: f"{m:.1f}% [{lo:.1f}–{hi:.1f}%]"
+    print_summary_table(
+        "Segmentation — Runtime & Resources",
+        results_df, "method",
+        [("runtime_seconds", "Runtime (s)"), ("memory_mb", "Memory (MB)")],
+    )
+    print_summary_table(
+        "Segmentation — Cell & Nuclei Counts",
+        results_df, "method",
+        [("initial_nuclei", "Initial Nuclei"), ("initial_cells", "Initial Cells"),
+         ("final_nuclei", "Final Nuclei"), ("final_cells", "Final Cells")],
+    )
+    print_summary_table(
+        "Segmentation — Retention Rates",
+        results_df, "method",
+        [("nuclei_retention", "Nuclei Ret. (%)"), ("cell_retention", "Cell Ret. (%)")],
+        fmt_map={"nuclei_retention": pct_fmt, "cell_retention": pct_fmt},
+    )
 
 
 if __name__ == "__main__":

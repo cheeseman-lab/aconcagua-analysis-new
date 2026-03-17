@@ -592,7 +592,7 @@ def generate_visualization(results_df=None):
     Args:
         results_df: DataFrame with benchmark results. If None, loads from benchmark_results.csv
     """
-    from plot_style import setup_plot_style, box_strip, FIGSIZE, COLORS, save_figure
+    from plot_style import setup_plot_style, box_strip, FIGSIZE, COLORS, save_figure, print_summary_table
 
     # Apply consistent plot styling
     setup_plot_style()
@@ -630,21 +630,57 @@ def generate_visualization(results_df=None):
     plt.close()
     print(f"Saved: {OUTPUT_DIR / 'runtime_memory_comparison.png'}")
 
-    # Spots + mapping rate comparison
+    # Spots + mapping rate comparison (square layout, replaces old bar chart)
     if "total_reads" in results_df.columns:
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 6))
         box_strip(ax1, results_df, "Method", "total_reads", palette, method_order,
-                  ylabel="Total Filtered Spots", title="Filtered Spots per Tile",
+                  ylabel="Number of Spots", title="Filtered Spots",
                   fmt="int")
         if "1_or_more_genes__percent" in results_df.columns:
             box_strip(ax2, results_df, "Method", "1_or_more_genes__percent",
                       palette, method_order,
-                      ylabel="Mapping Rate (%)", title="Cells Mapped to 1+ Gene (%)",
+                      ylabel="Percentage of Cells (%)", title="Mapped Cells",
                       fmt="pct")
         plt.tight_layout()
         save_figure(fig, OUTPUT_DIR / "spots_mapping_comparison.png")
         plt.close()
         print(f"Saved: {OUTPUT_DIR / 'spots_mapping_comparison.png'}")
+
+        # Square version for publication (larger labels to match original)
+        fig2, (ax3, ax4) = plt.subplots(1, 2, figsize=FIGSIZE["square"])
+        box_strip(ax3, results_df, "Method", "total_reads", palette, method_order,
+                  ylabel="Number of Spots", title="Filtered Spots",
+                  fmt="int")
+        if "1_or_more_genes__percent" in results_df.columns:
+            box_strip(ax4, results_df, "Method", "1_or_more_genes__percent",
+                      palette, method_order,
+                      ylabel="Percentage of Cells (%)", title="Mapped Cells",
+                      fmt="pct")
+        for ax in (ax3, ax4):
+            ax.set_title(ax.get_title(), fontsize=20, fontweight="bold")
+            ax.set_ylabel(ax.get_ylabel(), fontsize=16)
+            ax.tick_params(labelsize=14)
+        plt.tight_layout()
+        save_figure(fig2, OUTPUT_DIR / "spotiflow_vs_standard_comparison_square.png",
+                    transparent=True)
+        plt.close()
+        print(f"Saved: {OUTPUT_DIR / 'spotiflow_vs_standard_comparison_square.png'}")
+
+    # Print publication-ready summary tables
+    pct_fmt = lambda m, lo, hi: f"{m:.1f}% [{lo:.1f}–{hi:.1f}%]"
+    spot_metrics = [
+        ("runtime_seconds", "Runtime (s)"),
+        ("memory_mb", "Memory (MB)"),
+        ("total_reads", "Filtered Spots"),
+    ]
+    spot_fmt = {}
+    if "1_or_more_genes__percent" in results_df.columns:
+        spot_metrics.append(("1_or_more_genes__percent", "Mapped Cells (%)"))
+        spot_fmt["1_or_more_genes__percent"] = pct_fmt
+    print_summary_table(
+        "Spot Calling — Spotiflow vs Standard",
+        results_df, "Method", spot_metrics, fmt_map=spot_fmt,
+    )
 
 
 if __name__ == "__main__":

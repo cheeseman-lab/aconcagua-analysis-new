@@ -1052,7 +1052,7 @@ def run_comparison_benchmark(images):
 
 def generate_comparison_summary(results_df, run_correlation=True):
     """Generate summary for comparison benchmark."""
-    from plot_style import setup_plot_style, COLORS, FIGSIZE, box_strip, save_figure
+    from plot_style import setup_plot_style, COLORS, FIGSIZE, box_strip, save_figure, print_summary_table
 
     # Apply consistent plot styling
     setup_plot_style()
@@ -1089,8 +1089,8 @@ def generate_comparison_summary(results_df, run_correlation=True):
         "CP Emulator": COLORS.get("cp_multichannel", "#e377c2"),
     }
 
-    # 1. RUNTIME PER TILE PLOT (square)
-    fig, ax = plt.subplots(figsize=FIGSIZE["square"])
+    # 1. RUNTIME PER TILE PLOT
+    fig, ax = plt.subplots(figsize=FIGSIZE["single"])
     box_strip(ax, results_df, "Method", "runtime_seconds", palette, method_order,
               ylabel="Runtime (seconds)", title="Runtime per Tile")
     plt.tight_layout()
@@ -1098,7 +1098,7 @@ def generate_comparison_summary(results_df, run_correlation=True):
     plt.close()
 
     # 2. MEMORY COMPARISON PLOT
-    fig, ax = plt.subplots(figsize=FIGSIZE["square"])
+    fig, ax = plt.subplots(figsize=FIGSIZE["single"])
     box_strip(ax, results_df, "Method", "memory_mb", palette, method_order,
               ylabel="Memory Usage (MB)", title="Memory Usage Comparison")
     plt.tight_layout()
@@ -1106,27 +1106,21 @@ def generate_comparison_summary(results_df, run_correlation=True):
     plt.close()
 
     # 3. FEATURE COUNT COMPARISON
-    fig, ax = plt.subplots(figsize=FIGSIZE["square"])
+    fig, ax = plt.subplots(figsize=FIGSIZE["single"])
     box_strip(ax, results_df, "Method", "feature_count", palette, method_order,
               ylabel="Number of Features", title="Feature Count Comparison", fmt="int")
     plt.tight_layout()
     save_figure(fig, OUTPUT_DIR / "feature_count_comparison.png")
     plt.close()
 
-    # Print summary
-    print("\n" + "=" * 60)
-    print("COMPARISON SUMMARY")
-    print("=" * 60)
-    for method in results_df["method"].unique():
-        m = results_df[results_df["method"] == method]
-        print(f"\n{method.upper()}")
-        print(
-            f"  Runtime: {m['runtime_seconds'].mean():.2f}s (+/- {m['runtime_seconds'].std():.2f})"
-        )
-        print(f"  Memory: {m['memory_mb'].mean():.1f} MB")
-        print(f"  Features: {m['feature_count'].mean():.0f}")
-
-    print(f"\nSPEEDUP: CP Emulator is {speedup:.1f}x faster than CP Measure")
+    # Print publication-ready summary table
+    print_summary_table(
+        "Feature Extraction — CP Measure vs CP Emulator",
+        results_df, "Method",
+        [("runtime_seconds", "Runtime (s)"), ("memory_mb", "Memory (MB)"),
+         ("feature_count", "Features")],
+    )
+    print(f"  Speedup: CP Emulator is {speedup:.1f}x faster than CP Measure")
 
     # 4. RUN CORRELATION ANALYSIS
     if run_correlation:
