@@ -120,17 +120,17 @@ COLORS = {
     "cellpose4": "#ff7f0e",  # Orange
     "stardist": "#2ca02c",  # Green
     # Spot calling methods
-    "standard": "#d62728",  # Red
-    "spotiflow": "#9467bd",  # Purple
+    "standard": "#E41A1C",  # Red
+    "spotiflow": "#FFD700",  # Yellow
     # Feature extraction methods
     "cp_measure": "#8c564b",  # Brown
     "cp_multichannel": "#e377c2",  # Pink
     # Merge methods
     "fast": "#1f77b4",  # Blue
     "stitch": "#ff7f0e",  # Orange
-    # Clustering comparison
-    "brieflow": "#2ca02c",  # Green
-    "funk": "#d62728",  # Red
+    # Clustering comparison (colorblind-friendly)
+    "brieflow": "#0077BB",  # Teal blue
+    "funk": "#EE7733",  # Coral orange
 }
 
 # Standard figure sizes
@@ -161,6 +161,183 @@ def get_method_colors(methods, palette="default"):
         return sns.color_palette(palette, len(methods))
 
 
+def _significance_stars(p):
+    """Convert p-value to star notation."""
+    if p < 0.001:
+        return "***"
+    elif p < 0.01:
+        return "**"
+    elif p < 0.05:
+        return "*"
+    return "ns"
+
+
+def _add_significance_brackets(ax, data, x, y, groups, ylim=None):
+    """Add pairwise Mann-Whitney U significance brackets between all group pairs."""
+    from itertools import combinations
+    from scipy.stats import mannwhitneyu
+
+    pairs = list(combinations(range(len(groups)), 2))
+    if not pairs:
+        return
+
+    # Get current y-axis range to place brackets above data
+    y_max = data[y].max()
+    y_min = data[y].min()
+    y_range = y_max - y_min
+    bracket_height = y_range * 0.02
+    bracket_start = y_max + y_range * 0.05
+
+    # If ylim is set, compress brackets to fit within the specified range
+    if ylim is not None:
+        ceiling = ylim[1]
+        available = ceiling - y_max
+        n_brackets = len(pairs)
+        per_bracket = available / (n_brackets + 1.5)
+        bracket_height = per_bracket * 0.3
+        bracket_start = y_max + per_bracket * 0.5
+        bracket_step = per_bracket
+    else:
+        bracket_step = y_range * 0.06
+
+    for k, (i, j) in enumerate(pairs):
+        vals_a = data[data[x] == groups[i]][y].dropna()
+        vals_b = data[data[x] == groups[j]][y].dropna()
+        if len(vals_a) < 2 or len(vals_b) < 2:
+            continue
+
+        _, p = mannwhitneyu(vals_a, vals_b, alternative="two-sided")
+        stars = _significance_stars(p)
+
+        y_pos = bracket_start + k * bracket_step
+        # Draw bracket
+        ax.plot([i, i, j, j], [y_pos, y_pos + bracket_height,
+                                y_pos + bracket_height, y_pos],
+                color="black", linewidth=1, clip_on=False)
+        # Draw stars
+        ax.text((i + j) / 2, y_pos + bracket_height, stars,
+                ha="center", va="bottom", fontsize=8, color="black")
+
+    # Adjust ylim to fit brackets (only when no explicit ylim)
+    if ylim is None:
+        new_top = bracket_start + len(pairs) * bracket_step + y_range * 0.05
+        current_bottom = ax.get_ylim()[0]
+        ax.set_ylim(current_bottom, new_top)
+
+
+def box_strip(ax, data, x, y, palette, order=None, ylabel=None, title=None,
+              fmt="auto", ylim=None):
+    """Draw box-and-whisker + jittered strip plot on a single axes.
+
+    Better than bar charts for small sample sizes (n~8) because it shows
+    the full distribution: median, IQR (box), range (whiskers), and all
+    individual data points. Pairwise Mann-Whitney U significance brackets
+    are added automatically.
+
+    Args:
+        ax: Matplotlib axes
+        data: DataFrame with the data
+        x: Column name for categories (x-axis)
+        y: Column name for values (y-axis)
+        palette: Dict mapping category names to colors
+        order: List of category names in display order
+        ylabel: Y-axis label
+        title: Axes title
+        fmt: Format for median annotation — "auto", "pct", "int", or a format spec
+        ylim: Tuple for y-axis limits
+    """
+    import seaborn as sns
+
+    sns.boxplot(
+        data=data, x=x, y=y, hue=x, order=order, palette=palette,
+        linewidth=1.2, fliersize=0, ax=ax, legend=False,
+        boxprops=dict(alpha=0.6),
+        medianprops=dict(color="black", linewidth=1.5),
+    )
+    sns.stripplot(
+        data=data, x=x, y=y, order=order, color="black",
+        size=5, jitter=0.12, ax=ax, alpha=0.7, zorder=10, legend=False,
+    )
+    if ylabel:
+        ax.set_ylabel(ylabel)
+    if title:
+        ax.set_title(title, fontweight="bold")
+    ax.set_xlabel("")
+    if ylim:
+        ax.set_ylim(ylim)
+
+    # Collect medians (returned so callers can print for publication)
+    groups = order if order else sorted(data[x].unique())
+    medians = {}
+    for g in groups:
+        vals = data[data[x] == g][y].dropna()
+        if len(vals) > 0:
+            medians[g] = vals.median()
+
+    # Add significance brackets (pairwise Mann-Whitney U)
+    _add_significance_brackets(ax, data, x, y, groups, ylim=ylim)
+    # Re-apply explicit ylim if provided (overrides bracket adjustment)
+    if ylim:
+        ax.set_ylim(ylim)
+
+    return medians
+
+
+def print_summary_table(title, data, x, metrics, fmt_map=None):
+    """Print a publication-ready summary table with median ± IQR for each metric.
+
+    Args:
+        title: Table title
+        data: DataFrame with the data
+        x: Column name for groups (rows of the table)
+        metrics: List of (column_name, display_name) tuples
+        fmt_map: Optional dict mapping column_name to format function.
+                 Default formats: ".1f" for floats, ",.0f" for large numbers.
+    """
+    groups = sorted(data[x].unique())
+    # Build header
+    col_widths = [max(18, max(len(str(g)) for g in groups) + 2)]
+    for _, display in metrics:
+        col_widths.append(max(20, len(display) + 2))
+
+    header = f"{'Method':<{col_widths[0]}}"
+    for i, (_, display) in enumerate(metrics):
+        header += f"  {display:>{col_widths[i+1]}}"
+
+    print(f"\n{'=' * len(header)}")
+    print(f"  {title}")
+    print(f"{'=' * len(header)}")
+    print(header)
+    print("-" * len(header))
+
+    for g in groups:
+        vals_by_col = {}
+        for col, _ in metrics:
+            v = data[data[x] == g][col].dropna()
+            vals_by_col[col] = v
+
+        row = f"{str(g):<{col_widths[0]}}"
+        for i, (col, _) in enumerate(metrics):
+            v = vals_by_col[col]
+            med = v.median()
+            iqr_lo = v.quantile(0.25)
+            iqr_hi = v.quantile(0.75)
+
+            if fmt_map and col in fmt_map:
+                cell = fmt_map[col](med, iqr_lo, iqr_hi)
+            elif abs(med) >= 1000:
+                cell = f"{med:,.0f} [{iqr_lo:,.0f}–{iqr_hi:,.0f}]"
+            elif abs(med) >= 1:
+                cell = f"{med:.1f} [{iqr_lo:.1f}–{iqr_hi:.1f}]"
+            else:
+                cell = f"{med:.2f} [{iqr_lo:.2f}–{iqr_hi:.2f}]"
+            row += f"  {cell:>{col_widths[i+1]}}"
+        print(row)
+
+    print(f"{'=' * len(header)}")
+    print("  Values: median [IQR]\n")
+
+
 def add_value_labels(ax, bars, fmt="{:.0f}", fontsize=10, offset=5):
     """Add value labels on top of bar chart bars.
 
@@ -185,17 +362,21 @@ def add_value_labels(ax, bars, fmt="{:.0f}", fontsize=10, offset=5):
         )
 
 
-def save_figure(fig, path, dpi=300):
-    """Save figure as high-DPI PNG.
+def save_figure(fig, path, dpi=300, transparent=False):
+    """Save figure as PNG (or specified format) and also as PDF.
 
     Args:
         fig: Matplotlib figure
-        path: Path (with or without .png extension)
-        dpi: Resolution (default 300)
+        path: Path with desired extension
+        dpi: Resolution for raster formats (default 300)
+        transparent: If True, save with transparent background
     """
     from pathlib import Path
 
     path = Path(path)
-    if path.suffix != ".png":
+    if not path.suffix:
         path = path.with_suffix(".png")
-    fig.savefig(path, dpi=dpi, bbox_inches="tight")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, dpi=dpi, bbox_inches="tight", transparent=transparent)
+    if path.suffix != ".pdf":
+        fig.savefig(path.with_suffix(".pdf"), bbox_inches="tight", transparent=transparent)

@@ -1,13 +1,16 @@
 """
-Cluster Overlap Metrics: Brieflow vs Funk
+Cluster Overlap: Brieflow vs Funk Pipeline-Unique Clusters
 
-Computes systematic Jaccard similarity and overlap metrics between all
-high-confidence clusters in Brieflow and Funk pipelines, in both directions.
+Computes bidirectional Jaccard similarity between all high-confidence clusters
+in Brieflow and Funk pipelines. Identifies pipeline-unique clusters (Jaccard
+< 0.15) and annotates them with novel-role and uncharacterized gene members.
 
 Outputs:
-  - TSV files with per-cluster overlap metrics
-  - Markdown summary tables
-  - Heatmap visualizations of top cluster matches
+    results/cluster/overlap/bf_to_fk_interphase.tsv   Brieflow→Funk interphase matches
+    results/cluster/overlap/bf_to_fk_mitotic.tsv       Brieflow→Funk mitotic matches
+    results/cluster/overlap/fk_to_bf_interphase.tsv    Funk→Brieflow interphase matches
+    results/cluster/overlap/fk_to_bf_mitotic.tsv       Funk→Brieflow mitotic matches
+    results/cluster/overlap/unique_clusters.png         Combined unique clusters figure
 
 Usage:
     python cluster_overlap.py
@@ -18,17 +21,16 @@ import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap
 from pathlib import Path
 
-from plot_style import setup_plot_style, save_figure, COLORS, FIGSIZE
+from plot_style import setup_plot_style, save_figure, COLORS
 
 # Paths
 SCRIPT_DIR = Path(__file__).parent
 ANALYSIS_DIR = SCRIPT_DIR.parent / "analysis"
 CLUSTER_DIR = ANALYSIS_DIR / "brieflow_output" / "cluster" / "DAPI_TUBULIN_GH2AX_PHALLOIDIN"
 FUNK_DIR = SCRIPT_DIR / "external" / "results" / "cluster"
-OUTPUT_DIR = SCRIPT_DIR / "results" / "cluster_overlap"
+OUTPUT_DIR = SCRIPT_DIR / "results" / "cluster" / "overlap"
 
 # Configurations
 CONFIGS = {
@@ -230,222 +232,97 @@ def compute_gene_level_overlap(source_clusters, source_conf, source_proc,
     }
 
 
-def plot_jaccard_distribution(results_dict, output_path):
-    """Plot Jaccard similarity distribution for each condition."""
+def _shorten_process(proc, maxlen=55):
+    """Truncate process name for bar labels."""
+    if len(proc) > maxlen:
+        return proc[: maxlen - 3] + "..."
+    return proc
+
+
+def _format_gene_list(genes_str, max_genes=6):
+    """Format semicolon-separated gene string, truncating if needed."""
+    if not genes_str or pd.isna(genes_str) or genes_str.strip() == "":
+        return ""
+    genes = [g.strip() for g in str(genes_str).split(";") if g.strip()]
+    if not genes:
+        return ""
+    if len(genes) <= max_genes:
+        return ", ".join(genes)
+    return ", ".join(genes[:max_genes]) + f" (+{len(genes) - max_genes} more)"
+
+
+def _collect_low_jaccard(results_dict, jaccard_threshold=0.15):
+    """Collect low-Jaccard clusters from results dict."""
+    rows = []
+    for label, df in results_dict.items():
+        cc = label.split()[-1]
+        low = df[df["jaccard"] < jaccard_threshold].copy()
+        low["cell_class"] = cc
+        rows.append(low)
+    if not rows:
+        return pd.DataFrame()
+    combined = pd.concat(rows, ignore_index=True)
+    return combined.sort_values("jaccard", ascending=True).reset_index(drop=True)
+
+
+def plot_unique_combined(bf_to_fk_dict, fk_to_bf_dict, output_path,
+                         jaccard_threshold=0.15):
+    """Single combined figure: Brieflow-unique clusters on top, Funk-unique below."""
     setup_plot_style()
-    n = len(results_dict)
-    fig, axes = plt.subplots(1, n, figsize=(5 * n, 4.5), squeeze=False)
 
-    for idx, (label, df) in enumerate(results_dict.items()):
-        ax = axes[0, idx]
-        jaccards = df["jaccard"].values
+    bf_low = _collect_low_jaccard(bf_to_fk_dict, jaccard_threshold)
+    fk_low = _collect_low_jaccard(fk_to_bf_dict, jaccard_threshold)
+    n_bf = len(bf_low)
+    n_fk = len(fk_low)
+    gap = 1  # small space between groups
 
-        bins = np.arange(0, 1.05, 0.05)
-        ax.hist(jaccards, bins=bins, color=COLORS["brieflow"], edgecolor="white",
-                linewidth=0.5, alpha=0.85)
+    fig, ax = plt.subplots(figsize=(9, 11))
 
-        ax.set_xlabel("Best-match Jaccard similarity")
-        ax.set_ylabel("Number of clusters")
-        ax.set_title(label, fontweight="bold")
-        ax.set_xlim(0, 1)
+    # Brieflow on top (higher y values), Funk on bottom
+    # Funk: y = 0..n_fk-1, gap, Brieflow: y = n_fk+gap..n_fk+gap+n_bf-1
+    fk_y = np.arange(n_fk)
+    bf_y = np.arange(n_bf) + n_fk + gap
 
-        # Add median line
-        med = np.median(jaccards)
-        ax.axvline(med, color="#d62728", linestyle="--", linewidth=1.5, alpha=0.8)
-        ax.text(med + 0.02, ax.get_ylim()[1] * 0.9, f"median={med:.2f}",
-                color="#d62728", fontsize=10)
+    # --- Draw bars ---
+    for i, (_, row) in enumerate(fk_low.iterrows()):
+        is_mitotic = row["cell_class"] == "Mitotic"
+        ax.barh(fk_y[i], row["jaccard"], color=COLORS["funk"], alpha=0.85,
+                height=0.65, hatch="//" if is_mitotic else None,
+                edgecolor="white", linewidth=1.5)
+
+    for i, (_, row) in enumerate(bf_low.iterrows()):
+        is_mitotic = row["cell_class"] == "Mitotic"
+        ax.barh(bf_y[i], row["jaccard"], color=COLORS["brieflow"], alpha=0.85,
+                height=0.65, hatch="//" if is_mitotic else None,
+                edgecolor="white", linewidth=1.5)
+
+
+    # --- Labels ---
+    def _add_labels(df, y_positions):
+        for i, (_, row) in enumerate(df.iterrows()):
+            proc = _shorten_process(row["source_process"])
+            cc = row["cell_class"]
+            suffix = " (mitotic)" if cc == "Mitotic" else ""
+            n_genes = int(row["source_size"])
+            j = row["jaccard"]
+
+            label = f"{proc}{suffix} ({n_genes})"
+            ax.text(j + 0.002, y_positions[i], label, va="center",
+                    ha="left", fontsize=8.5, fontweight="bold")
+
+    _add_labels(bf_low, bf_y)
+    _add_labels(fk_low, fk_y)
+
+    ax.set_yticks([])
+    ax.set_xlabel("Best-match Jaccard similarity", fontsize=10, fontfamily="Arial")
+    ax.set_xlim(0, 0.225)
+    ax.set_ylim(-0.8, n_fk + gap + n_bf - 0.2)
+    ax.tick_params(axis='x', labelsize=9)
+    ax.spines["left"].set_visible(False)
 
     plt.tight_layout()
-    save_figure(fig, output_path)
+    save_figure(fig, output_path, dpi=400)
     plt.close(fig)
-    print(f"Saved: {output_path}")
-
-
-def plot_category_summary(results_dict, output_path):
-    """Stacked bar chart of match categories across conditions."""
-    setup_plot_style()
-    categories = [
-        "Strong concordance", "Good concordance",
-        "Partial match", "Weak match", "Unique to source",
-    ]
-    cat_colors = ["#2ca02c", "#98df8a", "#ffbb78", "#ff7f0e", "#d62728"]
-
-    labels = list(results_dict.keys())
-    n = len(labels)
-    fig, ax = plt.subplots(figsize=(max(6, 2.5 * n), 5))
-
-    x = np.arange(n)
-    bottom = np.zeros(n)
-
-    for cat, color in zip(categories, cat_colors):
-        counts = []
-        for label in labels:
-            df = results_dict[label]
-            counts.append((df["category"] == cat).sum())
-        counts = np.array(counts, dtype=float)
-        bars = ax.bar(x, counts, bottom=bottom, color=color, edgecolor="white",
-                      linewidth=0.5, label=cat, width=0.6)
-        # Label non-zero segments
-        for i, c in enumerate(counts):
-            if c > 0:
-                ax.text(x[i], bottom[i] + c / 2, str(int(c)),
-                        ha="center", va="center", fontsize=10, fontweight="bold")
-        bottom += counts
-
-    ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=30, ha="right")
-    ax.set_ylabel("Number of high-conf clusters")
-    ax.set_title("Cluster Match Quality: Brieflow → Funk", fontweight="bold")
-    ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left", fontsize=9)
-    plt.tight_layout()
-    save_figure(fig, output_path)
-    plt.close(fig)
-    print(f"Saved: {output_path}")
-
-
-def plot_overlap_heatmap(results_dict, output_path, top_n=20):
-    """Heatmap of top Jaccard matches for each condition."""
-    setup_plot_style()
-    n = len(results_dict)
-    fig, axes = plt.subplots(1, n, figsize=(7 * n, max(6, 0.4 * top_n)),
-                             squeeze=False)
-
-    cmap = LinearSegmentedColormap.from_list(
-        "jaccard", ["#ffffff", "#c7e9c0", "#41ab5d", "#006d2c"])
-
-    for idx, (label, df) in enumerate(results_dict.items()):
-        ax = axes[0, idx]
-        df_sorted = df.sort_values("jaccard", ascending=False).head(top_n)
-
-        # Build labels
-        y_labels = []
-        for _, row in df_sorted.iterrows():
-            proc = row["source_process"]
-            if len(proc) > 40:
-                proc = proc[:37] + "..."
-            y_labels.append(f"cl{int(row['source_cluster'])} ({proc})")
-
-        data = df_sorted[["jaccard", "overlap_frac"]].values
-        im = ax.imshow(data, aspect="auto", cmap=cmap, vmin=0, vmax=1)
-
-        ax.set_yticks(range(len(y_labels)))
-        ax.set_yticklabels(y_labels, fontsize=8)
-        ax.set_xticks([0, 1])
-        ax.set_xticklabels(["Jaccard", "Overlap\nfraction"], fontsize=10)
-        ax.set_title(label, fontweight="bold")
-
-        # Annotate cells
-        for i in range(data.shape[0]):
-            for j in range(data.shape[1]):
-                val = data[i, j]
-                color = "white" if val > 0.6 else "black"
-                ax.text(j, i, f"{val:.2f}", ha="center", va="center",
-                        fontsize=8, color=color)
-
-    fig.colorbar(im, ax=axes.ravel().tolist(), shrink=0.6, label="Score")
-    plt.tight_layout()
-    save_figure(fig, output_path)
-    plt.close(fig)
-    print(f"Saved: {output_path}")
-
-
-def generate_markdown_summary(all_results, gene_stats, output_path):
-    """Generate markdown summary of overlap analysis."""
-    lines = [
-        "# Cluster Overlap Metrics: Brieflow vs Funk",
-        "",
-        f"**Generated:** {pd.Timestamp.now().strftime('%Y-%m-%d')}",
-        "",
-        "Systematic Jaccard similarity and overlap metrics between all",
-        "high-confidence MozzareLLM clusters across Brieflow and Funk pipelines.",
-        "",
-        "---",
-        "",
-        "## Gene-Level Statistics",
-        "",
-    ]
-
-    # Gene-level table
-    lines.append("| Direction | HC genes | Found in other | Unique | % found |")
-    lines.append("|---|---|---|---|---|")
-    for label, stats in gene_stats.items():
-        lines.append(
-            f"| {label} | {stats['source_hc_genes']:,} | "
-            f"{stats['in_target']:,} | {stats['source_unique']:,} | "
-            f"{stats['pct_found']:.1f}% |"
-        )
-    lines.extend(["", "---", ""])
-
-    # Per-condition summary
-    for label, df in all_results.items():
-        lines.append(f"## {label}")
-        lines.append("")
-
-        # Category counts
-        cat_counts = df["category"].value_counts()
-        n_total = len(df)
-        lines.append(f"**{n_total} high-confidence clusters analyzed**")
-        lines.append("")
-        lines.append("| Match Quality | Count | % |")
-        lines.append("|---|---|---|")
-        for cat in ["Strong concordance", "Good concordance", "Partial match",
-                     "Weak match", "Unique to source"]:
-            c = cat_counts.get(cat, 0)
-            lines.append(f"| {cat} | {c} | {100*c/n_total:.1f}% |")
-
-        # Summary stats
-        lines.extend([
-            "",
-            f"- **Median Jaccard:** {df['jaccard'].median():.3f}",
-            f"- **Mean Jaccard:** {df['jaccard'].mean():.3f}",
-            f"- **Mean fragmentation:** {df['fragmentation'].mean():.1f}x",
-            "",
-        ])
-
-        # Top matches table
-        lines.append("### Top Matches (Jaccard ≥ 0.3)")
-        lines.append("")
-        top = df[df["jaccard"] >= 0.3].sort_values("jaccard", ascending=False)
-        if len(top) > 0:
-            lines.append("| Source cl | Source process | Size | Target cl | Target process | Target conf | Jaccard | Shared | Frag |")
-            lines.append("|---|---|---|---|---|---|---|---|---|")
-            for _, row in top.iterrows():
-                src_proc = row["source_process"]
-                if len(src_proc) > 45:
-                    src_proc = src_proc[:42] + "..."
-                tgt_proc = row["target_process"]
-                if len(tgt_proc) > 45:
-                    tgt_proc = tgt_proc[:42] + "..."
-                lines.append(
-                    f"| {int(row['source_cluster'])} | {src_proc} | "
-                    f"{int(row['source_size'])} | {int(row['best_target_cluster'])} | "
-                    f"{tgt_proc} | {row['target_confidence']} | "
-                    f"{row['jaccard']:.3f} | {int(row['shared_genes'])} | "
-                    f"{int(row['fragmentation'])} |"
-                )
-        else:
-            lines.append("*No clusters with Jaccard ≥ 0.3*")
-
-        lines.extend(["", "### Unique to Source (Jaccard < 0.05)", ""])
-        unique = df[df["jaccard"] < 0.05].sort_values("source_size", ascending=False)
-        if len(unique) > 0:
-            lines.append("| Source cl | Source process | Size | Best Jaccard |")
-            lines.append("|---|---|---|---|")
-            for _, row in unique.iterrows():
-                proc = row["source_process"]
-                if len(proc) > 55:
-                    proc = proc[:52] + "..."
-                lines.append(
-                    f"| {int(row['source_cluster'])} | {proc} | "
-                    f"{int(row['source_size'])} | {row['jaccard']:.3f} |"
-                )
-        else:
-            lines.append("*No clusters unique to source*")
-
-        lines.extend(["", "---", ""])
-
-    with open(output_path, "w") as f:
-        f.write("\n".join(lines))
     print(f"Saved: {output_path}")
 
 
@@ -454,9 +331,25 @@ def main():
     parser.add_argument("--min-confidence", default="High",
                         choices=["High", "Medium"],
                         help="Minimum confidence level to include")
+    parser.add_argument("--plots-only", action="store_true",
+                        help="Regenerate figures from cached TSVs without recomputing")
     args = parser.parse_args()
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    if args.plots_only:
+        print("Loading cached overlap TSVs...")
+        all_bf_to_fk = {
+            "BF→FK Interphase": pd.read_csv(OUTPUT_DIR / "bf_to_fk_interphase.tsv", sep="\t"),
+            "BF→FK Mitotic":    pd.read_csv(OUTPUT_DIR / "bf_to_fk_mitotic.tsv", sep="\t"),
+        }
+        all_fk_to_bf = {
+            "FK→BF Interphase": pd.read_csv(OUTPUT_DIR / "fk_to_bf_interphase.tsv", sep="\t"),
+            "FK→BF Mitotic":    pd.read_csv(OUTPUT_DIR / "fk_to_bf_mitotic.tsv", sep="\t"),
+        }
+        plot_unique_combined(all_bf_to_fk, all_fk_to_bf, OUTPUT_DIR / "unique_clusters.png")
+        print("Done. Results in:", OUTPUT_DIR)
+        return
 
     all_bf_to_fk = {}
     all_fk_to_bf = {}
@@ -538,19 +431,8 @@ def main():
 
     # Generate plots
     print("\nGenerating plots...")
-    plot_jaccard_distribution(all_bf_to_fk, OUTPUT_DIR / "jaccard_dist_bf_to_fk.png")
-    plot_jaccard_distribution(all_fk_to_bf, OUTPUT_DIR / "jaccard_dist_fk_to_bf.png")
-    plot_category_summary(
-        {**all_bf_to_fk, **all_fk_to_bf},
-        OUTPUT_DIR / "category_summary.png",
-    )
-    plot_overlap_heatmap(all_bf_to_fk, OUTPUT_DIR / "heatmap_bf_to_fk.png")
-    plot_overlap_heatmap(all_fk_to_bf, OUTPUT_DIR / "heatmap_fk_to_bf.png")
-
-    # Generate markdown
-    generate_markdown_summary(
-        all_results, gene_stats,
-        OUTPUT_DIR / "CLUSTER_OVERLAP.md",
+    plot_unique_combined(
+        all_bf_to_fk, all_fk_to_bf, OUTPUT_DIR / "unique_clusters.png",
     )
 
     print("\nDone! Results in:", OUTPUT_DIR)

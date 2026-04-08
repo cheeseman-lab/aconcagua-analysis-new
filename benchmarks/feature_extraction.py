@@ -801,9 +801,9 @@ def generate_scatter_plots(corr_df, measure_df, multi_df, max_features_per_clust
 
         # Legend - position based on number of entries
         if len(legend_added) <= 8:
-            ax.legend(loc="upper left", fontsize=9, markerscale=1.5)
+            ax.legend(loc="upper left", fontsize=12, markerscale=1.5)
         else:
-            ax.legend(loc="upper left", fontsize=7, markerscale=1.2, ncol=1)
+            ax.legend(loc="upper left", fontsize=11, markerscale=1.2, ncol=1)
 
         save_figure(fig, scatter_dir / f"cluster_scatter_{cluster_name}.png")
         plt.close()
@@ -1052,7 +1052,7 @@ def run_comparison_benchmark(images):
 
 def generate_comparison_summary(results_df, run_correlation=True):
     """Generate summary for comparison benchmark."""
-    from plot_style import setup_plot_style, COLORS, FIGSIZE
+    from plot_style import setup_plot_style, COLORS, FIGSIZE, box_strip, save_figure, print_summary_table
 
     # Apply consistent plot styling
     setup_plot_style()
@@ -1080,130 +1080,47 @@ def generate_comparison_summary(results_df, run_correlation=True):
     ].mean()
     speedup = cp_measure_time / cp_multi_time if cp_multi_time > 0 else 0
 
-    # 1. RUNTIME PER TILE PLOT (square)
-    method_colors = {
-        "cp_measure": COLORS.get("cp_measure", "#8c564b"),
-        "cp_multichannel": COLORS.get("cp_multichannel", "#e377c2"),
+    # Display labels and palette
+    label_map = {"cp_measure": "CP Measure", "cp_multichannel": "CP Emulator"}
+    results_df["Method"] = results_df["method"].map(label_map)
+    method_order = ["CP Measure", "CP Emulator"]
+    palette = {
+        "CP Measure": COLORS.get("cp_measure", "#8c564b"),
+        "CP Emulator": COLORS.get("cp_multichannel", "#e377c2"),
     }
-    fig, ax = plt.subplots(figsize=FIGSIZE["square"])
-    bars = ax.bar(
-        ["CP Measure", "CP Emulator"],
-        [cp_measure_time, cp_multi_time],
-        color=[method_colors["cp_measure"], method_colors["cp_multichannel"]],
-        edgecolor="black",
-        linewidth=1,
-    )
 
-    # Add value labels
-    for bar in bars:
-        height = bar.get_height()
-        ax.annotate(
-            f"{height:.1f}s",
-            xy=(bar.get_x() + bar.get_width() / 2, height),
-            xytext=(0, 5),
-            textcoords="offset points",
-            ha="center",
-            va="bottom",
-            fontweight="bold",
-            fontsize=12,
-        )
-
-    ax.set_ylabel("Runtime (seconds)", fontsize=12)
-    ax.set_title("Runtime per Tile", fontsize=14, fontweight="bold")
-    ax.set_ylim(0, cp_measure_time * 1.15)
-
+    # 1. RUNTIME PER TILE PLOT
+    fig, ax = plt.subplots(figsize=FIGSIZE["single"])
+    box_strip(ax, results_df, "Method", "runtime_seconds", palette, method_order,
+              ylabel="Runtime (seconds)", title="Runtime per Tile")
     plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "runtime_comparison.png", dpi=300, bbox_inches="tight")
+    save_figure(fig, OUTPUT_DIR / "runtime_comparison.png")
     plt.close()
 
     # 2. MEMORY COMPARISON PLOT
-    cp_measure_mem = results_df[results_df["method"] == "cp_measure"][
-        "memory_mb"
-    ].mean()
-    cp_multi_mem = results_df[results_df["method"] == "cp_multichannel"][
-        "memory_mb"
-    ].mean()
-
-    fig, ax = plt.subplots(figsize=FIGSIZE["square"])
-    bars = ax.bar(
-        ["CP Measure", "CP Emulator"],
-        [cp_measure_mem, cp_multi_mem],
-        color=[method_colors["cp_measure"], method_colors["cp_multichannel"]],
-        edgecolor="black",
-        linewidth=1,
-    )
-
-    for bar in bars:
-        height = bar.get_height()
-        ax.annotate(
-            f"{height:.1f} MB",
-            xy=(bar.get_x() + bar.get_width() / 2, height),
-            xytext=(0, 5),
-            textcoords="offset points",
-            ha="center",
-            va="bottom",
-            fontweight="bold",
-            fontsize=11,
-        )
-
-    ax.set_ylabel("Memory Usage (MB)", fontsize=12)
-    ax.set_title("Memory Usage Comparison", fontsize=14, fontweight="bold")
+    fig, ax = plt.subplots(figsize=FIGSIZE["single"])
+    box_strip(ax, results_df, "Method", "memory_mb", palette, method_order,
+              ylabel="Memory Usage (MB)", title="Memory Usage Comparison")
     plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "memory_comparison.png", dpi=300, bbox_inches="tight")
+    save_figure(fig, OUTPUT_DIR / "memory_comparison.png")
     plt.close()
 
     # 3. FEATURE COUNT COMPARISON
-    cp_measure_feat = results_df[results_df["method"] == "cp_measure"][
-        "feature_count"
-    ].mean()
-    cp_multi_feat = results_df[results_df["method"] == "cp_multichannel"][
-        "feature_count"
-    ].mean()
-
-    fig, ax = plt.subplots(figsize=FIGSIZE["square"])
-    bars = ax.bar(
-        ["CP Measure", "CP Emulator"],
-        [cp_measure_feat, cp_multi_feat],
-        color=[method_colors["cp_measure"], method_colors["cp_multichannel"]],
-        edgecolor="black",
-        linewidth=1,
-    )
-
-    for bar in bars:
-        height = bar.get_height()
-        ax.annotate(
-            f"{int(height):,}",
-            xy=(bar.get_x() + bar.get_width() / 2, height),
-            xytext=(0, 5),
-            textcoords="offset points",
-            ha="center",
-            va="bottom",
-            fontweight="bold",
-            fontsize=11,
-        )
-
-    ax.set_ylabel("Number of Features", fontsize=12)
-    ax.set_title("Feature Count Comparison", fontsize=14, fontweight="bold")
+    fig, ax = plt.subplots(figsize=FIGSIZE["single"])
+    box_strip(ax, results_df, "Method", "feature_count", palette, method_order,
+              ylabel="Number of Features", title="Feature Count Comparison", fmt="int")
     plt.tight_layout()
-    plt.savefig(
-        OUTPUT_DIR / "feature_count_comparison.png", dpi=300, bbox_inches="tight"
-    )
+    save_figure(fig, OUTPUT_DIR / "feature_count_comparison.png")
     plt.close()
 
-    # Print summary
-    print("\n" + "=" * 60)
-    print("COMPARISON SUMMARY")
-    print("=" * 60)
-    for method in results_df["method"].unique():
-        m = results_df[results_df["method"] == method]
-        print(f"\n{method.upper()}")
-        print(
-            f"  Runtime: {m['runtime_seconds'].mean():.2f}s (+/- {m['runtime_seconds'].std():.2f})"
-        )
-        print(f"  Memory: {m['memory_mb'].mean():.1f} MB")
-        print(f"  Features: {m['feature_count'].mean():.0f}")
-
-    print(f"\nSPEEDUP: CP Emulator is {speedup:.1f}x faster than CP Measure")
+    # Print publication-ready summary table
+    print_summary_table(
+        "Feature Extraction — CP Measure vs CP Emulator",
+        results_df, "Method",
+        [("runtime_seconds", "Runtime (s)"), ("memory_mb", "Memory (MB)"),
+         ("feature_count", "Features")],
+    )
+    print(f"  Speedup: CP Emulator is {speedup:.1f}x faster than CP Measure")
 
     # 4. RUN CORRELATION ANALYSIS
     if run_correlation:

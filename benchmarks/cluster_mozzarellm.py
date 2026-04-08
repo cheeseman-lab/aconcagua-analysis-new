@@ -14,8 +14,8 @@ Reads summaries from:
   Shuffled:  .../Interphase/12/mozzarellm_shuffled/claude-opus-4-6_summaries.tsv (optional)
 
 Usage:
-    python mozzarellm.py
-    python mozzarellm.py --include-shuffled
+    python cluster_mozzarellm.py
+    python cluster_mozzarellm.py --include-shuffled
 """
 
 import argparse
@@ -31,7 +31,7 @@ SCRIPT_DIR = Path(__file__).parent
 ANALYSIS_DIR = SCRIPT_DIR.parent / "analysis"
 CLUSTER_DIR = ANALYSIS_DIR / "brieflow_output" / "cluster" / "DAPI_TUBULIN_GH2AX_PHALLOIDIN"
 FUNK_DIR = SCRIPT_DIR / "external" / "results" / "cluster"
-OUTPUT_DIR = SCRIPT_DIR / "results" / "mozzarellm"
+OUTPUT_DIR = SCRIPT_DIR / "results" / "cluster" / "mozzarellm"
 
 # Pipeline → cell class → path
 PIPELINES = {
@@ -115,57 +115,50 @@ def get_confidence_stats(df):
     }
 
 
-def figure_a(data, output_dir):
-    """Figure A: High Confidence Cluster Comparison — grouped by cell class, Brieflow vs Funk."""
+def figure_a(stats, output_dir):
+    """Figure A: High Confidence Cluster Comparison — grouped by cell class."""
     setup_plot_style()
+    from matplotlib.patches import Patch
 
-    stats = {name: get_confidence_stats(df) for name, df in data.items()}
+    has_shuffled = "Shuffled" in stats
 
-    # Build groups: each cell class gets Brieflow + Funk bars; Shuffled is its own group
-    groups = []
+    # Build bar configs per cell class: Brieflow, Funk, (Shuffled if Interphase)
+    # Consistent with enrichment plot layout
+    bar_configs = []  # (position, label, color)
+    group_centers = []
+    group_names = []
+    width = 0.5
+    pos = 0
+    group_gap = 0.6
+
     for cc in CELL_CLASSES:
-        group_labels = []
+        center_positions = []
         for pipeline in PIPELINES:
             label = f"{pipeline} {cc}"
             if label in stats:
-                group_labels.append(label)
-        if group_labels:
-            groups.append((cc, group_labels))
-    if "Shuffled" in stats:
-        groups.append(("Shuffled", ["Shuffled"]))
-
-    # Compute bar positions with gaps between groups
-    bar_positions = []
-    bar_labels = []
-    bar_colors = []
-    group_centers = []
-    group_names = []
-    pos = 0
-    width = 0.6
-    group_gap = 0.4
-
-    for group_name, labels in groups:
-        center_positions = []
-        for label in labels:
-            bar_positions.append(pos)
-            bar_labels.append(label)
-            if label == "Shuffled":
-                bar_colors.append(PIPELINE_COLORS["Shuffled"])
-            else:
-                pipeline = label.split(" ")[0]
-                bar_colors.append(PIPELINE_COLORS[pipeline])
+                bar_configs.append((pos, label, PIPELINE_COLORS[pipeline]))
+                center_positions.append(pos)
+                pos += width + 0.1
+        # Add shuffled next to Interphase (only MozzareLLM data available for Interphase)
+        if has_shuffled and cc == "Interphase":
+            bar_configs.append((pos, "Shuffled", PIPELINE_COLORS["Shuffled"]))
             center_positions.append(pos)
             pos += width + 0.1
-        group_centers.append(np.mean(center_positions))
-        group_names.append(group_name)
+        if center_positions:
+            group_centers.append(np.mean(center_positions))
+            group_names.append(cc)
         pos += group_gap
 
-    fig, ax = plt.subplots(figsize=(7, 5))
+    fig, ax = plt.subplots(figsize=(5, 5))
 
-    pcts = [stats[l]["pct_high"] for l in bar_labels]
-    bars = ax.bar(bar_positions, pcts, width, color=bar_colors, edgecolor="white", linewidth=1.5)
+    positions = [c[0] for c in bar_configs]
+    labels = [c[1] for c in bar_configs]
+    colors = [c[2] for c in bar_configs]
+    pcts = [stats[lbl]["pct_high"] for lbl in labels]
 
-    for bar, label in zip(bars, bar_labels):
+    bars = ax.bar(positions, pcts, width, color=colors, edgecolor="white", linewidth=1.5)
+
+    for bar, label in zip(bars, labels):
         h = bar.get_height()
         s = stats[label]
         ax.text(
@@ -174,31 +167,29 @@ def figure_a(data, output_dir):
             ha="center", va="bottom", fontsize=9, fontweight="bold",
         )
 
-    ax.set_ylabel("% High Confidence Clusters")
+    ax.set_ylabel("% High Confidence Clusters", fontsize=13, fontweight="bold")
     ax.set_xticks(group_centers)
-    ax.set_xticklabels(group_names)
+    ax.set_xticklabels(group_names, fontsize=12)
     ax.set_ylim(0, max(pcts) * 1.35)
-    ax.set_title("Cluster Pathway Confidence")
+    ax.set_title("Cluster Pathway Confidence", fontweight="bold", fontsize=14)
 
-    # Legend for pipelines
-    from matplotlib.patches import Patch
     handles = [Patch(facecolor=PIPELINE_COLORS[p], label=p) for p in PIPELINES]
-    if "Shuffled" in stats:
+    if has_shuffled:
         handles.append(Patch(facecolor=PIPELINE_COLORS["Shuffled"], label="Shuffled"))
-    ax.legend(handles=handles, loc="upper right")
+    ax.legend(handles=handles, loc="upper right", fontsize=11)
 
     save_figure(fig, output_dir / "figure_a_high_confidence.png")
     plt.close(fig)
     print("Saved: figure_a_high_confidence.png")
 
 
-def figure_b(data, output_dir):
+def figure_b(stats, output_dir):
     """Figure B: Gene Discovery Potential (stacked bar, high-conf only, grouped by cell class)."""
     setup_plot_style()
 
     # Exclude Shuffled
-    labels = [l for l in data if l != "Shuffled"]
-    stats = {l: get_confidence_stats(data[l]) for l in labels}
+    labels = [lbl for lbl in stats if lbl != "Shuffled"]
+    stats = {lbl: stats[lbl] for lbl in labels}
 
     # Order: Brieflow Interphase, Funk Interphase, Brieflow Mitotic, Funk Mitotic
     ordered = []
@@ -215,12 +206,8 @@ def figure_b(data, output_dir):
     width = 0.6
     pos = 0
     group_centers = []
-    cc_idx = 0
     for i, label in enumerate(ordered):
         positions.append(pos)
-        # Add gap after every 2 bars (between cell classes)
-        if i > 0 and i % len(PIPELINES) == 0:
-            pass  # gap already added below
         pos += width + 0.1
         if (i + 1) % len(PIPELINES) == 0:
             group_centers.append(np.mean(positions[-len(PIPELINES):]))
@@ -228,15 +215,15 @@ def figure_b(data, output_dir):
 
     x = np.array(positions)
 
-    established = [stats[l]["genes_established"] for l in ordered]
-    novel = [stats[l]["genes_novel"] for l in ordered]
-    uncharacterized = [stats[l]["genes_uncharacterized"] for l in ordered]
+    established = [stats[lbl]["genes_established"] for lbl in ordered]
+    novel = [stats[lbl]["genes_novel"] for lbl in ordered]
+    uncharacterized = [stats[lbl]["genes_uncharacterized"] for lbl in ordered]
 
     # Stack colors: consistent across all bars
     stack_colors = {"Established": "#2ca02c", "Novel role": "#ff7f0e", "Uncharacterized": "#d62728"}
 
     # Use hatching to distinguish pipelines
-    hatches = [None if l.startswith("Brieflow") else "///" for l in ordered]
+    hatches = [None if lbl.startswith("Brieflow") else "///" for lbl in ordered]
 
     for i, label in enumerate(ordered):
         h = hatches[i]
@@ -248,15 +235,15 @@ def figure_b(data, output_dir):
                color=stack_colors["Uncharacterized"], edgecolor="white", hatch=h)
 
     # Total labels
-    totals = [stats[l]["genes_total_highconf"] for l in ordered]
+    totals = [stats[lbl]["genes_total_highconf"] for lbl in ordered]
     for i, total in enumerate(totals):
         ax.text(x[i], total + 10, f"{total}", ha="center", va="bottom", fontsize=10, fontweight="bold")
 
-    ax.set_ylabel("Genes in High Confidence Clusters")
+    ax.set_ylabel("Genes in High Confidence Clusters", fontsize=13, fontweight="bold")
     ax.set_xticks(group_centers)
     ax.set_xticklabels(CELL_CLASSES)
     ax.set_ylim(0, max(totals) * 1.2)
-    ax.set_title("Gene Discovery Potential")
+    ax.set_title("Gene Discovery Potential", fontweight="bold", fontsize=14)
 
     # Legend: gene categories + pipeline distinction
     from matplotlib.patches import Patch
@@ -274,13 +261,13 @@ def figure_b(data, output_dir):
     print("Saved: figure_b_gene_discovery.png")
 
 
-def figure_c(data, output_dir):
+def figure_c(stats, output_dir):
     """Figure C: Mean Genes per High Confidence Cluster (grouped bar by pipeline, per gene category)."""
     setup_plot_style()
 
     # Exclude Shuffled
-    labels = [l for l in data if l != "Shuffled"]
-    stats = {l: get_confidence_stats(data[l]) for l in labels}
+    labels = [lbl for lbl in stats if lbl != "Shuffled"]
+    stats = {lbl: stats[lbl] for lbl in labels}
 
     # Order labels
     ordered = []
@@ -319,10 +306,10 @@ def figure_c(data, output_dir):
                     f"{h:.1f}", ha="center", va="bottom", fontsize=8,
                 )
 
-    ax.set_ylabel("Mean Genes per High Confidence Cluster")
+    ax.set_ylabel("Mean Genes per High Confidence Cluster", fontsize=13, fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(categories)
-    ax.set_title("Cluster Composition")
+    ax.set_title("Cluster Composition", fontweight="bold", fontsize=14)
     ax.legend(fontsize=9)
 
     save_figure(fig, output_dir / "figure_c_mean_genes.png")
@@ -355,17 +342,54 @@ def save_summary_table(data, output_dir):
     table = pd.DataFrame(rows)
     path = output_dir / "summary_table.tsv"
     table.to_csv(path, sep="\t", index=False)
-    print(f"Saved: summary_table.tsv")
+    print("Saved: summary_table.tsv")
     print(table.to_string(index=False))
     return table
+
+
+def load_stats_from_summary(output_dir):
+    """Reconstruct stats dicts from saved summary_table.tsv."""
+    table = pd.read_csv(output_dir / "summary_table.tsv", sep="\t")
+    stats = {}
+    for _, row in table.iterrows():
+        stats[row["condition"]] = {
+            "total": row["total_clusters"],
+            "high": row["high_confidence"],
+            "medium": row["medium_confidence"],
+            "low": row["low_confidence"],
+            "pct_high": row["pct_high"],
+            "pct_medium": row["pct_medium"],
+            "pct_low": row["pct_low"],
+            "genes_established": row["genes_established"],
+            "genes_novel": row["genes_novel"],
+            "genes_uncharacterized": row["genes_uncharacterized"],
+            "genes_total_highconf": row["genes_in_high_conf"],
+            "mean_established": row["mean_established"],
+            "mean_novel": row["mean_novel"],
+            "mean_uncharacterized": row["mean_uncharacterized"],
+        }
+    return stats
 
 
 def main():
     parser = argparse.ArgumentParser(description="Generate MozzareLLM manuscript figures A-C")
     parser.add_argument("--include-shuffled", action="store_true", help="Include shuffled negative control in Figure A")
+    parser.add_argument("--plots-only", action="store_true",
+                        help="Regenerate figures from cached summary_table.tsv without reloading summaries")
     args = parser.parse_args()
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    if args.plots_only:
+        print("Loading cached summary_table.tsv...")
+        stats = load_stats_from_summary(OUTPUT_DIR)
+        print(f"Loaded {len(stats)} conditions")
+        print("\nGenerating figures...")
+        figure_a(stats, OUTPUT_DIR)
+        figure_b(stats, OUTPUT_DIR)
+        figure_c(stats, OUTPUT_DIR)
+        print(f"\nAll figures saved to: {OUTPUT_DIR}")
+        return
 
     print("Loading MozzareLLM summaries...")
     data = load_summaries(include_shuffled=args.include_shuffled)
@@ -375,11 +399,12 @@ def main():
         return
 
     save_summary_table(data, OUTPUT_DIR)
+    stats = {name: get_confidence_stats(df) for name, df in data.items()}
 
     print("\nGenerating figures...")
-    figure_a(data, OUTPUT_DIR)
-    figure_b(data, OUTPUT_DIR)
-    figure_c(data, OUTPUT_DIR)
+    figure_a(stats, OUTPUT_DIR)
+    figure_b(stats, OUTPUT_DIR)
+    figure_c(stats, OUTPUT_DIR)
 
     print(f"\nAll figures saved to: {OUTPUT_DIR}")
 

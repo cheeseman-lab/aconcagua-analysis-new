@@ -16,3 +16,24 @@ benchmarks/__pycache__/
 
 # ignore .env
 analysis/.env
+
+# macOS metadata
+.DS_Store
+
+# Claude Code session files
+.claude/
+
+# Slurm job logs (root-level)
+*.err
+*.out
+
+# Aspera transfer files
+aspera-transfer-*
+
+# Submission package outputs (keep the script, ignore generated files)
+analysis/submission_package/figures/
+analysis/submission_package/excel/
+analysis/submission_package/*.zip
+
+# BIA upload logs
+analysis/bia_upload/logs/
