@@ -675,7 +675,9 @@ def plot_fragmentation_sankey(frag_df, brieflow_conf, brieflow_proc, output_path
     )
 
     fig.write_image(str(output_path), scale=4)
-    print(f"  Saved: {output_path}")
+    pdf_path = Path(output_path).with_suffix(".pdf")
+    fig.write_image(str(pdf_path))
+    print(f"  Saved: {output_path} + {pdf_path.name}")
 
 
 # ---------------------------------------------------------------------------
