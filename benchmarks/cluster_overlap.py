@@ -307,21 +307,8 @@ def plot_unique_combined(bf_to_fk_dict, fk_to_bf_dict, output_path,
             j = row["jaccard"]
 
             label = f"{proc}{suffix} ({n_genes})"
-            ax.text(j + 0.002, y_positions[i] + 0.15, label, va="center",
-                    ha="left", fontsize=6.5, fontweight="bold")
-
-            novel = _format_gene_list(row.get("genes_novel_role", ""), max_genes=6)
-            unchar = _format_gene_list(row.get("genes_uncharacterized", ""), max_genes=6)
-            parts = []
-            if novel:
-                parts.append(f"Novel: {novel}")
-            if unchar:
-                parts.append(f"Unchar: {unchar}")
-            if parts:
-                gene_text = "  |  ".join(parts)
-                ax.text(j + 0.002, y_positions[i] - 0.22, gene_text,
-                        va="center", ha="left", fontsize=5, color="#555555",
-                        style="italic")
+            ax.text(j + 0.002, y_positions[i], label, va="center",
+                    ha="left", fontsize=8.5, fontweight="bold")
 
     _add_labels(bf_low, bf_y)
     _add_labels(fk_low, fk_y)
@@ -344,9 +331,25 @@ def main():
     parser.add_argument("--min-confidence", default="High",
                         choices=["High", "Medium"],
                         help="Minimum confidence level to include")
+    parser.add_argument("--plots-only", action="store_true",
+                        help="Regenerate figures from cached TSVs without recomputing")
     args = parser.parse_args()
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    if args.plots_only:
+        print("Loading cached overlap TSVs...")
+        all_bf_to_fk = {
+            "BF→FK Interphase": pd.read_csv(OUTPUT_DIR / "bf_to_fk_interphase.tsv", sep="\t"),
+            "BF→FK Mitotic":    pd.read_csv(OUTPUT_DIR / "bf_to_fk_mitotic.tsv", sep="\t"),
+        }
+        all_fk_to_bf = {
+            "FK→BF Interphase": pd.read_csv(OUTPUT_DIR / "fk_to_bf_interphase.tsv", sep="\t"),
+            "FK→BF Mitotic":    pd.read_csv(OUTPUT_DIR / "fk_to_bf_mitotic.tsv", sep="\t"),
+        }
+        plot_unique_combined(all_bf_to_fk, all_fk_to_bf, OUTPUT_DIR / "unique_clusters.png")
+        print("Done. Results in:", OUTPUT_DIR)
+        return
 
     all_bf_to_fk = {}
     all_fk_to_bf = {}

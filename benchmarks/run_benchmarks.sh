@@ -34,6 +34,7 @@ set -e  # Exit on error
 MAIN_ENV="brieflow_aconcagua"
 CELLPOSE_ENV="brieflow_cellpose4"
 STARDIST_ENV="brieflow_stardist"
+PLOTS_ONLY=false
 
 # ============================================================================
 # SCRIPT SETUP
@@ -137,6 +138,10 @@ while [[ $# -gt 0 ]]; do
             RUN_ISS_MULTI=false
             shift
             ;;
+        --plots-only)
+            PLOTS_ONLY=true
+            shift
+            ;;
         --help)
             echo "Brieflow Benchmark Runner"
             echo ""
@@ -151,6 +156,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --cluster             Only run clustering comparison (Brieflow vs Funk et al.)"
             echo "  --iss-multi           Only run ISS multi-construct validation"
             echo "  --classifier          Only run cell stage classifier"
+            echo "  --plots-only          Regenerate figures only (skip heavy computation)"
             echo "  --help                Show this help message"
             exit 0
             ;;
@@ -238,6 +244,9 @@ fi
 log_info "Main environment: $MAIN_ENV"
 echo ""
 
+PLOTS_ONLY_FLAG=""
+[ "$PLOTS_ONLY" = true ] && PLOTS_ONLY_FLAG="--plots-only"
+
 OVERALL_SUCCESS=true
 
 # ============================================================================
@@ -250,13 +259,13 @@ if [ "$RUN_SEGMENTATION" = true ]; then
     echo "============================================================================"
 
     log_info "Running Cellpose 3 segmentation benchmark..."
-    if ! run_in_env "$MAIN_ENV" "segmentation.py" "cellpose3" "--method cellpose"; then
+    if ! run_in_env "$MAIN_ENV" "segmentation.py" "cellpose3" "--method cellpose $PLOTS_ONLY_FLAG"; then
         OVERALL_SUCCESS=false
     fi
 
     if check_conda_env "$STARDIST_ENV"; then
         log_info "Running StarDist segmentation benchmark..."
-        if ! run_in_env "$STARDIST_ENV" "segmentation.py" "stardist" "--method stardist"; then
+        if ! run_in_env "$STARDIST_ENV" "segmentation.py" "stardist" "--method stardist $PLOTS_ONLY_FLAG"; then
             OVERALL_SUCCESS=false
         fi
     else
@@ -265,7 +274,7 @@ if [ "$RUN_SEGMENTATION" = true ]; then
 
     if check_conda_env "$CELLPOSE_ENV"; then
         log_info "Running Cellpose 4 (CPSAM) segmentation benchmark..."
-        if ! run_in_env "$CELLPOSE_ENV" "segmentation.py" "cellpose4" "--method cellpose4"; then
+        if ! run_in_env "$CELLPOSE_ENV" "segmentation.py" "cellpose4" "--method cellpose4 $PLOTS_ONLY_FLAG"; then
             OVERALL_SUCCESS=false
         fi
     else
@@ -286,7 +295,7 @@ if [ "$RUN_SPOT_CALLING" = true ]; then
     echo "============================================================================"
 
     log_info "Running spot calling benchmark..."
-    if ! run_in_env "$MAIN_ENV" "spot_calling.py" "main"; then
+    if ! run_in_env "$MAIN_ENV" "spot_calling.py" "main" "$PLOTS_ONLY_FLAG"; then
         OVERALL_SUCCESS=false
     fi
 
@@ -304,7 +313,7 @@ if [ "$RUN_FEATURE_EXTRACTION" = true ]; then
     echo "============================================================================"
 
     log_info "Running feature extraction comparison benchmark..."
-    if ! run_in_env "$MAIN_ENV" "feature_extraction.py" "comparison" "--mode comparison"; then
+    if ! run_in_env "$MAIN_ENV" "feature_extraction.py" "comparison" "--mode comparison $PLOTS_ONLY_FLAG"; then
         OVERALL_SUCCESS=false
     fi
 
@@ -340,7 +349,7 @@ if [ "$RUN_MERGE" = true ]; then
     echo "============================================================================"
 
     log_info "Running merge mode comparison benchmark..."
-    if ! run_in_env "$MAIN_ENV" "merge.py" "main"; then
+    if ! run_in_env "$MAIN_ENV" "merge.py" "main" "$PLOTS_ONLY_FLAG"; then
         OVERALL_SUCCESS=false
     fi
 
@@ -358,22 +367,22 @@ if [ "$RUN_CLUSTER" = true ]; then
     echo "============================================================================"
 
     log_info "Running clustering enrichment benchmark..."
-    if ! run_in_env "$MAIN_ENV" "cluster_enrichment.py" "main"; then
+    if ! run_in_env "$MAIN_ENV" "cluster_enrichment.py" "main" "$PLOTS_ONLY_FLAG"; then
         OVERALL_SUCCESS=false
     fi
 
     log_info "Running cluster overlap analysis..."
-    if ! run_in_env "$MAIN_ENV" "cluster_overlap.py" "main"; then
+    if ! run_in_env "$MAIN_ENV" "cluster_overlap.py" "main" "$PLOTS_ONLY_FLAG"; then
         OVERALL_SUCCESS=false
     fi
 
     log_info "Running cluster validation analysis..."
-    if ! run_in_env "$MAIN_ENV" "cluster_validation.py" "main"; then
+    if ! run_in_env "$MAIN_ENV" "cluster_validation.py" "main" "$PLOTS_ONLY_FLAG"; then
         OVERALL_SUCCESS=false
     fi
 
     log_info "Running cluster similarity analysis..."
-    if ! run_in_env "$MAIN_ENV" "cluster_similarity.py" "main"; then
+    if ! run_in_env "$MAIN_ENV" "cluster_similarity.py" "main" "$PLOTS_ONLY_FLAG"; then
         OVERALL_SUCCESS=false
     fi
 
@@ -383,7 +392,7 @@ if [ "$RUN_CLUSTER" = true ]; then
     fi
 
     log_info "Running cluster MozzareLLM analysis..."
-    if ! run_in_env "$MAIN_ENV" "cluster_mozzarellm.py" "main" "--include-shuffled"; then
+    if ! run_in_env "$MAIN_ENV" "cluster_mozzarellm.py" "main" "--include-shuffled $PLOTS_ONLY_FLAG"; then
         OVERALL_SUCCESS=false
     fi
 
@@ -406,7 +415,12 @@ if [ "$RUN_ISS_MULTI" = true ]; then
     echo "============================================================================"
 
     log_info "Running ISS multi-construct validation benchmark..."
-    if ! run_in_env "$MAIN_ENV" "iss_multi.py" "main" "--all-wells --positions all --rerun --threshold 400"; then
+    if [ "$PLOTS_ONLY" = true ]; then
+        ISS_ARGS="--plots-only"
+    else
+        ISS_ARGS="--all-wells --positions all --rerun --threshold 400"
+    fi
+    if ! run_in_env "$MAIN_ENV" "iss_multi.py" "main" "$ISS_ARGS"; then
         OVERALL_SUCCESS=false
     fi
 
@@ -424,7 +438,7 @@ if [ "$RUN_CLASSIFIER" = true ]; then
     echo "============================================================================"
 
     log_info "Running cell stage classifier benchmark..."
-    if ! run_in_env "$MAIN_ENV" "classifier.py" "main"; then
+    if ! run_in_env "$MAIN_ENV" "classifier.py" "main" "$PLOTS_ONLY_FLAG"; then
         OVERALL_SUCCESS=false
     fi
 

@@ -363,7 +363,7 @@ def add_value_labels(ax, bars, fmt="{:.0f}", fontsize=10, offset=5):
 
 
 def save_figure(fig, path, dpi=300, transparent=False):
-    """Save figure, respecting the file extension (png, pdf, svg, etc.).
+    """Save figure as PNG (or specified format) and also as PDF.
 
     Args:
         fig: Matplotlib figure
@@ -376,4 +376,7 @@ def save_figure(fig, path, dpi=300, transparent=False):
     path = Path(path)
     if not path.suffix:
         path = path.with_suffix(".png")
+    path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=dpi, bbox_inches="tight", transparent=transparent)
+    if path.suffix != ".pdf":
+        fig.savefig(path.with_suffix(".pdf"), bbox_inches="tight", transparent=transparent)

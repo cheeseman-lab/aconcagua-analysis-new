@@ -506,6 +506,8 @@ def main():
         "--cell-class", default="Interphase", choices=list(IDEAL_CONFIGS.keys()),
     )
     parser.add_argument("--highlight-key", default="mitochondrial")
+    parser.add_argument("--plots-only", action="store_true",
+                        help="Regenerate figures (re-runs from source; no intermediate cache)")
     args = parser.parse_args()
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

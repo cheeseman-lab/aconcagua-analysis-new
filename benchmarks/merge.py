@@ -1228,6 +1228,37 @@ def plot_memory_requirements(output_path, approaches_filter=None):
     print(f"Saved: {output_path}")
 
 
+def plot_merge_color_legend(output_path):
+    """Standalone color legend for the tile match visualization (Fig. 3b).
+
+    Colors: blue = Phenotype, green = SBS, gray = Matched cells.
+    """
+    import matplotlib.patches as mpatches
+
+    setup_plot_style()
+    fig, ax = plt.subplots(figsize=(3.5, 1.5))
+    ax.axis("off")
+
+    handles = [
+        mpatches.Patch(facecolor="#1f77b4", label="Phenotype"),
+        mpatches.Patch(facecolor="#2ca02c", label="SBS"),
+        mpatches.Patch(facecolor="#888888", label="Matched"),
+    ]
+    ax.legend(
+        handles=handles,
+        loc="center",
+        ncol=3,
+        fontsize=12,
+        frameon=True,
+        framealpha=1.0,
+        edgecolor="#cccccc",
+    )
+    plt.tight_layout()
+    save_figure(fig, output_path)
+    plt.close()
+    print(f"Saved: {output_path}")
+
+
 def main():
     args = parse_args()
 
@@ -1305,6 +1336,8 @@ def main():
 
     plot_tile_match_visualization(OUTPUT_DIR / "tiles.png")
     plot_tile_match_visualization(OUTPUT_DIR / "tiles_fast_only.png", fast_only=True)
+
+    plot_merge_color_legend(OUTPUT_DIR / "merge_legend.png")
 
     plot_memory_requirements(OUTPUT_DIR / "memory.png")
     plot_memory_requirements(

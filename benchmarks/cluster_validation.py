@@ -23,6 +23,7 @@ Usage:
     python cluster_validation.py
 """
 
+import argparse
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -681,5 +682,47 @@ def plot_fragmentation_sankey(frag_df, brieflow_conf, brieflow_proc, output_path
 # Entry point
 # ---------------------------------------------------------------------------
 
-if __name__ == "__main__":
+
+def main():
+    parser = argparse.ArgumentParser(description="Cluster validation: Brieflow preservation of Funk clusters")
+    parser.add_argument("--plots-only", action="store_true",
+                        help="Regenerate figures from cached TSVs without recomputing")
+    args = parser.parse_args()
+
+    if args.plots_only:
+        print("Loading cached TSVs...")
+        df = pd.read_csv(OUTPUT_DIR / "cluster_tracking.tsv", sep="\t")
+        redist_df = pd.read_csv(OUTPUT_DIR / "redistribution_detail.tsv", sep="\t")
+
+        # Reconstruct brieflow_conf and brieflow_proc from redistribution_detail
+        brieflow_conf = {}
+        brieflow_proc = {}
+        for _, row in redist_df.iterrows():
+            cc = row["cell_class"]
+            bl_cl = int(row["brieflow_cluster"])
+            if cc not in brieflow_conf:
+                brieflow_conf[cc] = {}
+                brieflow_proc[cc] = {}
+            brieflow_conf[cc][bl_cl] = row["brieflow_confidence"]
+            brieflow_proc[cc][bl_cl] = row["brieflow_process"]
+
+        text_df = df[df["highlighted_in"] == "text"]
+
+        print("Regenerating figures...")
+        plot_preservation(df, OUTPUT_DIR / "cluster_preservation.png")
+        plot_preservation(
+            text_df, OUTPUT_DIR / "cluster_preservation_text.png",
+            title="Brieflow Preservation of Funk Text-Discussed Clusters",
+        )
+        plot_fragmentation_sankey(
+            redist_df, brieflow_conf, brieflow_proc,
+            OUTPUT_DIR / "redistribution_sankey.png",
+        )
+        print(f"\nDone. Outputs in: {OUTPUT_DIR}")
+        return
+
     run_validation()
+
+
+if __name__ == "__main__":
+    main()

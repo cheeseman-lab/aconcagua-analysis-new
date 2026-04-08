@@ -115,12 +115,11 @@ def get_confidence_stats(df):
     }
 
 
-def figure_a(data, output_dir):
+def figure_a(stats, output_dir):
     """Figure A: High Confidence Cluster Comparison — grouped by cell class."""
     setup_plot_style()
     from matplotlib.patches import Patch
 
-    stats = {name: get_confidence_stats(df) for name, df in data.items()}
     has_shuffled = "Shuffled" in stats
 
     # Build bar configs per cell class: Brieflow, Funk, (Shuffled if Interphase)
@@ -184,13 +183,13 @@ def figure_a(data, output_dir):
     print("Saved: figure_a_high_confidence.png")
 
 
-def figure_b(data, output_dir):
+def figure_b(stats, output_dir):
     """Figure B: Gene Discovery Potential (stacked bar, high-conf only, grouped by cell class)."""
     setup_plot_style()
 
     # Exclude Shuffled
-    labels = [lbl for lbl in data if lbl != "Shuffled"]
-    stats = {lbl: get_confidence_stats(data[lbl]) for lbl in labels}
+    labels = [lbl for lbl in stats if lbl != "Shuffled"]
+    stats = {lbl: stats[lbl] for lbl in labels}
 
     # Order: Brieflow Interphase, Funk Interphase, Brieflow Mitotic, Funk Mitotic
     ordered = []
@@ -262,13 +261,13 @@ def figure_b(data, output_dir):
     print("Saved: figure_b_gene_discovery.png")
 
 
-def figure_c(data, output_dir):
+def figure_c(stats, output_dir):
     """Figure C: Mean Genes per High Confidence Cluster (grouped bar by pipeline, per gene category)."""
     setup_plot_style()
 
     # Exclude Shuffled
-    labels = [lbl for lbl in data if lbl != "Shuffled"]
-    stats = {lbl: get_confidence_stats(data[lbl]) for lbl in labels}
+    labels = [lbl for lbl in stats if lbl != "Shuffled"]
+    stats = {lbl: stats[lbl] for lbl in labels}
 
     # Order labels
     ordered = []
@@ -348,12 +347,49 @@ def save_summary_table(data, output_dir):
     return table
 
 
+def load_stats_from_summary(output_dir):
+    """Reconstruct stats dicts from saved summary_table.tsv."""
+    table = pd.read_csv(output_dir / "summary_table.tsv", sep="\t")
+    stats = {}
+    for _, row in table.iterrows():
+        stats[row["condition"]] = {
+            "total": row["total_clusters"],
+            "high": row["high_confidence"],
+            "medium": row["medium_confidence"],
+            "low": row["low_confidence"],
+            "pct_high": row["pct_high"],
+            "pct_medium": row["pct_medium"],
+            "pct_low": row["pct_low"],
+            "genes_established": row["genes_established"],
+            "genes_novel": row["genes_novel"],
+            "genes_uncharacterized": row["genes_uncharacterized"],
+            "genes_total_highconf": row["genes_in_high_conf"],
+            "mean_established": row["mean_established"],
+            "mean_novel": row["mean_novel"],
+            "mean_uncharacterized": row["mean_uncharacterized"],
+        }
+    return stats
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate MozzareLLM manuscript figures A-C")
     parser.add_argument("--include-shuffled", action="store_true", help="Include shuffled negative control in Figure A")
+    parser.add_argument("--plots-only", action="store_true",
+                        help="Regenerate figures from cached summary_table.tsv without reloading summaries")
     args = parser.parse_args()
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    if args.plots_only:
+        print("Loading cached summary_table.tsv...")
+        stats = load_stats_from_summary(OUTPUT_DIR)
+        print(f"Loaded {len(stats)} conditions")
+        print("\nGenerating figures...")
+        figure_a(stats, OUTPUT_DIR)
+        figure_b(stats, OUTPUT_DIR)
+        figure_c(stats, OUTPUT_DIR)
+        print(f"\nAll figures saved to: {OUTPUT_DIR}")
+        return
 
     print("Loading MozzareLLM summaries...")
     data = load_summaries(include_shuffled=args.include_shuffled)
@@ -363,11 +399,12 @@ def main():
         return
 
     save_summary_table(data, OUTPUT_DIR)
+    stats = {name: get_confidence_stats(df) for name, df in data.items()}
 
     print("\nGenerating figures...")
-    figure_a(data, OUTPUT_DIR)
-    figure_b(data, OUTPUT_DIR)
-    figure_c(data, OUTPUT_DIR)
+    figure_a(stats, OUTPUT_DIR)
+    figure_b(stats, OUTPUT_DIR)
+    figure_c(stats, OUTPUT_DIR)
 
     print(f"\nAll figures saved to: {OUTPUT_DIR}")
 

@@ -28,6 +28,10 @@ from pathlib import Path
 
 import pandas as pd
 
+# MitoCarta highlighted clusters (from cluster_phate.py HIGHLIGHT_SETS)
+MITO_BRIEFLOW_CLUSTERS = [22, 69, 121, 129, 160]
+MITO_FUNK_CLUSTERS = [135, 147, 149, 185]
+
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
@@ -685,6 +689,112 @@ def export_excel(all_tables: dict[str, pd.DataFrame]) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Supplementary Data exports (5 separate Excel workbooks)
+# ---------------------------------------------------------------------------
+
+def _write_excel(sheets: dict[str, pd.DataFrame], path: Path) -> None:
+    with pd.ExcelWriter(path, engine="openpyxl") as writer:
+        for sheet_name, df in sheets.items():
+            df.to_excel(writer, sheet_name=sheet_name[:31], index=False)
+    print(f"  {path.name} ({len(sheets)} sheets)")
+
+
+def export_supp1(comprehensive: dict[str, pd.DataFrame]) -> None:
+    """Supp Data 1: All Brieflow clusters — 4 tabs (interphase clusters, interphase genes,
+    mitotic clusters, mitotic genes)."""
+    print("Supp Data 1: Brieflow MozzareLLM annotations")
+    sheets = {
+        "Interphase Clusters": comprehensive["S6_brieflow_interphase_clusters"],
+        "Interphase Genes": comprehensive["S6_brieflow_interphase_genes"],
+        "Mitotic Clusters": comprehensive["S7_brieflow_mitotic_clusters"],
+        "Mitotic Genes": comprehensive["S7_brieflow_mitotic_genes"],
+    }
+    _write_excel(sheets, OUTPUT_DIR / "Supplementary_Data_1_Brieflow_MozzareLLM.xlsx")
+
+
+def export_supp2(comprehensive: dict[str, pd.DataFrame]) -> None:
+    """Supp Data 2: All Funk clusters — 4 tabs."""
+    print("Supp Data 2: Funk MozzareLLM annotations")
+    sheets = {
+        "Interphase Clusters": comprehensive["S8_funk_interphase_clusters"],
+        "Interphase Genes": comprehensive["S8_funk_interphase_genes"],
+        "Mitotic Clusters": comprehensive["S9_funk_mitotic_clusters"],
+        "Mitotic Genes": comprehensive["S9_funk_mitotic_genes"],
+    }
+    _write_excel(sheets, OUTPUT_DIR / "Supplementary_Data_2_Funk_MozzareLLM.xlsx")
+
+
+def _load_mitocarta_map() -> dict[str, str]:
+    """Return {gene: top_level_pathway} for all MitoCarta genes."""
+    mc = pd.read_excel(EXTERNAL_DIR / "Human.MitoCarta3.0.xls", sheet_name="A Human MitoCarta3.0")
+    result = {}
+    for _, row in mc.iterrows():
+        gene = str(row["Symbol"])
+        pw = str(row.get("MitoCarta3.0_MitoPathways", ""))
+        if pw in ("nan", "0", ""):
+            result[gene] = ""
+        else:
+            first = pw.split("|")[0].strip()
+            top = first.split(">")[0].strip()
+            top = top.replace("Mitochondrial central dogma", "Central Dogma")
+            top = top.replace("Protein import, sorting and homeostasis", "Protein Import & Homeostasis")
+            top = top.replace("Mitochondrial dynamics and surveillance", "Dynamics & Surveillance")
+            result[gene] = top
+    return result
+
+
+def export_supp3(comprehensive: dict[str, pd.DataFrame]) -> None:
+    """Supp Data 3: MitoCarta validation — genes from highlighted mitochondrial clusters,
+    with in_mitocarta flag and pathway."""
+    print("Supp Data 3: MitoCarta validation of mitochondrial sub-modules")
+    mito_map = _load_mitocarta_map()
+
+    def _build_mito_sheet(gene_df: pd.DataFrame, cluster_df: pd.DataFrame, cluster_ids: list[int], prefix: str) -> pd.DataFrame:
+        label_ids = {f"{prefix}{cid}" for cid in cluster_ids}
+        genes = gene_df[gene_df["cluster_label"].isin(label_ids)].copy()
+        # Merge cluster-level annotation
+        cl_cols = cluster_df[["cluster_label", "dominant_process", "pathway_confidence"]].rename(
+            columns={"dominant_process": "cluster_process", "pathway_confidence": "cluster_confidence"}
+        )
+        genes = genes.merge(cl_cols, on="cluster_label", how="left")
+        genes["in_mitocarta"] = genes["gene_symbol"].map(lambda g: g in mito_map)
+        genes["mitocarta_pathway"] = genes["gene_symbol"].map(lambda g: mito_map.get(g, ""))
+        cols = [
+            "cluster_label", "cluster_id", "cluster_process", "cluster_confidence",
+            "gene_symbol", "gene_classification", "priority", "rationale",
+            "in_mitocarta", "mitocarta_pathway",
+        ]
+        return genes[cols].sort_values(["cluster_label", "gene_symbol"]).reset_index(drop=True)
+
+    bf_genes = comprehensive["S6_brieflow_interphase_genes"]
+    bf_clusters = comprehensive["S6_brieflow_interphase_clusters"]
+    fk_genes = comprehensive["S8_funk_interphase_genes"]
+    fk_clusters = comprehensive["S8_funk_interphase_clusters"]
+
+    sheets = {
+        "Brieflow": _build_mito_sheet(bf_genes, bf_clusters, MITO_BRIEFLOW_CLUSTERS, "BI"),
+        "Funk": _build_mito_sheet(fk_genes, fk_clusters, MITO_FUNK_CLUSTERS, "FI"),
+    }
+    _write_excel(sheets, OUTPUT_DIR / "Supplementary_Data_3_MitoCarta_Validation.xlsx")
+
+
+def export_supp4() -> None:
+    """Supp Data 4: Funk cluster retention in Brieflow (was S4)."""
+    print("Supp Data 4: Funk cluster retention (preservation analysis)")
+    df = generate_s4()
+    sheets = {"Funk Cluster Retention": df}
+    _write_excel(sheets, OUTPUT_DIR / "Supplementary_Data_4_Cluster_Preservation.xlsx")
+
+
+def export_supp5() -> None:
+    """Supp Data 5: Bidirectional Jaccard similarity (was S3)."""
+    print("Supp Data 5: Bidirectional Jaccard similarity")
+    df = generate_s3()
+    sheets = {"Jaccard Similarity": df}
+    _write_excel(sheets, OUTPUT_DIR / "Supplementary_Data_5_Jaccard_Similarity.xlsx")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 def main() -> None:
@@ -703,6 +813,13 @@ def main() -> None:
     all_tables.update(comprehensive)
 
     export_excel(all_tables)
+
+    print("\nGenerating 5 Supplementary Data Excel files...")
+    export_supp1(comprehensive)
+    export_supp2(comprehensive)
+    export_supp3(comprehensive)
+    export_supp4()
+    export_supp5()
 
     print(f"\nDone. All tables written to {OUTPUT_DIR}")
 

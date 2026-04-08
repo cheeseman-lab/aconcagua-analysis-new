@@ -22,6 +22,7 @@ Usage:
     python cluster_similarity.py
 """
 
+import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -260,19 +261,78 @@ def _build_split_diagonal(cos_upper, cos_lower, order):
     return combined
 
 
+def compute_correlation_matrices(data):
+    """Compute the four pairwise Pearson correlation matrices from raw arrays.
+
+    Returns dict with cos_pca_brieflow, cos_pca_funk, cos_feat_brieflow, cos_feat_funk.
+    """
+    print(f"\n  Computing Pearson correlations for {data['name']}...")
+    return {
+        "cos_pca_brieflow": cosine_similarity(_center(data["brieflow_pca"])),
+        "cos_pca_funk": cosine_similarity(_center(data["funk_pca"])),
+        "cos_feat_brieflow": cosine_similarity(_center(data["brieflow_features"])),
+        "cos_feat_funk": cosine_similarity(_center(data["funk_features"])),
+    }
+
+
+def save_corr_cache(data, matrices, path):
+    """Save correlation matrices and metadata to a compressed NPZ file."""
+    np.savez_compressed(
+        str(path),
+        brieflow_cluster=data["brieflow_cluster"],
+        funk_cluster=data["funk_cluster"],
+        cos_pca_brieflow=matrices["cos_pca_brieflow"],
+        cos_pca_funk=matrices["cos_pca_funk"],
+        cos_feat_brieflow=matrices["cos_feat_brieflow"],
+        cos_feat_funk=matrices["cos_feat_funk"],
+        _name=np.array(data["name"]),
+        _n=np.array(data["n"]),
+        _brieflow_k=np.array(data["brieflow_k"]),
+        _funk_k=np.array(data["funk_k"]),
+        _n_pcs=np.array(data["n_pcs"]),
+        _n_shared_feats=np.array(data["n_shared_feats"]),
+    )
+    print(f"  Saved cache: {path}")
+
+
+def load_corr_cache(path):
+    """Load correlation matrices and metadata from a cached NPZ file."""
+    npz = np.load(str(path), allow_pickle=True)
+    return {
+        "name": str(npz["_name"]),
+        "n": int(npz["_n"]),
+        "brieflow_k": int(npz["_brieflow_k"]),
+        "funk_k": int(npz["_funk_k"]),
+        "n_pcs": int(npz["_n_pcs"]),
+        "n_shared_feats": int(npz["_n_shared_feats"]),
+        "brieflow_cluster": npz["brieflow_cluster"],
+        "funk_cluster": npz["funk_cluster"],
+        "cos_pca_brieflow": npz["cos_pca_brieflow"],
+        "cos_pca_funk": npz["cos_pca_funk"],
+        "cos_feat_brieflow": npz["cos_feat_brieflow"],
+        "cos_feat_funk": npz["cos_feat_funk"],
+    }
+
+
 def plot_2x2_grid(data, output_path):
-    """Generate 2×2 split-diagonal heatmap grid for one cell class."""
+    """Generate 2×2 split-diagonal heatmap grid for one cell class.
+
+    Args:
+        data: dict with keys: name, n, brieflow_k, funk_k, n_pcs, n_shared_feats,
+              brieflow_cluster, funk_cluster, cos_pca_brieflow, cos_pca_funk,
+              cos_feat_brieflow, cos_feat_funk
+        output_path: where to save the figure
+    """
     setup_plot_style()
     name = data["name"]
     n = data["n"]
     bk = data["brieflow_k"]
     fk = data["funk_k"]
 
-    print(f"\n  Computing Pearson correlations for {name}...")
-    cos_pca_brieflow = cosine_similarity(_center(data["brieflow_pca"]))
-    cos_pca_funk = cosine_similarity(_center(data["funk_pca"]))
-    cos_feat_brieflow = cosine_similarity(_center(data["brieflow_features"]))
-    cos_feat_funk = cosine_similarity(_center(data["funk_features"]))
+    cos_pca_brieflow = data["cos_pca_brieflow"]
+    cos_pca_funk = data["cos_pca_funk"]
+    cos_feat_brieflow = data["cos_feat_brieflow"]
+    cos_feat_funk = data["cos_feat_funk"]
 
     brieflow_order = data["brieflow_cluster"].argsort(kind="stable")
     funk_order = data["funk_cluster"].argsort(kind="stable")
@@ -371,6 +431,11 @@ def plot_2x2_grid(data, output_path):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Cluster similarity: Brieflow vs Funk Pearson correlations")
+    parser.add_argument("--plots-only", action="store_true",
+                        help="Regenerate plots from cached NPZ files (run full mode first to create cache)")
+    args = parser.parse_args()
+
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     print("=" * 70)
@@ -378,10 +443,23 @@ def main():
     print("=" * 70)
 
     for cfg in CELL_CONFIGS:
-        data = load_cell_data(cfg)
-        plot_2x2_grid(
-            data, OUTPUT_DIR / f"pearson_correlation_{cfg['name'].lower()}.png"
-        )
+        name_lower = cfg["name"].lower()
+        cache_path = OUTPUT_DIR / f"corr_data_{name_lower}.npz"
+        out_path = OUTPUT_DIR / f"pearson_correlation_{name_lower}.png"
+
+        if args.plots_only:
+            if not cache_path.exists():
+                print(f"  ERROR: Cache not found at {cache_path}. Run without --plots-only first.")
+                continue
+            print(f"\nLoading cached matrices for {cfg['name']}...")
+            plot_data = load_corr_cache(cache_path)
+        else:
+            raw = load_cell_data(cfg)
+            matrices = compute_correlation_matrices(raw)
+            plot_data = {**raw, **matrices}
+            save_corr_cache(raw, matrices, cache_path)
+
+        plot_2x2_grid(plot_data, out_path)
 
     print("\n" + "=" * 70)
     print("ALL PLOTS COMPLETE")

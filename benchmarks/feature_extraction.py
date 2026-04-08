@@ -801,9 +801,9 @@ def generate_scatter_plots(corr_df, measure_df, multi_df, max_features_per_clust
 
         # Legend - position based on number of entries
         if len(legend_added) <= 8:
-            ax.legend(loc="upper left", fontsize=9, markerscale=1.5)
+            ax.legend(loc="upper left", fontsize=12, markerscale=1.5)
         else:
-            ax.legend(loc="upper left", fontsize=7, markerscale=1.2, ncol=1)
+            ax.legend(loc="upper left", fontsize=11, markerscale=1.2, ncol=1)
 
         save_figure(fig, scatter_dir / f"cluster_scatter_{cluster_name}.png")
         plt.close()

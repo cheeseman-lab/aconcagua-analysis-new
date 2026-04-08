@@ -658,8 +658,8 @@ def generate_visualization(results_df=None):
                       fmt="pct")
         for ax in (ax3, ax4):
             ax.set_title(ax.get_title(), fontsize=20, fontweight="bold")
-            ax.set_ylabel(ax.get_ylabel(), fontsize=16)
-            ax.tick_params(labelsize=14)
+            ax.set_ylabel(ax.get_ylabel(), fontsize=18)
+            ax.tick_params(labelsize=16)
         plt.tight_layout()
         save_figure(fig2, OUTPUT_DIR / "spotiflow_vs_standard_comparison_square.png",
                     transparent=True)
