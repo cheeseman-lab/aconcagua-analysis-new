@@ -657,9 +657,9 @@ def generate_visualization(results_df=None):
                       ylabel="Percentage of Cells (%)", title="Mapped Cells",
                       fmt="pct")
         for ax in (ax3, ax4):
-            ax.set_title(ax.get_title(), fontsize=20, fontweight="bold")
-            ax.set_ylabel(ax.get_ylabel(), fontsize=18)
-            ax.tick_params(labelsize=16)
+            ax.set_title(ax.get_title(), fontsize=26, fontweight="bold")
+            ax.set_ylabel(ax.get_ylabel(), fontsize=22)
+            ax.tick_params(labelsize=20)
         plt.tight_layout()
         save_figure(fig2, OUTPUT_DIR / "spotiflow_vs_standard_comparison_square.png",
                     transparent=True)

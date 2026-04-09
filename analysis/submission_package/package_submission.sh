@@ -22,7 +22,8 @@ FIGURE_LABEL["P-1__cell_PHALLOIDIN_min_heatmap"]="2f"
 FIGURE_LABEL["P-1__cell_density_heatmap"]="2f"
 FIGURE_LABEL["P-3__sbs_to_ph_matching_rates"]="3b"
 FIGURE_LABEL["P-3__cells_with_channel_min_0"]="3b"
-FIGURE_LABEL["base_legend"]="3b"
+FIGURE_LABEL["base_legend"]="s3c"
+FIGURE_LABEL["merge_legend"]="3b"
 FIGURE_LABEL["CeCl-all_ChCo-DAPI_TUBULIN_GH2AX_PHALLOIDIN__feature_distributions"]="3d"
 FIGURE_LABEL["phate_scatter_interphase_mitochondrial"]="5a"
 FIGURE_LABEL["pearson_correlation_interphase"]="5a"
@@ -37,7 +38,10 @@ FIGURE_LABEL["runtime_comparison"]="s4e"
 FIGURE_LABEL["cluster_scatter_hu_moments"]="s4fh"
 FIGURE_LABEL["cluster_scatter_intensity"]="s4fh"
 FIGURE_LABEL["cluster_scatter_radial_distribution"]="s4fh"
+FIGURE_LABEL["retention_fast_only"]="s5a"
+FIGURE_LABEL["tiles_sbs_fast_only"]="s5bc"
 FIGURE_LABEL["tiles_phenotype_fast_only"]="s5bc"
+FIGURE_LABEL["training_totals"]="s6b"
 FIGURE_LABEL["classifier"]="s6d"
 FIGURE_LABEL["confusion_matrix"]="s6c"
 FIGURE_LABEL["confidence"]="s6d"
@@ -47,8 +51,7 @@ FIGURE_LABEL["figure_c_mean_genes"]="s7c"
 FIGURE_LABEL["cluster_preservation_text"]="s8a"
 FIGURE_LABEL["crosstalk"]="s8a"
 FIGURE_LABEL["redistribution_sankey"]="s8b"
-FIGURE_LABEL["novel"]="s9a"
-FIGURE_LABEL["cluster_145"]="s9a"
+FIGURE_LABEL["unique_clusters"]="s9"
 FIGURE_LABEL["brieflow_schema"]="1"
 FIGURE_LABEL["montage"]="2e"
 
@@ -61,6 +64,7 @@ TARGET_STEMS=(
     "P-3__sbs_to_ph_matching_rates"
     "P-3__cells_with_channel_min_0"
     "base_legend"
+    "merge_legend"
     "CeCl-all_ChCo-DAPI_TUBULIN_GH2AX_PHALLOIDIN__feature_distributions"
     "phate_scatter_interphase_mitochondrial"
     "pearson_correlation_interphase"
@@ -75,7 +79,10 @@ TARGET_STEMS=(
     "cluster_scatter_hu_moments"
     "cluster_scatter_intensity"
     "cluster_scatter_radial_distribution"
+    "retention_fast_only"
+    "tiles_sbs_fast_only"
     "tiles_phenotype_fast_only"
+    "training_totals"
     "classifier"
     "confusion_matrix"
     "confidence"
@@ -85,8 +92,7 @@ TARGET_STEMS=(
     "cluster_preservation_text"
     "crosstalk"
     "redistribution_sankey"
-    "novel"
-    "cluster_145"
+    "unique_clusters"
     "brieflow_schema"
     "montage"
 )
@@ -97,9 +103,18 @@ mkdir -p "$FIGURES_DIR" "$EXCEL_DIR"
 found=0
 missing=()
 
+# Explicit path overrides for stems where multiple files share the same name
+declare -A FIGURE_PATH
+FIGURE_PATH["P-1__cell_density_heatmap"]="$REPO_ROOT/benchmarks/results/eval_figures/phenotype/eval/segmentation/P-1__cell_density_heatmap.pdf"
+FIGURE_PATH["runtime_comparison"]="$REPO_ROOT/benchmarks/results/feature_extraction/runtime_comparison.pdf"
+
 for stem in "${TARGET_STEMS[@]}"; do
-    match=$(find "$REPO_ROOT/benchmarks/results" \
-        -name "${stem}.pdf" 2>/dev/null | head -1)
+    if [ -n "${FIGURE_PATH[$stem]+x}" ]; then
+        match="${FIGURE_PATH[$stem]}"
+    else
+        match=$(find "$REPO_ROOT/benchmarks/results" \
+            -name "${stem}.pdf" 2>/dev/null | head -1)
+    fi
     if [ -n "$match" ]; then
         label="${FIGURE_LABEL[$stem]:-unknown}"
         dest="${label}__${stem}.pdf"
@@ -127,6 +142,6 @@ if [ ${#missing[@]} -gt 0 ]; then
 fi
 echo "Excel files:  $(ls "$EXCEL_DIR/" | wc -l)"
 
-zip -r "$ZIP_NAME" "$FIGURES_DIR/" "$EXCEL_DIR/"
+cd "$SCRIPT_DIR" && zip -r "$ZIP_NAME" figures/ excel/
 echo ""
 echo "Done: $ZIP_NAME ($(du -sh "$ZIP_NAME" | cut -f1))"

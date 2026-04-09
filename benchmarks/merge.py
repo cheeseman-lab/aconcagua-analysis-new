@@ -1231,20 +1231,24 @@ def plot_memory_requirements(output_path, approaches_filter=None):
 def plot_merge_color_legend(output_path):
     """Standalone color legend for the tile match visualization (Fig. 3b).
 
-    Colors: blue = Phenotype, green = SBS, gray = Matched cells.
+    Colors: blue = Phenotype, green = SBS, red = Matched cells.
     """
     import matplotlib.patches as mpatches
 
+    from pathlib import Path
+
     setup_plot_style()
-    fig, ax = plt.subplots(figsize=(3.5, 1.5))
+    fig, ax = plt.subplots(figsize=(3.5, 0.4))
+    ax.set_facecolor("white")
+    fig.patch.set_facecolor("white")
     ax.axis("off")
 
     handles = [
         mpatches.Patch(facecolor="#1f77b4", label="Phenotype"),
         mpatches.Patch(facecolor="#2ca02c", label="SBS"),
-        mpatches.Patch(facecolor="#888888", label="Matched"),
+        mpatches.Patch(facecolor="#d62728", label="Matched"),
     ]
-    ax.legend(
+    legend = ax.legend(
         handles=handles,
         loc="center",
         ncol=3,
@@ -1252,11 +1256,22 @@ def plot_merge_color_legend(output_path):
         frameon=True,
         framealpha=1.0,
         edgecolor="#cccccc",
+        bbox_to_anchor=(0.5, 0.5),
     )
-    plt.tight_layout()
-    save_figure(fig, output_path)
+    fig.canvas.draw()
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    for ext in (".png", ".pdf"):
+        fig.savefig(
+            output_path.with_suffix(ext),
+            dpi=300,
+            bbox_inches=legend.get_window_extent().transformed(
+                fig.dpi_scale_trans.inverted()
+            ),
+            facecolor="white",
+        )
     plt.close()
-    print(f"Saved: {output_path}")
+    print(f"Saved: {output_path} + {output_path.stem}.pdf")
 
 
 def main():

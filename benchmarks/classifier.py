@@ -91,10 +91,11 @@ def plot_confusion_matrix(output_path):
     # Normalize for display
     cm_normalized = cm.astype(float) / cm.sum(axis=1, keepdims=True)
 
-    fig, ax = plt.subplots(figsize=(6, 6))
+    fig, ax = plt.subplots(figsize=(6, 6), facecolor="white")
+    ax.set_facecolor("white")
 
     # Plot heatmap
-    im = ax.imshow(cm_normalized, interpolation="nearest", cmap="Blues", vmin=0, vmax=1)
+    im = ax.imshow(cm_normalized, interpolation="nearest", cmap="Blues", vmin=0, vmax=1, rasterized=True)
     cbar = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
     cbar.set_label("Proportion", fontsize=12)
 

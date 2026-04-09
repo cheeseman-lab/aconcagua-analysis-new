@@ -183,14 +183,26 @@ def write_csv(rows: list[dict], path: Path, fieldnames: list[str]) -> None:
     print(f"  {path.name}: {len(rows)} rows")
 
 
+PREFIX_MAP = {
+    "BI": "Brieflow Interphase Cluster",
+    "BM": "Brieflow Mitotic Cluster",
+    "FI": "Funk Interphase Cluster",
+    "FM": "Funk Mitotic Cluster",
+}
+
+
+def make_label(prefix: str, cluster_id: str | int) -> str:
+    return f"{PREFIX_MAP[prefix]} {cluster_id}"
+
+
 def brieflow_label(cluster_id: str | int, cell_class: str) -> str:
     prefix = "BI" if cell_class.lower().startswith("inter") else "BM"
-    return f"{prefix}{cluster_id}"
+    return make_label(prefix, cluster_id)
 
 
 def funk_label(cluster_id: str | int, cell_class: str) -> str:
     prefix = "FI" if cell_class.lower().startswith("inter") else "FM"
-    return f"{prefix}{cluster_id}"
+    return make_label(prefix, cluster_id)
 
 
 # ---------------------------------------------------------------------------
@@ -282,11 +294,11 @@ def generate_s3() -> pd.DataFrame:
             rows.append({
                 "cell_class": cell_class,
                 "direction": direction,
-                "source_label": f"{src_prefix}{row['source_cluster']}",
+                "source_label": make_label(src_prefix, row['source_cluster']),
                 "source_process": row["source_process"],
                 "source_confidence": row["source_confidence"],
                 "source_size": int(row["source_size"]),
-                "target_label": f"{tgt_prefix}{row['best_target_cluster']}",
+                "target_label": make_label(tgt_prefix, row['best_target_cluster']),
                 "target_process": row["target_process"],
                 "target_confidence": row["target_confidence"],
                 "target_size": int(row["target_size"]),
@@ -308,7 +320,11 @@ def generate_s3() -> pd.DataFrame:
     ]
     path = OUTPUT_DIR / "S3_cross_pipeline_jaccard.csv"
     write_csv(rows, path, fieldnames)
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    # Fill any null string columns with empty string to avoid NaN in Excel
+    str_cols = df.select_dtypes(include="object").columns
+    df[str_cols] = df[str_cols].fillna("")
+    return df
 
 
 # ---------------------------------------------------------------------------
@@ -451,7 +467,7 @@ def generate_s4() -> pd.DataFrame:
                 })
             else:
                 bl_prefix = "BI" if cell_class.lower().startswith("inter") else "BM"
-                dom_bl_label = f"{bl_prefix}{summary['dominant_brieflow_cluster']}"
+                dom_bl_label = make_label(bl_prefix, summary['dominant_brieflow_cluster'])
                 rows.append({
                     "funk_label": funk_lbl,
                     "cell_class": cell_class,
@@ -604,7 +620,7 @@ def generate_comprehensive_tables(name: str, config: dict) -> tuple[pd.DataFrame
 
     for cid in all_cluster_ids:
         cl = cluster_data.get(cid, {})
-        label = f"{prefix}{cid}"
+        label = make_label(prefix, cid)
         cluster_genes = sorted([g for g, c in gene_to_cluster.items() if c == cid])
         total = len(cluster_genes)
 
@@ -614,7 +630,7 @@ def generate_comprehensive_tables(name: str, config: dict) -> tuple[pd.DataFrame
         n_unclass = cl.get("num_unclassified", 0)
         pct_est = f"{100 * n_est / total:.1f}" if total > 0 else ""
         raw_comp = cl.get("classification_completeness", 0)
-        completeness = f"{100 * raw_comp:.1f}%" if isinstance(raw_comp, (int, float)) and raw_comp > 0 else ""
+        completeness = f"{100 * raw_comp:.1f}%" if isinstance(raw_comp, (int, float)) else "0.0%"
 
         cluster_rows.append({
             "cluster_label": label, "cluster_id": cid,
@@ -629,13 +645,13 @@ def generate_comprehensive_tables(name: str, config: dict) -> tuple[pd.DataFrame
 
         gene_info = cl.get("gene_info", {})
         for gene in cluster_genes:
-            info = gene_info.get(gene, {"classification": "unclassified", "priority": "", "rationale": ""})
+            info = gene_info.get(gene, {"classification": "", "priority": "", "rationale": ""})
             gene_rows.append({
                 "cluster_label": label, "cluster_id": cid,
                 "gene_symbol": gene,
                 "gene_classification": info["classification"],
-                "priority": info["priority"],
-                "rationale": info["rationale"],
+                "priority": info["priority"] if info["priority"] is not None else "",
+                "rationale": info["rationale"] if info["rationale"] is not None else "",
             })
 
     cluster_path = OUTPUT_DIR / f"{name}_clusters.csv"
@@ -654,7 +670,11 @@ def generate_comprehensive_tables(name: str, config: dict) -> tuple[pd.DataFrame
     print(f"  {cluster_path.name}: {len(cluster_rows)} clusters")
     print(f"  {gene_path.name}: {len(gene_rows)} genes")
 
-    return pd.DataFrame(cluster_rows), pd.DataFrame(gene_rows)
+    gene_df = pd.DataFrame(gene_rows)
+    gene_df["priority"] = gene_df["priority"].fillna("")
+    gene_df["rationale"] = gene_df["rationale"].fillna("")
+    gene_df["gene_classification"] = gene_df["gene_classification"].replace("unclassified", "")
+    return pd.DataFrame(cluster_rows), gene_df
 
 
 def generate_s6_to_s9() -> dict[str, pd.DataFrame]:
@@ -750,7 +770,7 @@ def export_supp3(comprehensive: dict[str, pd.DataFrame]) -> None:
     mito_map = _load_mitocarta_map()
 
     def _build_mito_sheet(gene_df: pd.DataFrame, cluster_df: pd.DataFrame, cluster_ids: list[int], prefix: str) -> pd.DataFrame:
-        label_ids = {f"{prefix}{cid}" for cid in cluster_ids}
+        label_ids = {make_label(prefix, cid) for cid in cluster_ids}
         genes = gene_df[gene_df["cluster_label"].isin(label_ids)].copy()
         # Merge cluster-level annotation
         cl_cols = cluster_df[["cluster_label", "dominant_process", "pathway_confidence"]].rename(
@@ -758,7 +778,9 @@ def export_supp3(comprehensive: dict[str, pd.DataFrame]) -> None:
         )
         genes = genes.merge(cl_cols, on="cluster_label", how="left")
         genes["in_mitocarta"] = genes["gene_symbol"].map(lambda g: g in mito_map)
-        genes["mitocarta_pathway"] = genes["gene_symbol"].map(lambda g: mito_map.get(g, ""))
+        genes["mitocarta_pathway"] = genes["gene_symbol"].map(
+            lambda g: mito_map[g] if g in mito_map else "not in MitoCarta"
+        )
         cols = [
             "cluster_label", "cluster_id", "cluster_process", "cluster_confidence",
             "gene_symbol", "gene_classification", "priority", "rationale",

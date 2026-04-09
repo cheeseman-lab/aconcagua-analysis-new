@@ -377,6 +377,7 @@ def save_figure(fig, path, dpi=300, transparent=False):
     if not path.suffix:
         path = path.with_suffix(".png")
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=dpi, bbox_inches="tight", transparent=transparent)
+    facecolor = "none" if transparent else fig.get_facecolor()
+    fig.savefig(path, dpi=dpi, bbox_inches="tight", transparent=transparent, facecolor=facecolor)
     if path.suffix != ".pdf":
-        fig.savefig(path.with_suffix(".pdf"), bbox_inches="tight", transparent=transparent)
+        fig.savefig(path.with_suffix(".pdf"), bbox_inches="tight", transparent=transparent, facecolor=facecolor)

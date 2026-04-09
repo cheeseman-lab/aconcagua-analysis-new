@@ -709,6 +709,7 @@ def plot_mito_heatmap(data, feature_type, output_path):
     # --- Plot ---
     fig, ax = plt.subplots(figsize=(fig_width, fig_side))
     fig.subplots_adjust(left=0.15, right=0.85, top=0.95, bottom=0.03)
+    ax.set_rasterization_zorder(10)  # rasterize all artists in PDF to avoid transparency artifacts
 
     ax.pcolormesh(combined, cmap="RdBu_r", vmin=-1, vmax=1, rasterized=True)
     ax.set_aspect("equal")
